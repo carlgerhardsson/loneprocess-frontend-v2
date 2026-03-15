@@ -24,5 +24,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    base: '/loneprocess-frontend-v2/',
   },
 })
