@@ -7,9 +7,7 @@ function App() {
   return (
     <PageLayout>
       <div className="text-center py-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Welcome to Löneportalen v2.0
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Löneportalen v2.0</h2>
         <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
           Modern React + TypeScript migration in progress. This is the foundation for the
           production-ready digital checklista.
