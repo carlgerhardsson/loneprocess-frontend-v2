@@ -1,0 +1,16 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request.
+
+# Default owner for everything
+* @carlgerhardsson
+
+# Specific ownership
+/.github/workflows/ @carlgerhardsson
+/src/components/ @carlgerhardsson
+/src/lib/ @carlgerhardsson
+/tests/ @carlgerhardsson
+
+# Security-sensitive files
+/.github/workflows/security.yml @carlgerhardsson
+package.json @carlgerhardsson
+package-lock.json @carlgerhardsson

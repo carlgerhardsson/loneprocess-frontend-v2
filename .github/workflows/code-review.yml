@@ -1,0 +1,85 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review-size:
+    name: PR Size Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          CHANGED_LINES=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo 0)
+          
+          echo "Changed files: $CHANGED_FILES"
+          echo "Changed lines: $CHANGED_LINES"
+          
+          if [ $CHANGED_FILES -gt 50 ] || [ $CHANGED_LINES -gt 1000 ]; then
+            echo "::warning::Large PR detected. Consider splitting into smaller PRs for easier review."
+          fi
+
+  complexity-check:
+    name: Code Complexity Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check complexity
+        run: |
+          echo "Running complexity analysis..."
+          npx eslint . --ext .ts,.tsx --max-warnings 0 || echo "::warning::High complexity detected in some files"
+        continue-on-error: true
+
+  test-coverage:
+    name: Test Coverage Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Coverage Report
+        run: |
+          echo "Test coverage report generated"
+          cat coverage/coverage-summary.json || echo "No coverage report found"
+        continue-on-error: true
+
+  conventional-commits:
+    name: Conventional Commits Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        run: |
+          git log origin/${{ github.base_ref }}..HEAD --pretty=format:"%s" | while read msg; do
+            if ! echo "$msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-z]+\))?: .+'; then
+              echo "::warning::Non-conventional commit message: $msg"
+            fi
+          done
