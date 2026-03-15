@@ -14,18 +14,33 @@ updates:
       - 'dependencies'
       - 'automated'
     versioning-strategy: increase
-    # Group minor and patch updates
+    # Group updates to avoid dependency conflicts
     groups:
-      development-dependencies:
-        dependency-type: 'development'
+      # TypeScript ESLint packages must be updated together
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint/*'
         update-types:
           - 'minor'
           - 'patch'
+      # Development dependencies
+      development-dependencies:
+        dependency-type: 'development'
+        exclude-patterns:
+          - '@typescript-eslint/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Production dependencies
       production-dependencies:
         dependency-type: 'production'
         update-types:
           - 'minor'
           - 'patch'
+    # Ignore major version updates for now (breaking changes)
+    ignore:
+      - dependency-name: '@typescript-eslint/*'
+        update-types: ['version-update:semver-major']
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'
