@@ -9,7 +9,7 @@
 
 **Migration Phase:** 🟢 Fas 1 COMPLETE - Project Setup  
 **Version:** 2.0.0  
-**Status:** ✅ Scaffold Complete | CI/CD Active
+**Status:** ✅ All CI/CD Green | Deploying to Pages
 
 ## 🏗️ Tech Stack
 
@@ -61,6 +61,7 @@ npm run build
 - [x] Vitest configured with tests
 - [x] Playwright E2E configured
 - [x] GitHub Actions CI/CD pipelines
+- [x] GitHub Pages deployment
 - [x] Documentation complete
 
 ### 🟡 Fas 2: Core Components (Week 2) - NEXT
@@ -110,10 +111,10 @@ Every commit must pass:
 
 ## 🔗 Links
 
+- **Live Demo:** [GitHub Pages](https://carlgerhardsson.github.io/loneprocess-frontend-v2/)
 - **Migration Plan:** [Issue #6](https://github.com/carlgerhardsson/loneprocess-frontend/issues/6)
 - **Old Repo:** [loneprocess-frontend](https://github.com/carlgerhardsson/loneprocess-frontend)
 - **API Repo:** [loneprocess-api](https://github.com/carlgerhardsson/loneprocess-api)
-- **Live App:** [GitHub Pages](https://carlgerhardsson.github.io/loneprocess-frontend-v2/)
 
 ## 🤖 Agent Team
 
