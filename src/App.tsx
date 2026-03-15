@@ -9,9 +9,7 @@ function App() {
         <h1 className="text-4xl font-bold text-primary-600 mb-4">
           🚀 Löneportalen v2.0
         </h1>
-        <p className="text-gray-600 mb-8">
-          Modern React + TypeScript Migration
-        </p>
+        <p className="text-gray-600 mb-8">Modern React + TypeScript Migration</p>
         <button
           onClick={() => setCount(count + 1)}
           className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
