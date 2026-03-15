@@ -23,11 +23,21 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
+      # ESLint and plugins must be compatible
+      eslint-ecosystem:
+        patterns:
+          - 'eslint'
+          - 'eslint-plugin-*'
+        update-types:
+          - 'minor'
+          - 'patch'
       # Development dependencies
       development-dependencies:
         dependency-type: 'development'
         exclude-patterns:
           - '@typescript-eslint/*'
+          - 'eslint'
+          - 'eslint-plugin-*'
         update-types:
           - 'minor'
           - 'patch'
@@ -37,9 +47,13 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
-    # Ignore major version updates for now (breaking changes)
+    # Ignore major version updates (breaking changes)
     ignore:
       - dependency-name: '@typescript-eslint/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'eslint-plugin-*'
         update-types: ['version-update:semver-major']
 
   # Enable version updates for GitHub Actions
