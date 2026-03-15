@@ -1,9 +1,9 @@
+/* Import Design System Tokens FIRST */
+@import './styles/design-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import Design System Tokens */
-@import './styles/design-tokens.css';
 
 @layer base {
   :root {
