@@ -97,7 +97,5 @@ export function handleAPIError(error: unknown): APIError {
   }
 
   // Unknown error
-  return new APIError(
-    error instanceof Error ? error.message : 'An unexpected error occurred'
-  )
+  return new APIError(error instanceof Error ? error.message : 'An unexpected error occurred')
 }
