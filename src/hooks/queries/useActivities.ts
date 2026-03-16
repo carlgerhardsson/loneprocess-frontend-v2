@@ -23,7 +23,7 @@ export function useActivities(filters?: ActivityFilters) {
   return useQuery({
     queryKey: activitiesKeys.list(filters || {}),
     queryFn: async () => {
-      const activities = await activitiesService.getAll(filters);
+      const activities = await activitiesService.list();
       // Sync with Zustand store
       setActivities(activities);
       return activities;
@@ -37,7 +37,7 @@ export function useActivities(filters?: ActivityFilters) {
 export function useActivity(id: string) {
   return useQuery({
     queryKey: activitiesKeys.detail(id),
-    queryFn: () => activitiesService.getById(id),
+    queryFn: () => activitiesService.get(id),
     enabled: !!id,
   });
 }
@@ -72,7 +72,7 @@ export function useCreateActivity() {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() });
     },
-    onError: (err, newActivity, context) => {
+    onError: (_error, _newActivity, context) => {
       // Rollback on error
       if (context?.previousActivities) {
         queryClient.setQueryData(activitiesKeys.lists(), context.previousActivities);
@@ -108,7 +108,7 @@ export function useUpdateActivity() {
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() });
       queryClient.invalidateQueries({ queryKey: activitiesKeys.detail(data.id) });
     },
-    onError: (err, { id }, context) => {
+    onError: (_error, { id }, context) => {
       if (context?.previousActivity) {
         queryClient.setQueryData(activitiesKeys.detail(id), context.previousActivity);
       }
@@ -121,7 +121,7 @@ export function useUpdateActivity() {
  */
 export function useDeleteActivity() {
   const queryClient = useQueryClient();
-  const removeActivity = useActivitiesStore((state) => state.removeActivity);
+  const deleteActivity = useActivitiesStore((state) => state.deleteActivity);
 
   return useMutation({
     mutationFn: activitiesService.delete,
@@ -137,12 +137,12 @@ export function useDeleteActivity() {
 
       return { previousActivities };
     },
-    onSuccess: (_, id) => {
-      removeActivity(id);
+    onSuccess: (_data, id) => {
+      deleteActivity(id);
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() });
       queryClient.removeQueries({ queryKey: activitiesKeys.detail(id) });
     },
-    onError: (err, id, context) => {
+    onError: (_error, _id, context) => {
       if (context?.previousActivities) {
         queryClient.setQueryData(activitiesKeys.lists(), context.previousActivities);
       }

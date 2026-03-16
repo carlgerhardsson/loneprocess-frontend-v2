@@ -24,7 +24,7 @@ export function usePeriods() {
   return useQuery({
     queryKey: periodsKeys.list(),
     queryFn: async () => {
-      const periods = await periodsService.getAll();
+      const periods = await periodsService.list();
       // Sync with Zustand store
       setPeriods(periods);
       return periods;
@@ -38,7 +38,7 @@ export function usePeriods() {
 export function usePeriod(id: string) {
   return useQuery({
     queryKey: periodsKeys.detail(id),
-    queryFn: () => periodsService.getById(id),
+    queryFn: () => periodsService.get(id),
     enabled: !!id,
   });
 }
@@ -86,7 +86,7 @@ export function useCreatePeriod() {
       addPeriod(data);
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
     },
-    onError: (err, newPeriod, context) => {
+    onError: (_error, _newPeriod, context) => {
       if (context?.previousPeriods) {
         queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
       }
@@ -121,7 +121,7 @@ export function useUpdatePeriod() {
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
       queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) });
     },
-    onError: (err, { id }, context) => {
+    onError: (_error, { id }, context) => {
       if (context?.previousPeriod) {
         queryClient.setQueryData(periodsKeys.detail(id), context.previousPeriod);
       }
@@ -134,7 +134,7 @@ export function useUpdatePeriod() {
  */
 export function useDeletePeriod() {
   const queryClient = useQueryClient();
-  const removePeriod = usePeriodsStore((state) => state.removePeriod);
+  const deletePeriod = usePeriodsStore((state) => state.deletePeriod);
 
   return useMutation({
     mutationFn: periodsService.delete,
@@ -150,12 +150,12 @@ export function useDeletePeriod() {
 
       return { previousPeriods };
     },
-    onSuccess: (_, id) => {
-      removePeriod(id);
+    onSuccess: (_data, id) => {
+      deletePeriod(id);
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
       queryClient.removeQueries({ queryKey: periodsKeys.detail(id) });
     },
-    onError: (err, id, context) => {
+    onError: (_error, _id, context) => {
       if (context?.previousPeriods) {
         queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
       }

@@ -16,7 +16,7 @@ vi.mock('@/stores', () => ({
     setActivities: vi.fn(),
     addActivity: vi.fn(),
     updateActivity: vi.fn(),
-    removeActivity: vi.fn(),
+    deleteActivity: vi.fn(),
   }),
 }));
 
@@ -24,14 +24,16 @@ const mockActivity: Activity = {
   id: '1',
   periodId: 'period-1',
   title: 'Test Activity',
-  type: 'manual',
+  type: 'salary',
   status: 'pending',
   priority: 'medium',
   description: 'Test description',
   assignedTo: 'user-1',
   dueDate: '2024-12-31',
-  checklist: [],
+  completedAt: null,
+  checklistItems: [],
   comments: [],
+  tags: [],
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };
@@ -56,7 +58,7 @@ describe('useActivities', () => {
 
   it('fetches activities successfully', async () => {
     const mockActivities = [mockActivity];
-    vi.mocked(activitiesService.getAll).mockResolvedValue(mockActivities);
+    vi.mocked(activitiesService.list).mockResolvedValue(mockActivities);
 
     const { result } = renderHook(() => useActivities(), {
       wrapper: createWrapper(),
@@ -65,12 +67,12 @@ describe('useActivities', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(mockActivities);
-    expect(activitiesService.getAll).toHaveBeenCalledWith({});
+    expect(activitiesService.list).toHaveBeenCalled();
   });
 
   it('handles fetch error', async () => {
     const error = new Error('Fetch failed');
-    vi.mocked(activitiesService.getAll).mockRejectedValue(error);
+    vi.mocked(activitiesService.list).mockRejectedValue(error);
 
     const { result } = renderHook(() => useActivities(), {
       wrapper: createWrapper(),

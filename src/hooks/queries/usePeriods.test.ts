@@ -16,7 +16,7 @@ vi.mock('@/stores', () => ({
     setPeriods: vi.fn(),
     addPeriod: vi.fn(),
     updatePeriod: vi.fn(),
-    removePeriod: vi.fn(),
+    deletePeriod: vi.fn(),
   }),
 }));
 
@@ -27,6 +27,8 @@ const mockPeriod: Period = {
   status: 'active',
   startDate: '2024-01-01',
   endDate: '2024-01-31',
+  activityCount: 0,
+  completedActivityCount: 0,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };
@@ -51,7 +53,7 @@ describe('usePeriods', () => {
 
   it('fetches periods successfully', async () => {
     const mockPeriods = [mockPeriod];
-    vi.mocked(periodsService.getAll).mockResolvedValue(mockPeriods);
+    vi.mocked(periodsService.list).mockResolvedValue(mockPeriods);
 
     const { result } = renderHook(() => usePeriods(), {
       wrapper: createWrapper(),
@@ -60,12 +62,12 @@ describe('usePeriods', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(mockPeriods);
-    expect(periodsService.getAll).toHaveBeenCalled();
+    expect(periodsService.list).toHaveBeenCalled();
   });
 
   it('handles fetch error', async () => {
     const error = new Error('Fetch failed');
-    vi.mocked(periodsService.getAll).mockRejectedValue(error);
+    vi.mocked(periodsService.list).mockRejectedValue(error);
 
     const { result } = renderHook(() => usePeriods(), {
       wrapper: createWrapper(),
