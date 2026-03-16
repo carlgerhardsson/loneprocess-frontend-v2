@@ -5,7 +5,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User, AuthSession, LoginCredentials, AuthState } from '../types'
+import type { User, AuthSession, LoginCredentials, AuthState, Permission } from '../types'
 
 interface AuthActions {
   login: (credentials: LoginCredentials) => Promise<void>
@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthStore>()(  persist(
 
       checkPermission: (permission: string) => {
         const { user } = get()
-        return user?.permissions.includes(permission as any) ?? false
+        return user?.permissions.includes(permission as Permission) ?? false
       },
 
       hasRole: (role: string) => {
