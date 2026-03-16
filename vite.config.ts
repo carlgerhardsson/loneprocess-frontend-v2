@@ -4,6 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/loneprocess-frontend-v2/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -24,6 +25,5 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
-    base: '/loneprocess-frontend-v2/',
   },
 })
