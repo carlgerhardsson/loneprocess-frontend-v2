@@ -1,19 +1,8 @@
-// Activity queries
-export {
-  useActivities,
-  useActivity,
-  useCreateActivity,
-  useUpdateActivity,
-  useDeleteActivity,
-  useOptimisticUpdateActivity,
-} from './useActivities';
+/**
+ * TanStack Query Hooks
+ * 
+ * Centralized exports for all query and mutation hooks
+ */
 
-// Period queries
-export {
-  usePeriods,
-  usePeriod,
-  usePeriodProgress,
-  useCreatePeriod,
-  useUpdatePeriod,
-  useDeletePeriod,
-} from './usePeriods';
+export * from './useActivities';
+export * from './usePeriods';

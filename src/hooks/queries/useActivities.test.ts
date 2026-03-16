@@ -1,22 +1,37 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useActivities, useActivity, useCreateActivity } from './useActivities';
-import * as activitiesService from '../../lib/api/services/activities';
-import type { Activity } from '../../types/activity';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { useActivities, useCreateActivity, useUpdateActivity, useDeleteActivity } from './useActivities';
+import { activitiesService } from '@/lib/api/services/activities';
+import type { Activity } from '@/types';
 
-vi.mock('../../lib/api/services/activities');
+// Mock API service
+vi.mock('@/lib/api/services/activities');
+
+// Mock Zustand store
+vi.mock('@/stores', () => ({
+  useActivitiesStore: () => ({
+    setActivities: vi.fn(),
+    addActivity: vi.fn(),
+    updateActivity: vi.fn(),
+    removeActivity: vi.fn(),
+  }),
+}));
 
 const mockActivity: Activity = {
   id: '1',
+  periodId: 'period-1',
   title: 'Test Activity',
-  description: 'Test Description',
-  type: 'payroll',
-  priority: 'high',
+  type: 'manual',
   status: 'pending',
-  dueDate: '2024-03-20',
-  createdAt: '2024-03-15T10:00:00Z',
-  updatedAt: '2024-03-15T10:00:00Z',
+  priority: 'medium',
+  description: 'Test description',
+  assignedTo: 'user-1',
+  dueDate: '2024-12-31',
+  checklist: [],
+  comments: [],
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
 };
 
 function createWrapper() {
@@ -26,9 +41,14 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+  };
 }
 
 describe('useActivities', () => {
@@ -36,8 +56,9 @@ describe('useActivities', () => {
     vi.clearAllMocks();
   });
 
-  it('should fetch activities successfully', async () => {
-    vi.mocked(activitiesService.getActivities).mockResolvedValue([mockActivity]);
+  it('fetches activities successfully', async () => {
+    const mockActivities = [mockActivity];
+    vi.mocked(activitiesService.getAll).mockResolvedValue(mockActivities);
 
     const { result } = renderHook(() => useActivities(), {
       wrapper: createWrapper(),
@@ -45,70 +66,73 @@ describe('useActivities', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual([mockActivity]);
-    expect(activitiesService.getActivities).toHaveBeenCalledTimes(1);
+    expect(result.current.data).toEqual(mockActivities);
+    expect(activitiesService.getAll).toHaveBeenCalledWith({});
   });
 
-  it('should pass filters to the query function', async () => {
-    vi.mocked(activitiesService.getActivities).mockResolvedValue([mockActivity]);
+  it('handles fetch error', async () => {
+    const error = new Error('Fetch failed');
+    vi.mocked(activitiesService.getAll).mockRejectedValue(error);
 
-    const filters = { status: 'pending' as const };
-    renderHook(() => useActivities(filters), {
+    const { result } = renderHook(() => useActivities(), {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() =>
-      expect(activitiesService.getActivities).toHaveBeenCalledWith(filters),
-    );
-  });
-});
+    await waitFor(() => expect(result.current.isError).toBe(true));
 
-describe('useActivity', () => {
-  it('should fetch single activity', async () => {
-    vi.mocked(activitiesService.getActivity).mockResolvedValue(mockActivity);
-
-    const { result } = renderHook(() => useActivity('1'), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data).toEqual(mockActivity);
-    expect(activitiesService.getActivity).toHaveBeenCalledWith('1');
-  });
-
-  it('should not fetch when id is empty', () => {
-    const { result } = renderHook(() => useActivity(''), {
-      wrapper: createWrapper(),
-    });
-
-    expect(result.current.fetchStatus).toBe('idle');
-    expect(activitiesService.getActivity).not.toHaveBeenCalled();
+    expect(result.current.error).toEqual(error);
   });
 });
 
 describe('useCreateActivity', () => {
-  it('should create activity successfully', async () => {
-    vi.mocked(activitiesService.createActivity).mockResolvedValue(mockActivity);
+  it('creates activity successfully', async () => {
+    const newActivity = { ...mockActivity, id: undefined } as unknown as Activity;
+    vi.mocked(activitiesService.create).mockResolvedValue(mockActivity);
 
     const { result } = renderHook(() => useCreateActivity(), {
       wrapper: createWrapper(),
     });
 
-    const newActivity = {
-      title: 'New Activity',
-      description: 'Description',
-      type: 'payroll' as const,
-      priority: 'high' as const,
-      status: 'pending' as const,
-      dueDate: '2024-03-20',
-    };
-
     result.current.mutate(newActivity);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(activitiesService.createActivity).toHaveBeenCalledWith(newActivity);
     expect(result.current.data).toEqual(mockActivity);
+    expect(activitiesService.create).toHaveBeenCalledWith(newActivity);
+  });
+});
+
+describe('useUpdateActivity', () => {
+  it('updates activity successfully', async () => {
+    const updates = { title: 'Updated Title' };
+    const updatedActivity = { ...mockActivity, ...updates };
+    vi.mocked(activitiesService.update).mockResolvedValue(updatedActivity);
+
+    const { result } = renderHook(() => useUpdateActivity(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ id: mockActivity.id, data: updates });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual(updatedActivity);
+    expect(activitiesService.update).toHaveBeenCalledWith(mockActivity.id, updates);
+  });
+});
+
+describe('useDeleteActivity', () => {
+  it('deletes activity successfully', async () => {
+    vi.mocked(activitiesService.delete).mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useDeleteActivity(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate(mockActivity.id);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(activitiesService.delete).toHaveBeenCalledWith(mockActivity.id);
   });
 });

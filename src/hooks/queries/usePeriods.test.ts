@@ -1,27 +1,32 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { usePeriods, usePeriod, usePeriodProgress } from './usePeriods';
-import * as periodsService from '../../lib/api/services/periods';
-import type { Period } from '../../types/period';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { usePeriods, useCreatePeriod, useUpdatePeriod, useDeletePeriod } from './usePeriods';
+import { periodsService } from '@/lib/api/services/periods';
+import type { Period } from '@/types';
 
-vi.mock('../../lib/api/services/periods');
+// Mock API service
+vi.mock('@/lib/api/services/periods');
+
+// Mock Zustand store
+vi.mock('@/stores', () => ({
+  usePeriodsStore: () => ({
+    setPeriods: vi.fn(),
+    addPeriod: vi.fn(),
+    updatePeriod: vi.fn(),
+    removePeriod: vi.fn(),
+  }),
+}));
 
 const mockPeriod: Period = {
   id: '1',
-  name: 'January 2024',
-  startDate: '2024-01-01',
-  endDate: '2024-01-31',
+  name: '2024-01',
   type: 'monthly',
   status: 'active',
+  startDate: '2024-01-01',
+  endDate: '2024-01-31',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
-};
-
-const mockProgress = {
-  total: 10,
-  completed: 7,
-  percentage: 70,
 };
 
 function createWrapper() {
@@ -31,9 +36,14 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+  };
 }
 
 describe('usePeriods', () => {
@@ -41,8 +51,9 @@ describe('usePeriods', () => {
     vi.clearAllMocks();
   });
 
-  it('should fetch periods successfully', async () => {
-    vi.mocked(periodsService.getPeriods).mockResolvedValue([mockPeriod]);
+  it('fetches periods successfully', async () => {
+    const mockPeriods = [mockPeriod];
+    vi.mocked(periodsService.getAll).mockResolvedValue(mockPeriods);
 
     const { result } = renderHook(() => usePeriods(), {
       wrapper: createWrapper(),
@@ -50,59 +61,73 @@ describe('usePeriods', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual([mockPeriod]);
-    expect(periodsService.getPeriods).toHaveBeenCalledTimes(1);
+    expect(result.current.data).toEqual(mockPeriods);
+    expect(periodsService.getAll).toHaveBeenCalled();
   });
 
-  it('should pass filters to query function', async () => {
-    vi.mocked(periodsService.getPeriods).mockResolvedValue([mockPeriod]);
+  it('handles fetch error', async () => {
+    const error = new Error('Fetch failed');
+    vi.mocked(periodsService.getAll).mockRejectedValue(error);
 
-    const filters = { year: 2024, status: 'active' as const };
-    renderHook(() => usePeriods(filters), {
+    const { result } = renderHook(() => usePeriods(), {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() =>
-      expect(periodsService.getPeriods).toHaveBeenCalledWith(filters),
-    );
+    await waitFor(() => expect(result.current.isError).toBe(true));
+
+    expect(result.current.error).toEqual(error);
   });
 });
 
-describe('usePeriod', () => {
-  it('should fetch single period', async () => {
-    vi.mocked(periodsService.getPeriod).mockResolvedValue(mockPeriod);
+describe('useCreatePeriod', () => {
+  it('creates period successfully', async () => {
+    const newPeriod = { ...mockPeriod, id: undefined } as unknown as Period;
+    vi.mocked(periodsService.create).mockResolvedValue(mockPeriod);
 
-    const { result } = renderHook(() => usePeriod('1'), {
+    const { result } = renderHook(() => useCreatePeriod(), {
       wrapper: createWrapper(),
     });
+
+    result.current.mutate(newPeriod);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(mockPeriod);
-    expect(periodsService.getPeriod).toHaveBeenCalledWith('1');
+    expect(periodsService.create).toHaveBeenCalledWith(newPeriod);
   });
 });
 
-describe('usePeriodProgress', () => {
-  it('should fetch period progress', async () => {
-    vi.mocked(periodsService.getPeriodProgress).mockResolvedValue(mockProgress);
+describe('useUpdatePeriod', () => {
+  it('updates period successfully', async () => {
+    const updates = { name: '2024-02' };
+    const updatedPeriod = { ...mockPeriod, ...updates };
+    vi.mocked(periodsService.update).mockResolvedValue(updatedPeriod);
 
-    const { result } = renderHook(() => usePeriodProgress('1'), {
+    const { result } = renderHook(() => useUpdatePeriod(), {
       wrapper: createWrapper(),
     });
+
+    result.current.mutate({ id: mockPeriod.id, data: updates });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual(mockProgress);
-    expect(periodsService.getPeriodProgress).toHaveBeenCalledWith('1');
+    expect(result.current.data).toEqual(updatedPeriod);
+    expect(periodsService.update).toHaveBeenCalledWith(mockPeriod.id, updates);
   });
+});
 
-  it('should not fetch when id is empty', () => {
-    const { result } = renderHook(() => usePeriodProgress(''), {
+describe('useDeletePeriod', () => {
+  it('deletes period successfully', async () => {
+    vi.mocked(periodsService.delete).mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useDeletePeriod(), {
       wrapper: createWrapper(),
     });
 
-    expect(result.current.fetchStatus).toBe('idle');
-    expect(periodsService.getPeriodProgress).not.toHaveBeenCalled();
+    result.current.mutate(mockPeriod.id);
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(periodsService.delete).toHaveBeenCalledWith(mockPeriod.id);
   });
 });

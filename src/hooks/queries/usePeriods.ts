@@ -1,104 +1,164 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getPeriods,
-  getPeriod,
-  createPeriod,
-  updatePeriod,
-  deletePeriod,
-  getPeriodProgress,
-} from '../../lib/api/services/periods';
-import { queryKeys } from '../../lib/query/queryClient';
-import type { Period } from '../../types/period';
-
-interface PeriodFilters {
-  year?: number;
-  type?: Period['type'];
-  status?: Period['status'];
-}
+import { periodsService } from '@/lib/api/services/periods';
+import { usePeriodsStore } from '@/stores';
+import type { Period } from '@/types';
 
 /**
- * Fetch all periods with optional filters
+ * Query keys for periods
  */
-export function usePeriods(filters?: PeriodFilters) {
+export const periodsKeys = {
+  all: ['periods'] as const,
+  lists: () => [...periodsKeys.all, 'list'] as const,
+  list: (filters?: Record<string, unknown>) => [...periodsKeys.lists(), filters] as const,
+  details: () => [...periodsKeys.all, 'detail'] as const,
+  detail: (id: string) => [...periodsKeys.details(), id] as const,
+  progress: (id: string) => [...periodsKeys.detail(id), 'progress'] as const,
+};
+
+/**
+ * Hook to fetch all periods
+ */
+export function usePeriods() {
+  const setPeriods = usePeriodsStore((state) => state.setPeriods);
+
   return useQuery({
-    queryKey: queryKeys.periods.list(filters),
-    queryFn: () => getPeriods(filters),
+    queryKey: periodsKeys.list(),
+    queryFn: async () => {
+      const periods = await periodsService.getAll();
+      // Sync with Zustand store
+      setPeriods(periods);
+      return periods;
+    },
   });
 }
 
 /**
- * Fetch a single period by ID
+ * Hook to fetch a single period by ID
  */
 export function usePeriod(id: string) {
   return useQuery({
-    queryKey: queryKeys.periods.detail(id),
-    queryFn: () => getPeriod(id),
+    queryKey: periodsKeys.detail(id),
+    queryFn: () => periodsService.getById(id),
     enabled: !!id,
   });
 }
 
 /**
- * Fetch period progress/completion status
+ * Hook to fetch period progress
  */
 export function usePeriodProgress(id: string) {
   return useQuery({
-    queryKey: queryKeys.periods.progress(id),
-    queryFn: () => getPeriodProgress(id),
+    queryKey: periodsKeys.progress(id),
+    queryFn: () => periodsService.getProgress(id),
     enabled: !!id,
-    // Refetch progress more frequently as it changes often
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    // Refetch progress more frequently
+    refetchInterval: 1000 * 30, // 30 seconds
   });
 }
 
 /**
- * Create a new period
+ * Hook to create a new period
  */
 export function useCreatePeriod() {
   const queryClient = useQueryClient();
+  const addPeriod = usePeriodsStore((state) => state.addPeriod);
 
   return useMutation({
-    mutationFn: (data: Omit<Period, 'id' | 'createdAt' | 'updatedAt'>) =>
-      createPeriod(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.periods.lists() });
+    mutationFn: periodsService.create,
+    onMutate: async (newPeriod) => {
+      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() });
+
+      const previousPeriods = queryClient.getQueryData(periodsKeys.lists());
+
+      // Optimistically update
+      queryClient.setQueryData(periodsKeys.lists(), (old: Period[] = []) => [
+        ...old,
+        {
+          ...newPeriod,
+          id: `temp-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+
+      return { previousPeriods };
+    },
+    onSuccess: (data) => {
+      addPeriod(data);
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
+    },
+    onError: (err, newPeriod, context) => {
+      if (context?.previousPeriods) {
+        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
+      }
     },
   });
 }
 
 /**
- * Update an existing period
+ * Hook to update an existing period
  */
 export function useUpdatePeriod() {
   const queryClient = useQueryClient();
+  const updatePeriod = usePeriodsStore((state) => state.updatePeriod);
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Period> }) =>
-      updatePeriod(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.periods.detail(variables.id),
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeys.periods.lists() });
-      // Also invalidate progress as period update might affect it
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.periods.progress(variables.id),
-      });
+      periodsService.update(id, data),
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: periodsKeys.detail(id) });
+
+      const previousPeriod = queryClient.getQueryData(periodsKeys.detail(id));
+
+      // Optimistically update
+      queryClient.setQueryData(periodsKeys.detail(id), (old: Period | undefined) =>
+        old ? { ...old, ...data } : old
+      );
+
+      return { previousPeriod };
+    },
+    onSuccess: (data) => {
+      updatePeriod(data.id, data);
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) });
+    },
+    onError: (err, { id }, context) => {
+      if (context?.previousPeriod) {
+        queryClient.setQueryData(periodsKeys.detail(id), context.previousPeriod);
+      }
     },
   });
 }
 
 /**
- * Delete a period
+ * Hook to delete a period
  */
 export function useDeletePeriod() {
   const queryClient = useQueryClient();
+  const removePeriod = usePeriodsStore((state) => state.removePeriod);
 
   return useMutation({
-    mutationFn: (id: string) => deletePeriod(id),
+    mutationFn: periodsService.delete,
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() });
+
+      const previousPeriods = queryClient.getQueryData(periodsKeys.lists());
+
+      // Optimistically remove
+      queryClient.setQueryData(periodsKeys.lists(), (old: Period[] = []) =>
+        old.filter((period) => period.id !== id)
+      );
+
+      return { previousPeriods };
+    },
     onSuccess: (_, id) => {
-      queryClient.removeQueries({ queryKey: queryKeys.periods.detail(id) });
-      queryClient.removeQueries({ queryKey: queryKeys.periods.progress(id) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.periods.lists() });
+      removePeriod(id);
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
+      queryClient.removeQueries({ queryKey: periodsKeys.detail(id) });
+    },
+    onError: (err, id, context) => {
+      if (context?.previousPeriods) {
+        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
+      }
     },
   });
 }
