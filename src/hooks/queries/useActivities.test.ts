@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -44,11 +45,7 @@ function createWrapper() {
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    );
+    return createElement(QueryClientProvider, { client: queryClient }, children);
   };
 }
 
