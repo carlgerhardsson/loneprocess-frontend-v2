@@ -19,7 +19,8 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions
 
-export const useAuthStore = create<AuthStore>()(  persist(
+export const useAuthStore = create<AuthStore>()(
+  persist(
     (set, get) => ({
       // Initial state
       user: null,
@@ -99,7 +100,7 @@ export const useAuthStore = create<AuthStore>()(  persist(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         user: state.user,
         session: state.session,
         isAuthenticated: state.isAuthenticated,

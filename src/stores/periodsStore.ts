@@ -21,7 +21,8 @@ interface PeriodsActions {
 
 type PeriodsStore = PeriodsState & PeriodsActions
 
-export const usePeriodsStore = create<PeriodsStore>()(  persist(
+export const usePeriodsStore = create<PeriodsStore>()(
+  persist(
     (set, get) => ({
       // Initial state
       periods: [],
@@ -83,7 +84,7 @@ export const usePeriodsStore = create<PeriodsStore>()(  persist(
     }),
     {
       name: 'periods-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         currentPeriod: state.currentPeriod,
       }),
     }
