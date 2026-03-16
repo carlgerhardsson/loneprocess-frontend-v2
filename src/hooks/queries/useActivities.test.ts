@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useActivities, useCreateActivity, useUpdateActivity, useDeleteActivity } from './useActivities';
 import { activitiesService } from '@/lib/api/services/activities';
 import type { Activity } from '@/types';
+import type { ReactNode } from 'react';
 
 // Mock API service
 vi.mock('@/lib/api/services/activities');
@@ -42,7 +43,7 @@ function createWrapper() {
     },
   });
 
-  return function Wrapper({ children }: { children: React.ReactNode }) {
+  return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
         {children}

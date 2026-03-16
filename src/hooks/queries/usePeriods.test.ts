@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { usePeriods, useCreatePeriod, useUpdatePeriod, useDeletePeriod } from './usePeriods';
 import { periodsService } from '@/lib/api/services/periods';
 import type { Period } from '@/types';
+import type { ReactNode } from 'react';
 
 // Mock API service
 vi.mock('@/lib/api/services/periods');
@@ -37,7 +38,7 @@ function createWrapper() {
     },
   });
 
-  return function Wrapper({ children }: { children: React.ReactNode }) {
+  return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
         {children}
