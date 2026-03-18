@@ -1,1 +1,5 @@
-export { queryClient, queryKeys } from './queryClient';
+/**
+ * Query utilities barrel export
+ */
+
+export * from './queryClient'

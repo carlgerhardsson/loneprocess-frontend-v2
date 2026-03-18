@@ -58,6 +58,17 @@ export const periodsService = {
   },
 
   /**
+   * Delete period
+   */
+  async delete(id: string): Promise<void> {
+    try {
+      await apiClient.delete(API_ENDPOINTS.periods.delete(id))
+    } catch (error) {
+      throw handleAPIError(error)
+    }
+  },
+
+  /**
    * Get period progress
    */
   async getProgress(id: string): Promise<{ completed: number; total: number }> {

@@ -1,8 +1,8 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query'
 
 /**
  * TanStack Query client configuration
- * 
+ *
  * Caching strategy:
  * - staleTime: 5min - data considered fresh for 5 minutes
  * - gcTime: 10min - unused data kept in cache for 10 minutes
@@ -21,7 +21,7 @@ export const queryClient = new QueryClient({
       retry: 0, // Don't retry mutations
     },
   },
-});
+})
 
 /**
  * Query keys factory for type-safe and organized cache keys
@@ -37,9 +37,8 @@ export const queryKeys = {
   periods: {
     all: ['periods'] as const,
     lists: () => [...queryKeys.periods.all, 'list'] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.periods.lists(), filters] as const,
+    list: (filters?: Record<string, unknown>) => [...queryKeys.periods.lists(), filters] as const,
     detail: (id: string) => [...queryKeys.periods.all, 'detail', id] as const,
     progress: (id: string) => [...queryKeys.periods.detail(id), 'progress'] as const,
   },
-} as const;
+} as const
