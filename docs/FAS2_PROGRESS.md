@@ -1,6 +1,6 @@
 # Fas 2: Core Architecture - Progress
 
-## Status: 5/7 Milestones Complete (71%)
+## Status: 6/7 Milestones Complete (86%)
 
 ---
 
@@ -116,22 +116,34 @@
 - ✨ Zustand store synchronization
 - ✨ Period progress auto-refresh (30s)
 
-### Lessons Learned:
-- TanStack Query hooks are complex to unit test - deferred to integration tests
-- Prettier config: `semi: false`, `arrowParens: avoid` - must match exactly
-- Always run `npm run format` locally before pushing
-
 ---
 
-## ⏳ Milestone 2.6: Error Boundaries
+## ✅ Milestone 2.6: Error Boundaries
 
-**Status:** Not Started
+**Status:** Complete  
+**Date:** 2024-03-18
 
-### Planned:
-- [ ] Global error boundary component
-- [ ] Query error boundary
-- [ ] Error fallback UI
-- [ ] Error logging integration
+### Deliverables:
+- ✅ Global ErrorBoundary component
+- ✅ QueryErrorBoundary for TanStack Query errors
+- ✅ ErrorFallback UI component
+- ✅ Unit tests (5 tests)
+- ✅ Integration in App.tsx
+
+### Files:
+- `src/components/errors/ErrorBoundary.tsx` + test
+- `src/components/errors/QueryErrorBoundary.tsx`
+- `src/components/errors/ErrorFallback.tsx` + test
+- `src/components/errors/index.ts`
+- Updated: `src/App.tsx`, `package.json` (added lucide-react)
+
+### Features:
+- ✨ Global error catching for React components
+- ✨ Query-specific error handling with reset functionality
+- ✨ User-friendly error messages in Swedish
+- ✨ Development mode error details (stack traces)
+- ✨ Reset and home navigation options
+- ✨ Lucide icons for visual feedback
 
 ---
 
@@ -149,18 +161,17 @@
 
 ## Test Coverage
 
-- **Component Tests:** 11 tests (Header, Footer, PageLayout)
+- **Component Tests:** 16 tests (Layout: 11, Errors: 5)
 - **Store Tests:** 22 tests (authStore, activitiesStore, periodsStore)
 - **API Client Tests:** 3 tests
 - **Query Tests:** 5 tests (queryClient + 2 placeholder hooks)
 - **E2E Tests:** 2 tests
 
-**Total:** 43 unit tests + 2 E2E tests
+**Total:** 48 unit tests + 2 E2E tests
 
 ---
 
 ## Next Steps
 
-1. **Milestone 2.6:** Error Boundaries
-2. **Milestone 2.7:** Loading States
-3. **Fas 3:** Begin functional migration (Activities List, etc.)
+1. **Milestone 2.7:** Loading States (Suspense, Skeleton loaders)
+2. **Fas 3:** Begin functional migration (Activities List, Period Selector, etc.)
