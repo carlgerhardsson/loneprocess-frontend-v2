@@ -1,2 +1,5 @@
-// Re-export all query hooks
-export * from './queries';
+/**
+ * Hooks barrel export
+ */
+
+export * from './queries'

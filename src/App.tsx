@@ -1,22 +1,20 @@
-import { useState } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { PageLayout } from './components/layout';
-import { queryClient } from './lib/queryClient';
+import { useState } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PageLayout } from './components/layout'
+import { queryClient } from './lib/queryClient'
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0)
 
   return (
     <QueryClientProvider client={queryClient}>
       <PageLayout>
         <div className="text-center py-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to Löneportalen v2.0
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Löneportalen v2.0</h2>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Modern React + TypeScript migration in progress. This is the foundation
-            for the production-ready digital checklista.
+            Modern React + TypeScript migration in progress. This is the foundation for the
+            production-ready digital checklista.
           </p>
 
           {/* Demo Counter */}
@@ -40,7 +38,7 @@ function App() {
       </PageLayout>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

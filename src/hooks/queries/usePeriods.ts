@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { periodsService } from '@/lib/api/services/periods';
-import { usePeriodsStore } from '@/stores';
-import type { Period } from '@/types';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { periodsService } from '@/lib/api/services/periods'
+import { usePeriodsStore } from '@/stores'
+import type { Period } from '@/types'
 
 /**
  * Query keys for periods
@@ -13,23 +13,23 @@ export const periodsKeys = {
   details: () => [...periodsKeys.all, 'detail'] as const,
   detail: (id: string) => [...periodsKeys.details(), id] as const,
   progress: (id: string) => [...periodsKeys.detail(id), 'progress'] as const,
-};
+}
 
 /**
  * Hook to fetch all periods
  */
 export function usePeriods() {
-  const setPeriods = usePeriodsStore((state) => state.setPeriods);
+  const setPeriods = usePeriodsStore((state) => state.setPeriods)
 
   return useQuery({
     queryKey: periodsKeys.list(),
     queryFn: async () => {
-      const periods = await periodsService.list();
+      const periods = await periodsService.list()
       // Sync with Zustand store
-      setPeriods(periods);
-      return periods;
+      setPeriods(periods)
+      return periods
     },
-  });
+  })
 }
 
 /**
@@ -40,7 +40,7 @@ export function usePeriod(id: string) {
     queryKey: periodsKeys.detail(id),
     queryFn: () => periodsService.get(id),
     enabled: !!id,
-  });
+  })
 }
 
 /**
@@ -53,22 +53,22 @@ export function usePeriodProgress(id: string) {
     enabled: !!id,
     // Refetch progress more frequently
     refetchInterval: 1000 * 30, // 30 seconds
-  });
+  })
 }
 
 /**
  * Hook to create a new period
  */
 export function useCreatePeriod() {
-  const queryClient = useQueryClient();
-  const addPeriod = usePeriodsStore((state) => state.addPeriod);
+  const queryClient = useQueryClient()
+  const addPeriod = usePeriodsStore((state) => state.addPeriod)
 
   return useMutation({
     mutationFn: periodsService.create,
     onMutate: async (newPeriod) => {
-      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() });
+      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() })
 
-      const previousPeriods = queryClient.getQueryData(periodsKeys.lists());
+      const previousPeriods = queryClient.getQueryData(periodsKeys.lists())
 
       // Optimistically update
       queryClient.setQueryData(periodsKeys.lists(), (old: Period[] = []) => [
@@ -78,87 +78,87 @@ export function useCreatePeriod() {
           id: `temp-${Date.now()}`,
           createdAt: new Date().toISOString(),
         },
-      ]);
+      ])
 
-      return { previousPeriods };
+      return { previousPeriods }
     },
     onSuccess: (data) => {
-      addPeriod(data);
-      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
+      addPeriod(data)
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
     },
     onError: (_error, _newPeriod, context) => {
       if (context?.previousPeriods) {
-        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
+        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods)
       }
     },
-  });
+  })
 }
 
 /**
  * Hook to update an existing period
  */
 export function useUpdatePeriod() {
-  const queryClient = useQueryClient();
-  const updatePeriod = usePeriodsStore((state) => state.updatePeriod);
+  const queryClient = useQueryClient()
+  const updatePeriod = usePeriodsStore((state) => state.updatePeriod)
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Period> }) =>
       periodsService.update(id, data),
     onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: periodsKeys.detail(id) });
+      await queryClient.cancelQueries({ queryKey: periodsKeys.detail(id) })
 
-      const previousPeriod = queryClient.getQueryData(periodsKeys.detail(id));
+      const previousPeriod = queryClient.getQueryData(periodsKeys.detail(id))
 
       // Optimistically update
       queryClient.setQueryData(periodsKeys.detail(id), (old: Period | undefined) =>
-        old ? { ...old, ...data } : old
-      );
+        old ? { ...old, ...data } : old,
+      )
 
-      return { previousPeriod };
+      return { previousPeriod }
     },
     onSuccess: (data) => {
-      updatePeriod(data.id, data);
-      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) });
+      updatePeriod(data.id, data)
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) })
     },
     onError: (_error, { id }, context) => {
       if (context?.previousPeriod) {
-        queryClient.setQueryData(periodsKeys.detail(id), context.previousPeriod);
+        queryClient.setQueryData(periodsKeys.detail(id), context.previousPeriod)
       }
     },
-  });
+  })
 }
 
 /**
  * Hook to delete a period
  */
 export function useDeletePeriod() {
-  const queryClient = useQueryClient();
-  const deletePeriod = usePeriodsStore((state) => state.deletePeriod);
+  const queryClient = useQueryClient()
+  const deletePeriod = usePeriodsStore((state) => state.deletePeriod)
 
   return useMutation({
     mutationFn: periodsService.delete,
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() });
+      await queryClient.cancelQueries({ queryKey: periodsKeys.lists() })
 
-      const previousPeriods = queryClient.getQueryData(periodsKeys.lists());
+      const previousPeriods = queryClient.getQueryData(periodsKeys.lists())
 
       // Optimistically remove
       queryClient.setQueryData(periodsKeys.lists(), (old: Period[] = []) =>
-        old.filter((period) => period.id !== id)
-      );
+        old.filter((period) => period.id !== id),
+      )
 
-      return { previousPeriods };
+      return { previousPeriods }
     },
     onSuccess: (_data, id) => {
-      deletePeriod(id);
-      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() });
-      queryClient.removeQueries({ queryKey: periodsKeys.detail(id) });
+      deletePeriod(id)
+      queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
+      queryClient.removeQueries({ queryKey: periodsKeys.detail(id) })
     },
     onError: (_error, _id, context) => {
       if (context?.previousPeriods) {
-        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods);
+        queryClient.setQueryData(periodsKeys.lists(), context.previousPeriods)
       }
     },
-  });
+  })
 }
