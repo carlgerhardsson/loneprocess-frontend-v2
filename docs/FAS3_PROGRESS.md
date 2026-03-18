@@ -1,48 +1,77 @@
 # Fas 3: Functional Migration - Progress
 
-## Status: 0/6 Milestones Complete (0%)
+## Status: 1/6 Milestones Complete (17%)
 
 **Goal:** Migrate core functional components from v1 to v2 with modern React patterns.
 
 ---
 
-## ⏳ Milestone 3.1: Activities List UI
+## ✅ Milestone 3.1: Activities List UI
 
-**Status:** Not Started
+**Status:** Complete ✅  
+**Date:** 2024-03-18  
+**PR:** #23 (merged)
 
 ### Deliverables:
-- [ ] ActivityList component with TanStack Query integration
-- [ ] ActivityCard component
-- [ ] ActivityListItem component
-- [ ] Empty state component
-- [ ] Loading states with skeletons
-- [ ] Error handling
-- [ ] Unit tests
+- ✅ ActivityList component with TanStack Query integration
+- ✅ ActivityListItem component
+- ✅ StatusBadge component (5 statuses)
+- ✅ PriorityIndicator component (4 priorities)
+- ✅ EmptyState component
+- ✅ Loading states with skeletons
+- ✅ Error handling
+- ✅ Unit tests (29 tests)
 
-### Files to Create:
+### Files Created:
 - `src/features/activities/components/ActivityList.tsx` + test
-- `src/features/activities/components/ActivityCard.tsx` + test
 - `src/features/activities/components/ActivityListItem.tsx` + test
+- `src/features/activities/components/StatusBadge.tsx` + test
+- `src/features/activities/components/PriorityIndicator.tsx` + test
 - `src/features/activities/components/EmptyState.tsx` + test
 - `src/features/activities/components/index.ts`
+
+### Features:
+- 🔄 TanStack Query integration
+- 💀 Skeleton loaders for loading state
+- ⚠️ Error state with retry button
+- 📝 Empty state with create button
+- ⌨️ Full keyboard navigation
+- 🎯 Selection highlighting
+- 📊 Checklist progress display
+- 💬 Comment count display
+
+### Lessons Learned:
+- ✅ Feature-based architecture works well
+- ✅ Comprehensive tests (29 for 5 components)
+- ❌ Must read TypeScript type files FIRST
+- ❌ Prettier formatting requires manual step (GitHub API doesn't run Husky hooks)
+- ✅ Use `as unknown as` for complex TanStack Query mocks
 
 ---
 
 ## ⏳ Milestone 3.2: Period Selector
 
-**Status:** Not Started
+**Status:** Not Started  
+**Next Up:** Tomorrow!
 
 ### Deliverables:
 - [ ] PeriodSelector dropdown component
-- [ ] Period display component
+- [ ] PeriodDisplay component
 - [ ] Period switching logic
 - [ ] Integration with TanStack Query
-- [ ] Unit tests
+- [ ] Unit tests (~10-15 tests)
 
 ### Files to Create:
 - `src/features/periods/components/PeriodSelector.tsx` + test
 - `src/features/periods/components/PeriodDisplay.tsx` + test
 - `src/features/periods/components/index.ts`
+
+### Plan:
+1. Read type files first: `src/types/period.ts`
+2. Create PeriodSelector dropdown with current period display
+3. Add period switching with TanStack Query
+4. Add loading/error states
+5. Full test coverage
 
 ---
 
@@ -53,15 +82,11 @@
 ### Deliverables:
 - [ ] ActivityDetails component
 - [ ] Activity metadata display
-- [ ] Status badge component
-- [ ] Priority indicator
 - [ ] Checklist display
 - [ ] Unit tests
 
 ### Files to Create:
 - `src/features/activities/components/ActivityDetails.tsx` + test
-- `src/features/activities/components/StatusBadge.tsx` + test
-- `src/features/activities/components/PriorityIndicator.tsx` + test
 - `src/features/activities/components/ChecklistDisplay.tsx` + test
 
 ---
@@ -155,7 +180,16 @@ src/
 
 ---
 
-## Dependencies Already Available
+## Test Coverage
+
+**Current:** 104 unit tests + 2 E2E = 106 total tests
+
+**Milestone breakdown:**
+- Milestone 3.1: +29 tests (Activities List UI)
+
+---
+
+## Dependencies Available
 - ✅ TanStack Query (data fetching)
 - ✅ Zustand (global state)
 - ✅ React Hook Form (forms)
@@ -167,6 +201,14 @@ src/
 
 ---
 
-## Next Steps
+## Next Session Plan (Tomorrow)
 
-Start with **Milestone 3.1: Activities List UI** - the core feature of the application.
+**Start:** Milestone 3.2 - Period Selector
+
+**Workflow:**
+1. Read type files: `src/types/period.ts`
+2. Create components
+3. **MANUAL STEP:** Run `npm run format` + `npm run type-check` locally
+4. Push to GitHub
+5. Create PR
+6. Merge when CI is green
