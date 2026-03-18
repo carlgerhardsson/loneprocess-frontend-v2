@@ -17,7 +17,14 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx,css}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -57,6 +64,8 @@
     "tailwindcss": "^3.4.1",
     "postcss": "^8.4.33",
     "autoprefixer": "^10.4.16",
-    "@tanstack/react-query-devtools": "^5.17.9"
+    "@tanstack/react-query-devtools": "^5.17.9",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.0"
   }
 }
