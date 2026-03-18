@@ -85,7 +85,8 @@
 ## ✅ Milestone 2.5: TanStack Query
 
 **Status:** Complete  
-**Date:** 2024-03-16
+**Date:** 2024-03-18  
+**PR:** #20 (merged)
 
 ### Deliverables:
 - ✅ QueryClient configuration
@@ -96,14 +97,16 @@
 - ✅ Integration with Zustand stores
 - ✅ QueryClientProvider in App.tsx
 - ✅ React Query Devtools
-- ✅ Comprehensive tests (8 tests)
+- ✅ Placeholder tests (2 tests - integration tests deferred)
 
 ### Files:
 - `src/lib/queryClient.ts`
+- `src/lib/query/queryClient.ts` + test
 - `src/hooks/queries/useActivities.ts` + test
 - `src/hooks/queries/usePeriods.ts` + test
 - `src/hooks/queries/index.ts`
-- Updated: `src/App.tsx`
+- `src/hooks/index.ts`
+- Updated: `src/App.tsx`, `src/main.tsx`
 
 ### Features:
 - ✨ Automatic caching (5min stale, 10min gc)
@@ -112,6 +115,11 @@
 - ✨ Window focus refetching
 - ✨ Zustand store synchronization
 - ✨ Period progress auto-refresh (30s)
+
+### Lessons Learned:
+- TanStack Query hooks are complex to unit test - deferred to integration tests
+- Prettier config: `semi: false`, `arrowParens: avoid` - must match exactly
+- Always run `npm run format` locally before pushing
 
 ---
 
@@ -144,10 +152,10 @@
 - **Component Tests:** 11 tests (Header, Footer, PageLayout)
 - **Store Tests:** 22 tests (authStore, activitiesStore, periodsStore)
 - **API Client Tests:** 3 tests
-- **Query Hooks Tests:** 8 tests (activities, periods)
+- **Query Tests:** 5 tests (queryClient + 2 placeholder hooks)
 - **E2E Tests:** 2 tests
 
-**Total:** 46 unit tests + 2 E2E tests
+**Total:** 43 unit tests + 2 E2E tests
 
 ---
 
