@@ -52,7 +52,9 @@ describe('ProgressBar', () => {
 describe('IndeterminateProgressBar', () => {
   it('renders indeterminate progress bar', () => {
     const { container } = render(<IndeterminateProgressBar />)
-    expect(container.querySelector('.animate-\\[progress_1\\.5s_ease-in-out_infinite\\]')).toBeInTheDocument()
+    expect(
+      container.querySelector('.animate-\\[progress_1\\.5s_ease-in-out_infinite\\]')
+    ).toBeInTheDocument()
   })
 
   it('applies size classes', () => {

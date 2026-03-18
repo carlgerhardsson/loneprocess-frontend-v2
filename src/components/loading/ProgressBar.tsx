@@ -47,10 +47,7 @@ export function ProgressBar({
       )}
       <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', sizeClasses[size])}>
         <div
-          className={cn(
-            'h-full transition-all duration-300 ease-out',
-            variantClasses[variant]
-          )}
+          className={cn('h-full transition-all duration-300 ease-out', variantClasses[variant])}
           style={{ width: `${percentage}%` }}
           role="progressbar"
           aria-valuenow={percentage}
@@ -78,7 +75,13 @@ export function IndeterminateProgressBar({
   }
 
   return (
-    <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', sizeClasses[size], className)}>
+    <div
+      className={cn(
+        'w-full bg-gray-200 rounded-full overflow-hidden',
+        sizeClasses[size],
+        className
+      )}
+    >
       <div
         className="h-full bg-primary-600 animate-[progress_1.5s_ease-in-out_infinite]"
         style={{

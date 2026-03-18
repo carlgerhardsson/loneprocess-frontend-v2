@@ -14,12 +14,7 @@ interface LoadingOverlayProps {
  * Displays a semi-transparent overlay with a spinner
  * over content while loading.
  */
-export function LoadingOverlay({
-  isLoading,
-  children,
-  message,
-  className,
-}: LoadingOverlayProps) {
+export function LoadingOverlay({ isLoading, children, message, className }: LoadingOverlayProps) {
   return (
     <div className={cn('relative', className)}>
       {children}
