@@ -19,7 +19,7 @@ export const periodsKeys = {
  * Hook to fetch all periods
  */
 export function usePeriods() {
-  const setPeriods = usePeriodsStore((state) => state.setPeriods)
+  const setPeriods = usePeriodsStore(state => state.setPeriods)
 
   return useQuery({
     queryKey: periodsKeys.list(),
@@ -61,11 +61,11 @@ export function usePeriodProgress(id: string) {
  */
 export function useCreatePeriod() {
   const queryClient = useQueryClient()
-  const addPeriod = usePeriodsStore((state) => state.addPeriod)
+  const addPeriod = usePeriodsStore(state => state.addPeriod)
 
   return useMutation({
     mutationFn: periodsService.create,
-    onMutate: async (newPeriod) => {
+    onMutate: async newPeriod => {
       await queryClient.cancelQueries({ queryKey: periodsKeys.lists() })
 
       const previousPeriods = queryClient.getQueryData(periodsKeys.lists())
@@ -82,7 +82,7 @@ export function useCreatePeriod() {
 
       return { previousPeriods }
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       addPeriod(data)
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
     },
@@ -99,7 +99,7 @@ export function useCreatePeriod() {
  */
 export function useUpdatePeriod() {
   const queryClient = useQueryClient()
-  const updatePeriod = usePeriodsStore((state) => state.updatePeriod)
+  const updatePeriod = usePeriodsStore(state => state.updatePeriod)
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Period> }) =>
@@ -111,12 +111,12 @@ export function useUpdatePeriod() {
 
       // Optimistically update
       queryClient.setQueryData(periodsKeys.detail(id), (old: Period | undefined) =>
-        old ? { ...old, ...data } : old,
+        old ? { ...old, ...data } : old
       )
 
       return { previousPeriod }
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       updatePeriod(data.id, data)
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
       queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) })
@@ -134,18 +134,18 @@ export function useUpdatePeriod() {
  */
 export function useDeletePeriod() {
   const queryClient = useQueryClient()
-  const deletePeriod = usePeriodsStore((state) => state.deletePeriod)
+  const deletePeriod = usePeriodsStore(state => state.deletePeriod)
 
   return useMutation({
     mutationFn: periodsService.delete,
-    onMutate: async (id) => {
+    onMutate: async id => {
       await queryClient.cancelQueries({ queryKey: periodsKeys.lists() })
 
       const previousPeriods = queryClient.getQueryData(periodsKeys.lists())
 
       // Optimistically remove
       queryClient.setQueryData(periodsKeys.lists(), (old: Period[] = []) =>
-        old.filter((period) => period.id !== id),
+        old.filter(period => period.id !== id)
       )
 
       return { previousPeriods }
