@@ -8,8 +8,8 @@ describe('StatusBadge', () => {
     expect(screen.getByText('Väntar')).toBeInTheDocument()
   })
 
-  it('renders in-progress status', () => {
-    render(<StatusBadge status="in-progress" />)
+  it('renders in_progress status', () => {
+    render(<StatusBadge status="in_progress" />)
     expect(screen.getByText('Pågående')).toBeInTheDocument()
   })
 

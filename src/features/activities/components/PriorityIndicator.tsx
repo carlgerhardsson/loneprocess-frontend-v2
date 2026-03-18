@@ -1,5 +1,5 @@
 import { Activity } from '@/types'
-import { AlertCircle, ArrowUp, Minus } from 'lucide-react'
+import { AlertCircle, ArrowUp, Minus, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface PriorityIndicatorProps {
@@ -28,10 +28,15 @@ export function PriorityIndicator({
     Activity['priority'],
     { label: string; icon: typeof AlertCircle; className: string }
   > = {
+    urgent: {
+      label: 'Brådskande',
+      icon: AlertTriangle,
+      className: 'text-red-600',
+    },
     high: {
       label: 'Hög prioritet',
       icon: AlertCircle,
-      className: 'text-red-600',
+      className: 'text-orange-600',
     },
     medium: {
       label: 'Medium prioritet',
@@ -57,11 +62,5 @@ export function PriorityIndicator({
     )
   }
 
-  return (
-    <Icon
-      className={cn(sizeClasses[size], config.className)}
-      aria-label={config.label}
-      title={config.label}
-    />
-  )
+  return <Icon className={cn(sizeClasses[size], config.className)} aria-label={config.label} />
 }

@@ -28,7 +28,7 @@ export function ActivityListItem({ activity, onClick, isSelected }: ActivityList
     }
   }
 
-  const completedItems = activity.checklistItems?.filter(item => item.completed).length || 0
+  const completedItems = activity.checklistItems?.filter(item => item.isCompleted).length || 0
   const totalItems = activity.checklistItems?.length || 0
   const hasChecklist = totalItems > 0
 

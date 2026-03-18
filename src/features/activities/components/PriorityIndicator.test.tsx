@@ -21,6 +21,12 @@ describe('PriorityIndicator', () => {
     expect(icon).toBeInTheDocument()
   })
 
+  it('renders urgent priority icon', () => {
+    render(<PriorityIndicator priority="urgent" />)
+    const icon = screen.getByLabelText('Brådskande')
+    expect(icon).toBeInTheDocument()
+  })
+
   it('renders with label when showLabel is true', () => {
     render(<PriorityIndicator priority="high" showLabel />)
     expect(screen.getByText('Hög prioritet')).toBeInTheDocument()

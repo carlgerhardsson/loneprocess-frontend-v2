@@ -15,10 +15,19 @@ const mockActivity: Activity = {
   dueDate: '2024-12-31',
   completedAt: null,
   checklistItems: [
-    { id: '1', text: 'Item 1', completed: true },
-    { id: '2', text: 'Item 2', completed: false },
+    { id: '1', text: 'Item 1', isCompleted: true, completedAt: null, completedBy: null },
+    { id: '2', text: 'Item 2', isCompleted: false, completedAt: null, completedBy: null },
   ],
-  comments: [{ id: '1', userId: 'user-1', text: 'Test comment', createdAt: '2024-01-01' }],
+  comments: [
+    {
+      id: '1',
+      authorId: 'user-1',
+      authorName: 'Test User',
+      text: 'Test comment',
+      createdAt: '2024-01-01',
+      updatedAt: null,
+    },
+  ],
   tags: [],
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',

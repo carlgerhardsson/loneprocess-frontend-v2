@@ -17,15 +17,12 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     md: 'text-sm px-2.5 py-1',
   }
 
-  const statusConfig: Record<
-    Activity['status'],
-    { label: string; className: string }
-  > = {
+  const statusConfig: Record<Activity['status'], { label: string; className: string }> = {
     pending: {
       label: 'Väntar',
       className: 'bg-gray-100 text-gray-700',
     },
-    'in-progress': {
+    in_progress: {
       label: 'Pågående',
       className: 'bg-blue-100 text-blue-700',
     },
@@ -36,6 +33,10 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     blocked: {
       label: 'Blockerad',
       className: 'bg-red-100 text-red-700',
+    },
+    cancelled: {
+      label: 'Avbruten',
+      className: 'bg-gray-100 text-gray-500',
     },
   }
 
