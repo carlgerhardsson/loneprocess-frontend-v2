@@ -6,9 +6,7 @@ describe('EmptyState', () => {
   it('renders empty state message', () => {
     render(<EmptyState />)
     expect(screen.getByText('Inga aktiviteter')).toBeInTheDocument()
-    expect(
-      screen.getByText(/Det finns inga aktiviteter för denna period/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Det finns inga aktiviteter för denna period/)).toBeInTheDocument()
   })
 
   it('renders create button when onCreateActivity is provided', () => {
