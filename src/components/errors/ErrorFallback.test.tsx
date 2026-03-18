@@ -11,13 +11,7 @@ describe('ErrorFallback', () => {
   })
 
   it('renders custom title and message', () => {
-    render(
-      <ErrorFallback
-        error={null}
-        title="Custom title"
-        message="Custom message"
-      />
-    )
+    render(<ErrorFallback error={null} title="Custom title" message="Custom message" />)
 
     expect(screen.getByText('Custom title')).toBeInTheDocument()
     expect(screen.getByText('Custom message')).toBeInTheDocument()
