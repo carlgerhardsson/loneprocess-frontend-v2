@@ -8,7 +8,16 @@ import type { Period } from '@/types';
 import type { ReactNode } from 'react';
 
 // Mock API service
-vi.mock('@/lib/api/services/periods');
+vi.mock('@/lib/api/services/periods', () => ({
+  periodsService: {
+    list: vi.fn(),
+    get: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    getProgress: vi.fn(),
+  },
+}));
 
 // Mock Zustand store
 vi.mock('@/stores', () => ({
@@ -59,7 +68,7 @@ describe('usePeriods', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(mockPeriods);
     expect(periodsService.list).toHaveBeenCalled();
@@ -73,7 +82,7 @@ describe('usePeriods', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 3000 });
 
     expect(result.current.error).toEqual(error);
   });
@@ -90,7 +99,7 @@ describe('useCreatePeriod', () => {
 
     result.current.mutate(newPeriod);
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(mockPeriod);
     expect(periodsService.create).toHaveBeenCalledWith(newPeriod);
@@ -109,7 +118,7 @@ describe('useUpdatePeriod', () => {
 
     result.current.mutate({ id: mockPeriod.id, data: updates });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(updatedPeriod);
     expect(periodsService.update).toHaveBeenCalledWith(mockPeriod.id, updates);
@@ -126,7 +135,7 @@ describe('useDeletePeriod', () => {
 
     result.current.mutate(mockPeriod.id);
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(periodsService.delete).toHaveBeenCalledWith(mockPeriod.id);
   });

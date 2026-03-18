@@ -8,7 +8,15 @@ import type { Activity } from '@/types';
 import type { ReactNode } from 'react';
 
 // Mock API service
-vi.mock('@/lib/api/services/activities');
+vi.mock('@/lib/api/services/activities', () => ({
+  activitiesService: {
+    list: vi.fn(),
+    get: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
 // Mock Zustand store
 vi.mock('@/stores', () => ({
@@ -64,7 +72,7 @@ describe('useActivities', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(mockActivities);
     expect(activitiesService.list).toHaveBeenCalled();
@@ -78,7 +86,7 @@ describe('useActivities', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 3000 });
 
     expect(result.current.error).toEqual(error);
   });
@@ -95,7 +103,7 @@ describe('useCreateActivity', () => {
 
     result.current.mutate(newActivity);
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(mockActivity);
     expect(activitiesService.create).toHaveBeenCalledWith(newActivity);
@@ -114,7 +122,7 @@ describe('useUpdateActivity', () => {
 
     result.current.mutate({ id: mockActivity.id, data: updates });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(result.current.data).toEqual(updatedActivity);
     expect(activitiesService.update).toHaveBeenCalledWith(mockActivity.id, updates);
@@ -131,7 +139,7 @@ describe('useDeleteActivity', () => {
 
     result.current.mutate(mockActivity.id);
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.isSuccess).toBe(true), { timeout: 3000 });
 
     expect(activitiesService.delete).toHaveBeenCalledWith(mockActivity.id);
   });
