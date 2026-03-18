@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ActivityList } from './ActivityList'
 import { useActivities } from '@/hooks/queries/useActivities'
 import type { ReactNode } from 'react'
+import type { UseQueryResult } from '@tanstack/react-query'
+import type { Activity } from '@/types'
 
 // Mock the useActivities hook
 vi.mock('@/hooks/queries/useActivities', () => ({
@@ -18,6 +20,10 @@ const mockActivities = [
     type: 'salary' as const,
     status: 'pending' as const,
     priority: 'high' as const,
+    description: '',
+    assignedTo: null,
+    dueDate: null,
+    completedAt: null,
     checklistItems: [],
     comments: [],
     tags: [],
@@ -50,7 +56,7 @@ describe('ActivityList', () => {
       isError: false,
       error: null,
       refetch: vi.fn(),
-    } as any)
+    } as UseQueryResult<Activity[], Error>)
 
     render(<ActivityList />, { wrapper: createWrapper() })
     // Skeleton loaders should be rendered
@@ -64,7 +70,7 @@ describe('ActivityList', () => {
       isError: true,
       error: new Error('Failed to fetch'),
       refetch: vi.fn(),
-    } as any)
+    } as UseQueryResult<Activity[], Error>)
 
     render(<ActivityList />, { wrapper: createWrapper() })
     expect(screen.getByText('Något gick fel')).toBeInTheDocument()
@@ -78,7 +84,7 @@ describe('ActivityList', () => {
       isError: false,
       error: null,
       refetch: vi.fn(),
-    } as any)
+    } as UseQueryResult<Activity[], Error>)
 
     render(<ActivityList />, { wrapper: createWrapper() })
     expect(screen.getByText('Inga aktiviteter')).toBeInTheDocument()
@@ -91,7 +97,7 @@ describe('ActivityList', () => {
       isError: false,
       error: null,
       refetch: vi.fn(),
-    } as any)
+    } as UseQueryResult<Activity[], Error>)
 
     render(<ActivityList />, { wrapper: createWrapper() })
     expect(screen.getByText('Activity 1')).toBeInTheDocument()
