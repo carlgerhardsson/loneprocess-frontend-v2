@@ -1,63 +1,60 @@
-# 🚀 Workflow Guide - Fortsättning Imorgon
+# 🚀 Workflow Guide - Fortsättning
 
-## 📋 Sammanfattning Idag (2024-03-18)
+## 📋 Sammanfattning
 
 ### ✅ Vad vi åstadkom:
 - **Fas 2:** 100% klar (7/7 milestones)
-- **Fas 3:** Startad - Milestone 3.1 klar (1/6 milestones)
-- **106 totala tester** (104 unit + 2 E2E)
-- **Activities List UI** komplett med TanStack Query
-
-### 📚 Lärdomar:
-1. **TypeScript types:** Måste alltid läsas FÖRST
-2. **Prettier formatting:** Kräver manuella steg (Husky körs inte via GitHub API)
-3. **Test mocks:** Använd `as unknown as` för komplexa typer
+- **Fas 3:** 2/6 milestones klara
+  - Milestone 3.1: Activities List UI ✅
+  - Milestone 3.2: Period Selector ✅
+- **124 totala tester** (122 unit + 2 E2E)
 
 ---
 
-## 🎯 Plan för Imorgon: Milestone 3.2 - Period Selector
+## ⚡ KORREKT ARBETSFLÖDE (Uppdaterad!)
 
-### Vad vi ska bygga:
-- **PeriodSelector** - Dropdown för att välja löneperiod
-- **PeriodDisplay** - Visa vald period med metadata
-- Integration med TanStack Query för period data
-- ~10-15 nya tester
+### **STEG 1: Hämta nya branchen** 🔄
+
+**VIKTIGT: Kör ALLTID git pull efter checkout!**
+
+**I VS Code Terminal (`` Ctrl+` ``):**
+```bash
+# Hämta alla nya branches
+git fetch origin
+
+# Checka ut branchen
+git checkout feat/milestone-3.X-whatever
+
+# KRITISKT: Hämta senaste commits!
+git pull
+
+# Verifiera att du har senaste version:
+git log -1  # Ska visa senaste commit-meddelandet
+```
+
+**Varför `git pull` är viktigt:**
+- Jag pushar komponenter i FLERA commits
+- Första commitet = komponenter
+- Andra commitet = tester  
+- Tredje commitet = fixes
+- **Du behöver ALLA commits!**
 
 ---
 
-## ⚡ ARBETSFLÖDE IMORGON
-
-### **STEG 1: Claude skapar komponenter** 
-*Du gör inget här - väntar bara*
-
-Jag kommer att:
-1. ✅ Läsa `src/types/period.ts` FÖRST
-2. ✅ Skapa PeriodSelector komponent
-3. ✅ Skapa PeriodDisplay komponent  
-4. ✅ Skapa tester
-5. ✅ Pusha till GitHub (ny branch)
-
----
-
-### **STEG 2: DU kör manuella checks** ⚠️
-*VIKTIGT - Här kommer du in!*
-
-När jag säger "kör manuella checks nu", gör så här:
+### **STEG 2: Installera dependencies** 📦
 
 ```bash
-# 1. Gå till ditt lokala repo
-cd path/to/loneprocess-frontend-v2
-
-# 2. Hämta nya branchen
-git fetch origin
-git checkout feat/milestone-3.2-period-selector
-
-# 3. Installera dependencies (om nya tillkommit)
 npm install
+```
 
-# 4. KÖR ALLA CHECKS:
+⏳ Vänta ~30 sekunder
 
-# Format alla filer
+---
+
+### **STEG 3: Kör alla checks** ✅
+
+```bash
+# Formatera kod
 npm run format
 
 # Kontrollera TypeScript
@@ -65,54 +62,49 @@ npm run type-check
 
 # Kontrollera ESLint
 npm run lint
-
-# Kör tester (valfritt men rekommenderat)
-npm run test
 ```
 
-**Om allt är grönt:**
+**Förväntat resultat:**
+- ✅ `npm run format`: Visar formaterade filer (eller "unchanged")
+- ✅ `npm run type-check`: Ingen output = OK!
+- ✅ `npm run lint`: Varning om TypeScript-version är OK, inga errors!
+
+---
+
+### **STEG 4: Committa och pusha** 📤
+
+**OM `npm run format` ändrade filer:**
+
 ```bash
-# Stage alla ändringar (om format ändrade något)
 git add .
-
-# Commit (om det blev ändringar)
 git commit -m "style: format code"
-
-# Pusha
 git push
 ```
 
-**Om något är rött:**
-- Kopiera felmeddelandet
-- Skicka till mig
-- Jag fixar
+**OM inget ändrades:**
+- Säg bara: "Allt grönt, inga ändringar!"
 
 ---
 
-### **STEG 3: Claude skapar PR**
-*Du gör inget här - väntar på CI*
+## 🔄 SNABBVERSION (Kopiera allt)
 
-Jag kommer att:
-1. ✅ Skapa Pull Request
-2. ✅ Vänta på CI (~2-3 min)
-3. ✅ Merga när grön
-
----
-
-## 🔄 Snabbversion
-
-**Du behöver bara köra 4 kommandon:**
 ```bash
-git checkout feat/milestone-3.2-period-selector
+# 1. Hämta branch OCH senaste commits
+git fetch origin
+git checkout feat/milestone-3.X-whatever
+git pull  # ← GLÖM INTE DENNA!
+
+# 2. Installera
+npm install
+
+# 3. Kör checks
 npm run format
 npm run type-check
 npm run lint
-```
 
-Om allt är OK:
-```bash
+# 4. Om format ändrade något:
 git add .
-git commit -m "style: format code"  # (om format ändrade något)
+git commit -m "style: format code"
 git push
 ```
 
@@ -121,71 +113,24 @@ git push
 ## 📍 När ska du köra manuella steg?
 
 **JAG KOMMER ATT SÄGA:**
-> "✅ Komponenter klara! Kör nu manuella checks i STEG 2."
+> "✅ Komponenter klara! Kör nu manuella checks."
 
-**DÅ kör du:**
-```bash
-npm run format && npm run type-check && npm run lint
-```
+**DÅ kör du kommandona ovan.**
 
-**Sedan säger du till mig:**
-- "Allt grönt, pushade ändringar" ✅
-- Eller: "Fick fel: [kopiera felmeddelande]" ❌
+**Sedan säger du:**
+- ✅ "Allt grönt, pushade ändringar!"
+- ✅ "Allt grönt, inga ändringar!"
+- ❌ "Fick fel: [kopiera felmeddelande]"
 
 ---
 
-## 🎯 Fördelar med detta workflow:
+## 🎯 Nästa Milestones
 
-✅ **Snabbare utveckling** - CI blir grön första gången  
-✅ **Färre omskrivningar** - TypeScript errors upptäcks tidigt  
-✅ **Ingen frustration** - Prettier formateras lokalt  
-✅ **Bättre kvalitet** - Alla checks passerar innan push  
-
----
-
-## 📋 Checklista Imorgon
-
-**Innan vi börjar:**
-- [ ] Du har projektet klonat lokalt
-- [ ] Du kan köra `npm install` utan errors
-- [ ] Du kan köra `npm run format` utan errors
-
-**Under utveckling:**
-- [ ] Claude säger "kör manuella checks"
-- [ ] Du kör 4 kommandon (format, type-check, lint, push)
-- [ ] Du rapporterar resultat till Claude
-- [ ] Claude skapar PR och mergar
-
-**Efter merge:**
-- [ ] Milestone 3.2 klar! 🎉
-- [ ] Fortsätter med Milestone 3.3
+**Milestone 3.3:** Activity Details View  
+**Milestone 3.4:** Comments System  
+**Milestone 3.5:** Search & Filters  
+**Milestone 3.6:** Forms & Validation  
 
 ---
 
-## 💡 Tips
-
-**Om npm run format ändrar filer:**
-- Det är helt OK! Prettier fixar formatering
-- Bara commit och pusha ändringarna
-
-**Om npm run type-check ger errors:**
-- Kopiera hela felmeddelandet
-- Skicka till mig
-- Jag fixar direkt via GitHub API
-
-**Om npm run lint ger warnings:**
-- Små warnings (< 5) är OK
-- Många warnings/errors → skicka till mig
-
----
-
-## 🚀 Redo för imorgon?
-
-**När vi ses imorgon säger du bara:**
-> "Redo att fortsätta med Milestone 3.2!"
-
-**Då kör jag igång och säger till när du ska köra manuella steg!**
-
----
-
-**Frågor? Spara denna guide och vi börjar imorgon! 💪**
+**Redo för nästa milestone! 🚀**
