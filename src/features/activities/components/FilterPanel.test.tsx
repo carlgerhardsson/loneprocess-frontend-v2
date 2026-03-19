@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { FilterPanel } from './FilterPanel'
 import type { ActivityFilters } from '@/types'
 
@@ -75,7 +75,8 @@ describe('FilterPanel', () => {
     const button = screen.getByText('Filter')
     fireEvent.click(button)
 
-    const checkbox = screen.getByLabelText('Väntande').querySelector('input')!
+    const label = screen.getByText('Väntande').closest('label')!
+    const checkbox = within(label).getByRole('checkbox')
     fireEvent.click(checkbox)
 
     expect(onFiltersChange).toHaveBeenCalledWith({ status: ['pending'] })
@@ -90,7 +91,8 @@ describe('FilterPanel', () => {
     const button = screen.getByText('Filter')
     fireEvent.click(button)
 
-    const checkbox = screen.getByLabelText('Väntande').querySelector('input')!
+    const label = screen.getByText('Väntande').closest('label')!
+    const checkbox = within(label).getByRole('checkbox')
     fireEvent.click(checkbox)
 
     expect(onFiltersChange).toHaveBeenCalledWith({ status: ['in_progress'] })
