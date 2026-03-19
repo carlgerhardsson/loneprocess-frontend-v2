@@ -113,7 +113,7 @@ describe('activitySchema', () => {
     const data = {
       title: 'Test Activity',
       description: 'Test description',
-      type: 'invalid' as any,
+      type: 'invalid' as unknown,
       status: 'pending' as const,
       priority: 'medium' as const,
     }
@@ -130,7 +130,7 @@ describe('activitySchema', () => {
       title: 'Test Activity',
       description: 'Test description',
       type: 'salary' as const,
-      status: 'invalid' as any,
+      status: 'invalid' as unknown,
       priority: 'medium' as const,
     }
 
@@ -147,7 +147,7 @@ describe('activitySchema', () => {
       description: 'Test description',
       type: 'salary' as const,
       status: 'pending' as const,
-      priority: 'invalid' as any,
+      priority: 'invalid' as unknown,
     }
 
     const result = activitySchema.safeParse(data)
