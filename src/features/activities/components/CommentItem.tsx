@@ -1,7 +1,6 @@
 import { Comment } from '@/types'
 import { MessageSquare, Edit, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
 
 interface CommentItemProps {
   comment: Comment
@@ -53,9 +52,7 @@ export function CommentItem({ comment, onEdit, onDelete, canEdit = false }: Comm
               minute: '2-digit',
             })}
           </span>
-          {comment.updatedAt && (
-            <span className="text-xs text-gray-400">(redigerad)</span>
-          )}
+          {comment.updatedAt && <span className="text-xs text-gray-400">(redigerad)</span>}
         </div>
 
         {/* Actions */}
