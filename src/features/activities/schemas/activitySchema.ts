@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { ActivityType, ActivityStatus, ActivityPriority } from '@/types'
 
 /**
  * Activity Form Validation Schema
