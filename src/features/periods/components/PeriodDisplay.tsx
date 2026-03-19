@@ -82,9 +82,7 @@ export function PeriodDisplay({ period, showProgress = true, className }: Period
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-green-600" />
           <div>
-            <div className="text-sm font-medium text-gray-900">
-              {period.completedActivityCount}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{period.completedActivityCount}</div>
             <div className="text-xs text-gray-500">Avslutade</div>
           </div>
         </div>
