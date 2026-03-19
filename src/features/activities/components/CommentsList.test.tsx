@@ -46,7 +46,12 @@ describe('CommentsList', () => {
     const onDelete = vi.fn()
 
     render(
-      <CommentsList comments={mockComments} onEdit={onEdit} onDelete={onDelete} currentUserId="user-1" />
+      <CommentsList
+        comments={mockComments}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        currentUserId="user-1"
+      />
     )
 
     // CommentItem should receive the callbacks

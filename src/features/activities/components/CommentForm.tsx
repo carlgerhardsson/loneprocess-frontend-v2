@@ -39,9 +39,7 @@ export function CommentForm({
         disabled={isSubmitting}
       />
       <div className="flex items-center justify-between mt-3">
-        <span className="text-xs text-gray-500">
-          {text.length > 0 && `${text.length} tecken`}
-        </span>
+        <span className="text-xs text-gray-500">{text.length > 0 && `${text.length} tecken`}</span>
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
