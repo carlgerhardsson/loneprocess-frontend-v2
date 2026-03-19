@@ -106,12 +106,17 @@ describe('ActivityForm', () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'New Activity',
-          description: 'This is a valid description',
-        })
-      )
+      expect(onSubmit).toHaveBeenCalled()
+      const callArgs = onSubmit.mock.calls[0]
+      expect(callArgs[0]).toMatchObject({
+        title: 'New Activity',
+        description: 'This is a valid description',
+        type: 'salary',
+        status: 'pending',
+        priority: 'medium',
+        assignedTo: '',
+        dueDate: '',
+      })
     })
   })
 

@@ -7,12 +7,12 @@ import { z } from 'zod'
  */
 export const activitySchema = z.object({
   title: z
-    .string()
+    .string({ required_error: 'Titel är obligatorisk' })
     .min(1, 'Titel är obligatorisk')
     .min(3, 'Titel måste vara minst 3 tecken')
     .max(100, 'Titel får max vara 100 tecken'),
   description: z
-    .string()
+    .string({ required_error: 'Beskrivning är obligatorisk' })
     .min(1, 'Beskrivning är obligatorisk')
     .min(10, 'Beskrivning måste vara minst 10 tecken')
     .max(1000, 'Beskrivning får max vara 1000 tecken'),
