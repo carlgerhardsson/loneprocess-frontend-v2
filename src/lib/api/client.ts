@@ -1,33 +1,38 @@
 /**
  * API Client
- * Axios instance with authentication interceptors
+ * Axios instance with authentication and API key
  */
 
 import axios from 'axios'
+import { env } from '@/config'
 import { useAuthStore } from '@/stores/authStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
-
 /**
- * Axios instance with interceptors for authentication
+ * Axios instance configured for backend API
+ *
+ * Uses:
+ * - X-API-Key header for backend authentication
+ * - Bearer token for future user-level auth (currently mock)
  */
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: env.apiBaseUrl,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'X-API-Key': env.apiKey, // Backend requires API key
   },
 })
 
 /**
  * Request interceptor
- * Adds authentication token to requests
+ * Adds authentication token to requests (for future use)
  */
 apiClient.interceptors.request.use(
   config => {
     const state = useAuthStore.getState()
     const token = state.session?.token
 
+    // Add Bearer token if available (for future user-level auth)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -39,7 +44,7 @@ apiClient.interceptors.request.use(
 
 /**
  * Response interceptor
- * Handles token expiry and refresh
+ * Handles errors and token refresh
  */
 apiClient.interceptors.response.use(
   response => response,

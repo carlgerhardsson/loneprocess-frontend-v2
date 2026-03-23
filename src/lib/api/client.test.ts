@@ -1,27 +1,19 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { apiClient } from './client'
 
 describe('apiClient', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  it('should be an axios instance', () => {
+  it('should have correct configuration', () => {
     expect(apiClient).toBeDefined()
-    expect(typeof apiClient.get).toBe('function')
-    expect(typeof apiClient.post).toBe('function')
-    expect(typeof apiClient.put).toBe('function')
-    expect(typeof apiClient.delete).toBe('function')
-  })
-
-  it('should have correct base configuration', () => {
-    expect(apiClient.defaults.baseURL).toBeTruthy()
+    expect(apiClient.defaults).toBeDefined()
+    expect(apiClient.defaults.baseURL).toBe('http://localhost:8000/api/v1')
     expect(apiClient.defaults.timeout).toBe(30000)
-    expect(apiClient.defaults.headers['Content-Type']).toBe('application/json')
   })
 
-  it('should have request and response interceptors', () => {
-    expect(apiClient.interceptors.request).toBeDefined()
-    expect(apiClient.interceptors.response).toBeDefined()
+  it('should have X-API-Key header', () => {
+    expect(apiClient.defaults.headers['X-API-Key']).toBe('test-api-key')
+  })
+
+  it('should have Content-Type header', () => {
+    expect(apiClient.defaults.headers['Content-Type']).toBe('application/json')
   })
 })

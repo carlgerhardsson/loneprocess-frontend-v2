@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { useActivitiesStore } from './activitiesStore'
+import { useActivitiesStore, getFilteredActivities } from './activitiesStore'
 import type { Activity } from '../types'
 
 const mockActivity: Activity = {
@@ -63,7 +63,7 @@ describe('activitiesStore', () => {
   })
 
   it('selects activity', () => {
-    useActivitiesStore.getState().selectActivity(mockActivity)
+    useActivitiesStore.getState().setSelectedActivity(mockActivity)
     expect(useActivitiesStore.getState().selectedActivity).toEqual(mockActivity)
   })
 
@@ -72,9 +72,9 @@ describe('activitiesStore', () => {
     const activity2 = { ...mockActivity, id: '2', status: 'completed' as const }
 
     useActivitiesStore.getState().setActivities([activity1, activity2])
-    useActivitiesStore.getState().setFilters({ status: ['pending'] })
+    const state = useActivitiesStore.getState()
 
-    const filtered = useActivitiesStore.getState().getFilteredActivities()
+    const filtered = getFilteredActivities(state.activities, { status: ['pending'] })
     expect(filtered).toHaveLength(1)
     expect(filtered[0].id).toBe('1')
   })
@@ -84,9 +84,9 @@ describe('activitiesStore', () => {
     const activity2 = { ...mockActivity, id: '2', title: 'Tax reporting' }
 
     useActivitiesStore.getState().setActivities([activity1, activity2])
-    useActivitiesStore.getState().setFilters({ search: 'salary' })
+    const state = useActivitiesStore.getState()
 
-    const filtered = useActivitiesStore.getState().getFilteredActivities()
+    const filtered = getFilteredActivities(state.activities, { search: 'salary' })
     expect(filtered).toHaveLength(1)
     expect(filtered[0].id).toBe('1')
   })

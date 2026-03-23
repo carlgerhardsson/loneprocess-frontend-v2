@@ -8,11 +8,11 @@
 
 ## 📋 Project Status
 
-**Current Phase:** 🟢 Fas 2 & 3 COMPLETE | 🔵 Fas 4 IN PROGRESS (33%)  
+**Current Phase:** 🟢 Fas 2 & 3 COMPLETE | 🔵 Fas 4 IN PROGRESS (50%)  
 **Version:** 2.0.0  
 **Test Suite:** ✅ 265 tests (263 unit + 2 E2E)  
 **Components:** 31 production-ready  
-**Status:** Authentication Flow Complete
+**Status:** API Integration In Progress
 
 📖 **[View Detailed Status →](./PROJECT_STATUS.md)**  
 🚀 **[Next Session Guide →](./NEXT_SESSION.md)**
@@ -32,6 +32,7 @@
 - 📝 **React Hook Form 7.54.2** + **Zod 3.24.1** - Forms & validation
 - 🔌 **TanStack Query v5** - Server state management
 - 🔐 **Auth with JWT** - Token management & refresh ✅
+- 🌐 **Axios** - HTTP client with interceptors ✅
 
 ### Quality & Testing
 - 🧪 **Vitest 1.6.1** - Unit & component tests
@@ -43,6 +44,13 @@
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+1. **Node.js 18+** installed
+2. **Backend API** running (see [loneprocess-api](https://github.com/carlgerhardsson/loneprocess-api))
+
+### Installation
+
 ```bash
 # Clone repo
 git clone https://github.com/carlgerhardsson/loneprocess-frontend-v2.git
@@ -51,6 +59,28 @@ cd loneprocess-frontend-v2
 # Install dependencies
 npm install
 
+# Copy environment file
+cp .env.example .env.development
+
+# Edit .env.development with your API key
+# VITE_API_KEY=your-api-key-here
+```
+
+### Backend Setup
+
+The frontend requires the backend API to be running:
+
+```bash
+# In a separate terminal, start the backend
+cd ../loneprocess-api
+python main.py
+
+# Backend will run on http://localhost:8000
+```
+
+### Development
+
+```bash
 # Start dev server (Port 5173)
 npm run dev
 
@@ -75,6 +105,23 @@ npm run format
 # Build for production
 npm run build
 ```
+
+---
+
+## 🔧 Environment Variables
+
+Create a `.env.development` file (copied from `.env.example`):
+
+```bash
+# API Configuration
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_API_KEY=your-api-key-here  # Get from backend team
+
+# Environment
+VITE_ENV=development
+```
+
+**Important:** Never commit `.env` files with real API keys!
 
 ---
 
@@ -126,12 +173,12 @@ npm run build
 
 ---
 
-### 🔵 Fas 4: Integration & API (IN PROGRESS - 33%)
+### 🔵 Fas 4: Integration & API (IN PROGRESS - 50%)
 **6 Milestones | Estimated: 8-12 hours**
 
 - ✅ **4.1** React Router Setup (routing, navigation, guards) ✅
 - ✅ **4.2** Authentication Flow (login, token management, auto-refresh) ✅
-- ⏳ **4.3** API Integration (backend connection, env vars)
+- 🔵 **4.3** API Integration (backend connection, env vars) 🔵 **IN PROGRESS**
 - ⏳ **4.4** CRUD Operations (create, edit, delete with real API)
 - ⏳ **4.5** Data Persistence (optimistic updates, cache)
 - ⏳ **4.6** Production Error Handling (global errors, toasts)
@@ -146,8 +193,11 @@ npm run build
 - ✅ Session monitoring component
 - ✅ useAuth hook for easy auth access
 - ✅ GitHub Pages deployment with SPA routing
+- 🔵 Environment configuration (IN PROGRESS)
+- 🔵 API services for activities & periods (IN PROGRESS)
+- 🔵 Real data fetching in ActivitiesPage (IN PROGRESS)
 
-**Next Up:** Backend API integration (Milestone 4.3)
+**Next Up:** Complete API Integration & CRUD operations
 
 ---
 
@@ -192,7 +242,10 @@ Every commit must pass:
 
 ```
 src/
-├── components/          # Fas 2: Core reusable components
+├── config/             # Environment configuration
+│   ├── env.ts          # Type-safe env variables
+│   └── index.ts        # Config exports
+├── components/         # Fas 2: Core reusable components
 │   ├── layout/         # Header, Footer, PageLayout
 │   ├── loading/        # Spinner, Skeleton, LoadingOverlay, ProgressBar
 │   ├── errors/         # ErrorBoundary, ErrorFallback
@@ -211,22 +264,25 @@ src/
 │   ├── periodsStore.ts
 │   └── authStore.ts    # With token management (Fas 4)
 ├── lib/                # Utilities & configurations
-│   ├── api/           # HTTP client (Axios) with auth interceptors
+│   ├── api/           # HTTP client & services
+│   │   ├── client.ts   # Axios with auth
+│   │   ├── activities.ts # Activity API
+│   │   └── periods.ts  # Period API
 │   └── query/         # React Query config
-├── pages/             # Route pages (Fas 4)
+├── pages/              # Route pages (Fas 4)
 │   ├── LoginPage.tsx
 │   ├── ActivitiesPage.tsx
 │   ├── ActivityDetailPage.tsx
 │   └── NotFoundPage.tsx
-├── router/            # React Router config (Fas 4)
+├── router/             # React Router config (Fas 4)
 │   ├── index.tsx
 │   └── ProtectedRoute.tsx
-├── types/             # TypeScript type definitions
+├── types/              # TypeScript type definitions
 │   ├── activity.ts
 │   ├── period.ts
-│   ├── auth.ts        # Auth types (Fas 4)
+│   ├── auth.ts         # Auth types (Fas 4)
 │   └── index.ts
-└── App.tsx            # Root with RouterProvider (Fas 4)
+└── App.tsx             # Root with RouterProvider (Fas 4)
 ```
 
 ---
@@ -285,7 +341,7 @@ npm run e2e:ui
 - **Performance:** Fast builds with Vite, optimized bundles
 - **Accessibility:** Semantic HTML, keyboard navigation
 - **Localization:** Swedish language throughout
-- **Security:** Token-based auth, auto-refresh, secure storage
+- **Security:** API key authentication, token management
 
 ---
 
@@ -294,10 +350,10 @@ npm run e2e:ui
 **Session: 2026-03-23**
 - ✅ Completed Milestone 4.1: React Router Setup
 - ✅ Completed Milestone 4.2: Authentication Flow
-- ✅ Added 17 new tests (265 total)
-- ✅ Built 4 new pages + 3 auth components
-- ✅ Implemented token management & auto-refresh
-- ✅ Fixed GitHub Pages SPA routing
+- 🔵 Working on Milestone 4.3: API Integration
+- ✅ Environment configuration
+- ✅ API services for activities & periods
+- ✅ Real data fetching with React Query
 - ✅ 100% CI success rate maintained
 
 ---
@@ -306,17 +362,13 @@ npm run e2e:ui
 
 **To continue development:**
 
-1. Read [NEXT_SESSION.md](./NEXT_SESSION.md)
-2. Start with Fas 4, Milestone 4.3: API Integration
-3. Follow the standard workflow
-4. Run tests after each milestone
+1. Ensure backend API is running: `cd loneprocess-api && python main.py`
+2. Start frontend: `npm run dev`
+3. Open browser: http://localhost:5173
+4. Login and see activities from backend!
 
-**Command to start:**
-```bash
-# Tell Claude:
-"Kör Fas 4, Milestone 4.3: API Integration"
-```
+**Next Milestone:** 4.4 - CRUD Operations
 
 ---
 
-**Built with ❤️ | Fas 1, 2, 3 Complete ✅ | Fas 4: 33% 🔵 | Ready for Backend! 🚀**
+**Built with ❤️ | Fas 1, 2, 3 Complete ✅ | Fas 4: 50% 🔵 | Backend Connected! 🌐**
