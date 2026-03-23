@@ -21,9 +21,7 @@ describe('ActivitiesPage', () => {
       </MemoryRouter>
     )
 
-    expect(
-      screen.getByText(/Hantera och följ upp löneprocessens aktiviteter/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Hantera och följ upp löneprocessens aktiviteter/i)).toBeInTheDocument()
   })
 
   it('shows placeholder content', () => {

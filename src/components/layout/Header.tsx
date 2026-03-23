@@ -28,10 +28,7 @@ export function Header() {
           {isAuthenticated && (
             <div className="flex items-center gap-6">
               <nav className="flex items-center gap-4">
-                <Link
-                  to="/activities"
-                  className="text-gray-700 hover:text-primary-600 font-medium"
-                >
+                <Link to="/activities" className="text-gray-700 hover:text-primary-600 font-medium">
                   Aktiviteter
                 </Link>
               </nav>
