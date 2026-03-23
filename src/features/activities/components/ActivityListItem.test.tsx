@@ -86,6 +86,7 @@ describe('ActivityListItem', () => {
 
   it('applies selected styles when isSelected is true', () => {
     const { container } = render(<ActivityListItem activity={mockActivity} isSelected={true} />)
-    expect(container.querySelector('.border-primary-500')).toBeInTheDocument()
+    const element = container.querySelector('.border-primary-500')
+    expect(element).not.toBeNull()
   })
 })
