@@ -1,18 +1,20 @@
 import { Outlet } from 'react-router-dom'
 import { Header } from './Header'
 import { Footer } from './Footer'
+import { SessionManager } from '@/components/auth'
 
 /**
  * Page Layout Component
  *
- * Provides consistent layout structure across all pages.
- * Includes header, main content area, and footer.
+ * Main layout wrapper with header, footer, and content area.
+ * Used as the root layout for all pages.
  */
 export function PageLayout() {
   return (
     <div className="min-h-screen flex flex-col">
+      <SessionManager />
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1">
         <Outlet />
       </main>
       <Footer />
