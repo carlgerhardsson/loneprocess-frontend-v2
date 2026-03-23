@@ -6,13 +6,13 @@ describe('App', () => {
   it('renders router provider with layout', () => {
     render(<App />)
 
-    // Header should be present
-    expect(screen.getByText(/Löneportalen/i)).toBeInTheDocument()
+    // Should render login page (not authenticated)
+    expect(screen.getByText(/Logga in för att fortsätta/i)).toBeInTheDocument()
   })
 
   it('provides QueryClient context', () => {
     render(<App />)
     // App should render without errors (QueryClient is provided)
-    expect(screen.getByText(/Löneportalen/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Logga in/i })).toBeInTheDocument()
   })
 })
