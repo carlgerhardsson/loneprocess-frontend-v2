@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { LogIn } from 'lucide-react'
@@ -12,9 +12,17 @@ import { LogIn } from 'lucide-react'
 export function LoginPage() {
   const navigate = useNavigate()
   const login = useAuthStore(state => state.login)
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/activities', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
