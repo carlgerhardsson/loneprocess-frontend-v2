@@ -18,7 +18,7 @@
     "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.13",
+    "@tanstack/react-query": "^5.95.0",
     "@hookform/resolvers": "^3.9.1",
     "axios": "^1.7.9",
     "lucide-react": "^0.469.0",
