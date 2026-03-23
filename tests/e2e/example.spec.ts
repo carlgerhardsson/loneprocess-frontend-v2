@@ -24,7 +24,7 @@ test('user can login and see activities page', async ({ page }) => {
   // Should show activities page content
   await expect(page.getByRole('heading', { name: /Aktiviteter/i })).toBeVisible()
 
-  // Check header shows user info
-  await expect(page.getByText('testuser')).toBeVisible()
+  // Check header shows user info (mock login sets name to 'Demo User')
+  await expect(page.getByText('Demo User')).toBeVisible()
   await expect(page.getByText(/Logga ut/i)).toBeVisible()
 })

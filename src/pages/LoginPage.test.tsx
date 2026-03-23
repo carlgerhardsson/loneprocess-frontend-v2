@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { LoginPage } from './LoginPage'
 import { useAuthStore } from '@/stores/authStore'
@@ -15,7 +15,7 @@ vi.mock('react-router-dom', async () => {
 
 describe('LoginPage', () => {
   beforeEach(() => {
-    useAuthStore.setState({ user: null, isAuthenticated: false })
+    useAuthStore.setState({ user: null, isAuthenticated: false, isLoading: false })
     mockNavigate.mockClear()
   })
 
@@ -45,7 +45,7 @@ describe('LoginPage', () => {
     expect(screen.getByText(/Användarnamn och lösenord krävs/i)).toBeInTheDocument()
   })
 
-  it('logs in user and navigates to activities', () => {
+  it('logs in user and navigates to activities', async () => {
     render(
       <MemoryRouter>
         <LoginPage />
@@ -60,9 +60,14 @@ describe('LoginPage', () => {
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
     fireEvent.click(submitButton)
 
+    // Wait for async login to complete
+    await waitFor(() => {
+      const state = useAuthStore.getState()
+      expect(state.isAuthenticated).toBe(true)
+    })
+
     const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(true)
-    expect(state.user?.name).toBe('testuser')
+    expect(state.user?.email).toBe('testuser')
     expect(mockNavigate).toHaveBeenCalledWith('/activities')
   })
 

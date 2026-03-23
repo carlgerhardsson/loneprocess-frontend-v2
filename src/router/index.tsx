@@ -10,7 +10,7 @@ import { PageLayout } from '@/components/layout/PageLayout'
  * Application Router Configuration
  *
  * Uses React Router v6 with protected routes for authenticated pages.
- * basename is set to /loneprocess-frontend-v2 for GitHub Pages deployment only.
+ * basename is set to /loneprocess-frontend-v2 for GitHub Pages deployment.
  */
 export const router = createBrowserRouter(
   [
