@@ -1,108 +1,95 @@
-import { Activity } from '@/types'
+/**
+ * Activity List Item Component
+ * Individual activity item in the list with action buttons
+ */
+
+import { Calendar, User, Edit2, Trash2 } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'
 import { PriorityIndicator } from './PriorityIndicator'
-import { Calendar, User, CheckCircle2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
+import type { Activity } from '@/types'
 
 interface ActivityListItemProps {
   activity: Activity
   onClick?: (activity: Activity) => void
+  onEdit?: (activity: Activity) => void
+  onDelete?: (activity: Activity) => void
   isSelected?: boolean
 }
 
-/**
- * Activity List Item
- *
- * Single activity row in the list view.
- * Displays key activity information with status, priority, and metadata.
- */
-export function ActivityListItem({ activity, onClick, isSelected }: ActivityListItemProps) {
-  const handleClick = () => {
-    onClick?.(activity)
+export function ActivityListItem({
+  activity,
+  onClick,
+  onEdit,
+  onDelete,
+  isSelected = false,
+}: ActivityListItemProps) {
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onEdit?.(activity)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
-    }
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onDelete?.(activity)
   }
-
-  const completedItems = activity.checklistItems?.filter(item => item.isCompleted).length || 0
-  const totalItems = activity.checklistItems?.length || 0
-  const hasChecklist = totalItems > 0
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      className={cn(
-        'group relative p-4 border border-gray-200 rounded-lg',
-        'hover:border-primary-300 hover:bg-primary-50/50 transition-all cursor-pointer',
-        'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
-        isSelected && 'border-primary-500 bg-primary-50'
-      )}
+      className={`bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer ${
+        isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+      }`}
+      onClick={() => onClick?.(activity)}
     >
-      <div className="flex items-start gap-4">
-        {/* Priority Indicator */}
-        <div className="flex-shrink-0 mt-1">
-          <PriorityIndicator priority={activity.priority} />
-        </div>
-
-        {/* Content */}
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          {/* Title */}
-          <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary-700">
-            {activity.title}
-          </h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 truncate">
+              {activity.title}
+            </h3>
+            <StatusBadge status={activity.status} size="sm" />
+            <PriorityIndicator priority={activity.priority} size="sm" />
+          </div>
 
-          {/* Description */}
           {activity.description && (
-            <p className="text-sm text-gray-600 line-clamp-2 mb-2">{activity.description}</p>
+            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{activity.description}</p>
           )}
 
-          {/* Metadata */}
-          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-            {/* Due Date */}
+          <div className="flex items-center gap-4 text-sm text-gray-500">
             {activity.dueDate && (
               <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                <span>{new Date(activity.dueDate).toLocaleDateString('sv-SE')}</span>
+                <Calendar className="w-4 h-4" />
+                <span>{formatDate(activity.dueDate)}</span>
               </div>
             )}
-
-            {/* Assigned To */}
             {activity.assignedTo && (
               <div className="flex items-center gap-1">
-                <User className="w-3 h-3" />
+                <User className="w-4 h-4" />
                 <span>{activity.assignedTo}</span>
-              </div>
-            )}
-
-            {/* Checklist Progress */}
-            {hasChecklist && (
-              <div className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>
-                  {completedItems}/{totalItems}
-                </span>
-              </div>
-            )}
-
-            {/* Comment Count */}
-            {activity.comments && activity.comments.length > 0 && (
-              <div className="flex items-center gap-1">
-                <span>{activity.comments.length} kommentarer</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Status Badge */}
-        <div className="flex-shrink-0">
-          <StatusBadge status={activity.status} />
+        <div className="flex items-center gap-2">
+          {onEdit && (
+            <button
+              onClick={handleEdit}
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              aria-label="Redigera"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={handleDelete}
+              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              aria-label="Ta bort"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>

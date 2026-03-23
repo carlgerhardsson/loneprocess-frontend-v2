@@ -1,7 +1,18 @@
+/**
+ * Activities Query Hooks
+ * React Query hooks for activity data fetching and mutations
+ */
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { activitiesService } from '@/lib/api/services/activities'
+import {
+  fetchActivities,
+  fetchActivity,
+  createActivity,
+  updateActivity,
+  deleteActivity,
+} from '@/lib/api'
 import { useActivitiesStore } from '@/stores'
-import type { Activity, ActivityFilters } from '@/types'
+import type { CreateActivityData, UpdateActivityData } from '@/types'
 
 /**
  * Query keys for activities
@@ -9,21 +20,27 @@ import type { Activity, ActivityFilters } from '@/types'
 export const activitiesKeys = {
   all: ['activities'] as const,
   lists: () => [...activitiesKeys.all, 'list'] as const,
-  list: (filters: ActivityFilters) => [...activitiesKeys.lists(), filters] as const,
+  list: (filters?: Record<string, unknown>) => [...activitiesKeys.lists(), filters || {}] as const,
   details: () => [...activitiesKeys.all, 'detail'] as const,
-  detail: (id: string) => [...activitiesKeys.details(), id] as const,
+  detail: (id: number) => [...activitiesKeys.details(), id] as const,
 }
 
 /**
  * Hook to fetch all activities with optional filtering
  */
-export function useActivities(filters?: ActivityFilters) {
+export function useActivities(filters?: {
+  skip?: number
+  limit?: number
+  process?: string
+  role?: string
+  status?: string
+}) {
   const setActivities = useActivitiesStore(state => state.setActivities)
 
   return useQuery({
-    queryKey: activitiesKeys.list(filters || {}),
+    queryKey: activitiesKeys.list(filters),
     queryFn: async () => {
-      const activities = await activitiesService.list()
+      const activities = await fetchActivities(filters)
       // Sync with Zustand store
       setActivities(activities)
       return activities
@@ -34,11 +51,11 @@ export function useActivities(filters?: ActivityFilters) {
 /**
  * Hook to fetch a single activity by ID
  */
-export function useActivity(id: string) {
+export function useActivity(id: number | null) {
   return useQuery({
-    queryKey: activitiesKeys.detail(id),
-    queryFn: () => activitiesService.get(id),
-    enabled: !!id,
+    queryKey: activitiesKeys.detail(id!),
+    queryFn: () => fetchActivity(id!),
+    enabled: id !== null,
   })
 }
 
@@ -50,33 +67,12 @@ export function useCreateActivity() {
   const addActivity = useActivitiesStore(state => state.addActivity)
 
   return useMutation({
-    mutationFn: activitiesService.create,
-    onMutate: async newActivity => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: activitiesKeys.lists() })
-
-      // Snapshot previous value
-      const previousActivities = queryClient.getQueryData(activitiesKeys.lists())
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(activitiesKeys.lists(), (old: Activity[] = []) => [
-        ...old,
-        { ...newActivity, id: `temp-${Date.now()}`, createdAt: new Date().toISOString() },
-      ])
-
-      return { previousActivities }
-    },
+    mutationFn: (data: CreateActivityData) => createActivity(data),
     onSuccess: data => {
       // Update Zustand store
       addActivity(data)
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
-    },
-    onError: (_error, _newActivity, context) => {
-      // Rollback on error
-      if (context?.previousActivities) {
-        queryClient.setQueryData(activitiesKeys.lists(), context.previousActivities)
-      }
     },
   })
 }
@@ -86,32 +82,15 @@ export function useCreateActivity() {
  */
 export function useUpdateActivity() {
   const queryClient = useQueryClient()
-  const updateActivity = useActivitiesStore(state => state.updateActivity)
+  const updateActivityStore = useActivitiesStore(state => state.updateActivity)
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Activity> }) =>
-      activitiesService.update(id, data),
-    onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: activitiesKeys.detail(id) })
-
-      const previousActivity = queryClient.getQueryData(activitiesKeys.detail(id))
-
-      // Optimistically update
-      queryClient.setQueryData(activitiesKeys.detail(id), (old: Activity | undefined) =>
-        old ? { ...old, ...data } : old
-      )
-
-      return { previousActivity }
-    },
+    mutationFn: ({ id, data }: { id: number; data: UpdateActivityData }) =>
+      updateActivity(id, data),
     onSuccess: data => {
-      updateActivity(data.id, data)
+      updateActivityStore(data.id, data)
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: activitiesKeys.detail(data.id) })
-    },
-    onError: (_error, { id }, context) => {
-      if (context?.previousActivity) {
-        queryClient.setQueryData(activitiesKeys.detail(id), context.previousActivity)
-      }
+      queryClient.invalidateQueries({ queryKey: activitiesKeys.detail(Number(data.id)) })
     },
   })
 }
@@ -121,31 +100,14 @@ export function useUpdateActivity() {
  */
 export function useDeleteActivity() {
   const queryClient = useQueryClient()
-  const deleteActivity = useActivitiesStore(state => state.deleteActivity)
+  const deleteActivityStore = useActivitiesStore(state => state.deleteActivity)
 
   return useMutation({
-    mutationFn: activitiesService.delete,
-    onMutate: async id => {
-      await queryClient.cancelQueries({ queryKey: activitiesKeys.lists() })
-
-      const previousActivities = queryClient.getQueryData(activitiesKeys.lists())
-
-      // Optimistically remove
-      queryClient.setQueryData(activitiesKeys.lists(), (old: Activity[] = []) =>
-        old.filter(activity => activity.id !== id)
-      )
-
-      return { previousActivities }
-    },
+    mutationFn: (id: number) => deleteActivity(id),
     onSuccess: (_data, id) => {
-      deleteActivity(id)
+      deleteActivityStore(String(id))
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
       queryClient.removeQueries({ queryKey: activitiesKeys.detail(id) })
-    },
-    onError: (_error, _id, context) => {
-      if (context?.previousActivities) {
-        queryClient.setQueryData(activitiesKeys.lists(), context.previousActivities)
-      }
     },
   })
 }
