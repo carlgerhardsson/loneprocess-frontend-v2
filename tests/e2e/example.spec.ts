@@ -20,8 +20,8 @@ test('user can login and see activities page', async ({ page }) => {
   // Submit form
   await page.click('button[type="submit"]')
 
-  // Wait for navigation and page load
-  await page.waitForURL('/aktiviteter')
+  // Wait for navigation and page load (using correct route: /activities not /aktiviteter)
+  await page.waitForURL('/activities')
 
   // Should show activities page content
   await expect(page.getByRole('heading', { name: /Aktiviteter/i })).toBeVisible()
