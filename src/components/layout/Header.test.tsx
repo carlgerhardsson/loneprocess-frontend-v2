@@ -40,7 +40,15 @@ describe('Header', () => {
 
   it('shows navigation and user info when authenticated', () => {
     useAuthStore.setState({
-      user: { id: '1', name: 'Test User', email: 'test@example.com', role: 'user' },
+      user: {
+        id: '1',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'user',
+        permissions: ['activities:read'],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       isAuthenticated: true,
     })
 
@@ -57,7 +65,15 @@ describe('Header', () => {
 
   it('logs out and navigates to login when logout clicked', () => {
     useAuthStore.setState({
-      user: { id: '1', name: 'Test User', email: 'test@example.com', role: 'user' },
+      user: {
+        id: '1',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'user',
+        permissions: ['activities:read'],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       isAuthenticated: true,
     })
 

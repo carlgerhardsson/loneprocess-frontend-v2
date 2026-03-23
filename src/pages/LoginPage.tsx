@@ -31,6 +31,9 @@ export function LoginPage() {
       name: username,
       email: `${username}@example.com`,
       role: 'user',
+      permissions: ['activities:read', 'activities:write'],
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
     })
 
     navigate('/activities')

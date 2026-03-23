@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
-import { HomePage } from '@/pages/HomePage'
 import { ActivitiesPage } from '@/pages/ActivitiesPage'
 import { ActivityDetailPage } from '@/pages/ActivityDetailPage'
 import { LoginPage } from '@/pages/LoginPage'
