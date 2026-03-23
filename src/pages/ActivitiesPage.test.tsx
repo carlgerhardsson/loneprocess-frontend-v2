@@ -31,6 +31,8 @@ describe('ActivitiesPage', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText(/Aktiviteter visas här när du har kopplat till backend API/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Aktiviteter visas här när du har kopplat till backend API/i)
+    ).toBeInTheDocument()
   })
 })
