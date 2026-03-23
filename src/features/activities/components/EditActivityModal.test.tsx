@@ -34,19 +34,17 @@ const mockActivity: Activity = {
 
 describe('EditActivityModal', () => {
   it('renders when open', () => {
-    render(
-      <EditActivityModal isOpen={true} onClose={vi.fn()} activity={mockActivity} />,
-      { wrapper }
-    )
+    render(<EditActivityModal isOpen={true} onClose={vi.fn()} activity={mockActivity} />, {
+      wrapper,
+    })
 
     expect(screen.getByText('Redigera aktivitet')).toBeInTheDocument()
   })
 
   it('does not render when closed', () => {
-    render(
-      <EditActivityModal isOpen={false} onClose={vi.fn()} activity={mockActivity} />,
-      { wrapper }
-    )
+    render(<EditActivityModal isOpen={false} onClose={vi.fn()} activity={mockActivity} />, {
+      wrapper,
+    })
 
     expect(screen.queryByText('Redigera aktivitet')).not.toBeInTheDocument()
   })

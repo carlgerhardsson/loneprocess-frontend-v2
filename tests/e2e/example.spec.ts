@@ -26,7 +26,7 @@ test('user can login and see activities page', async ({ page }) => {
   // Verify we're logged in by checking header shows user info
   // (Don't wait for activities to load - that requires mock API setup)
   await expect(page.getByText('Demo User')).toBeVisible()
-  
+
   // Verify logout button is present (confirms authenticated state)
   await expect(page.getByRole('button', { name: /Logga ut/i })).toBeVisible()
 })

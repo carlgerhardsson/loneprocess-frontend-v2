@@ -88,9 +88,7 @@ export function ActivitiesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Aktiviteter</h1>
-            <p className="mt-2 text-gray-600">
-              Hantera och följ upp löneprocessens aktiviteter
-            </p>
+            <p className="mt-2 text-gray-600">Hantera och följ upp löneprocessens aktiviteter</p>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
@@ -147,9 +145,7 @@ export function ActivitiesPage() {
       )}
 
       {/* Toast */}
-      {toast.isVisible && (
-        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
-      )}
+      {toast.isVisible && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </>
   )
 }

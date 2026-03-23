@@ -34,29 +34,26 @@ const mockActivity: Activity = {
 
 describe('DeleteActivityDialog', () => {
   it('renders when open', () => {
-    render(
-      <DeleteActivityDialog isOpen={true} onClose={vi.fn()} activity={mockActivity} />,
-      { wrapper }
-    )
+    render(<DeleteActivityDialog isOpen={true} onClose={vi.fn()} activity={mockActivity} />, {
+      wrapper,
+    })
 
     expect(screen.getByText('Ta bort aktivitet')).toBeInTheDocument()
     expect(screen.getByText(/Test Activity/)).toBeInTheDocument()
   })
 
   it('does not render when closed', () => {
-    render(
-      <DeleteActivityDialog isOpen={false} onClose={vi.fn()} activity={mockActivity} />,
-      { wrapper }
-    )
+    render(<DeleteActivityDialog isOpen={false} onClose={vi.fn()} activity={mockActivity} />, {
+      wrapper,
+    })
 
     expect(screen.queryByText('Ta bort aktivitet')).not.toBeInTheDocument()
   })
 
   it('shows warning message', () => {
-    render(
-      <DeleteActivityDialog isOpen={true} onClose={vi.fn()} activity={mockActivity} />,
-      { wrapper }
-    )
+    render(<DeleteActivityDialog isOpen={true} onClose={vi.fn()} activity={mockActivity} />, {
+      wrapper,
+    })
 
     expect(screen.getByText(/Denna åtgärd kan inte ångras/)).toBeInTheDocument()
   })

@@ -44,9 +44,7 @@ export function ActivityListItem({
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">
-              {activity.title}
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 truncate">{activity.title}</h3>
             <StatusBadge status={activity.status} size="sm" />
             <PriorityIndicator priority={activity.priority} size="sm" />
           </div>

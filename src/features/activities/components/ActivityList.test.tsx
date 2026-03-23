@@ -50,9 +50,7 @@ describe('ActivityList', () => {
 
   it('calls onEdit when edit button clicked', async () => {
     const onEdit = vi.fn()
-    const { container } = render(
-      <ActivityList activities={mockActivities} onEdit={onEdit} />
-    )
+    const { container } = render(<ActivityList activities={mockActivities} onEdit={onEdit} />)
 
     const editButtons = container.querySelectorAll('[aria-label="Redigera"]')
     expect(editButtons).toHaveLength(2)
@@ -60,9 +58,7 @@ describe('ActivityList', () => {
 
   it('calls onDelete when delete button clicked', async () => {
     const onDelete = vi.fn()
-    const { container } = render(
-      <ActivityList activities={mockActivities} onDelete={onDelete} />
-    )
+    const { container } = render(<ActivityList activities={mockActivities} onDelete={onDelete} />)
 
     const deleteButtons = container.querySelectorAll('[aria-label="Ta bort"]')
     expect(deleteButtons).toHaveLength(2)
