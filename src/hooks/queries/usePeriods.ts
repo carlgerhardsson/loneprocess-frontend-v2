@@ -102,7 +102,7 @@ export function useUpdatePeriod() {
     onSuccess: data => {
       updatePeriodStore(String(data.id), { ...data, id: String(data.id) } as never)
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) })
+      queryClient.invalidateQueries({ queryKey: periodsKeys.detail(Number(data.id)) })
     },
   })
 }

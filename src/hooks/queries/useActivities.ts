@@ -6,7 +6,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchActivities, fetchActivity, createActivity, updateActivity, deleteActivity } from '@/lib/api'
 import { useActivitiesStore } from '@/stores'
-import type { Activity, CreateActivityData, UpdateActivityData } from '@/types'
+import type { CreateActivityData, UpdateActivityData } from '@/types'
 
 /**
  * Query keys for activities
