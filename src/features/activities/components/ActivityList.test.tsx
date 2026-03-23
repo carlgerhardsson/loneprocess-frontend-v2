@@ -25,7 +25,7 @@ const mockActivities: Activity[] = [
     id: '2',
     title: 'Test Activity 2',
     description: 'Test description 2',
-    type: 'review',
+    type: 'tax',
     status: 'pending',
     priority: 'medium',
     assignedTo: 'Jane Smith',

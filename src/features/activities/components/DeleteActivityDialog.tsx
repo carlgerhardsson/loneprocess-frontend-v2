@@ -45,9 +45,7 @@ export function DeleteActivityDialog({
               Är du säker på att du vill ta bort aktiviteten{' '}
               <span className="font-semibold">{activity.title}</span>?
             </p>
-            <p className="text-sm text-gray-500 mt-2">
-              Denna åtgärd kan inte ångras.
-            </p>
+            <p className="text-sm text-gray-500 mt-2">Denna åtgärd kan inte ångras.</p>
           </div>
         </div>
 

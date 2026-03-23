@@ -14,6 +14,7 @@ interface ActivityListItemProps {
   onClick?: (activity: Activity) => void
   onEdit?: (activity: Activity) => void
   onDelete?: (activity: Activity) => void
+  isSelected?: boolean
 }
 
 export function ActivityListItem({
@@ -21,6 +22,7 @@ export function ActivityListItem({
   onClick,
   onEdit,
   onDelete,
+  isSelected = false,
 }: ActivityListItemProps) {
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -34,7 +36,9 @@ export function ActivityListItem({
 
   return (
     <div
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className={`bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer ${
+        isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+      }`}
       onClick={() => onClick?.(activity)}
     >
       <div className="flex items-start justify-between gap-4">
