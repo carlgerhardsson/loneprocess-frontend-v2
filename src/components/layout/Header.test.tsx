@@ -1,20 +1,78 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { Header } from './Header'
+import { useAuthStore } from '@/stores/authStore'
+
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
 
 describe('Header', () => {
-  it('renders with default title', () => {
-    render(<Header />)
-    expect(screen.getByText(/Löneportalen v2.0/i)).toBeInTheDocument()
+  beforeEach(() => {
+    useAuthStore.setState({ user: null, isAuthenticated: false })
+    mockNavigate.mockClear()
   })
 
-  it('renders with custom title', () => {
-    render(<Header title="Custom Title" />)
-    expect(screen.getByText(/Custom Title/i)).toBeInTheDocument()
+  it('renders app logo and name', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('Löneportalen')).toBeInTheDocument()
   })
 
-  it('shows current phase', () => {
-    render(<Header />)
-    expect(screen.getByText(/Fas 2: Core Components/i)).toBeInTheDocument()
+  it('does not show navigation when not authenticated', () => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText('Aktiviteter')).not.toBeInTheDocument()
+    expect(screen.queryByText('Logga ut')).not.toBeInTheDocument()
+  })
+
+  it('shows navigation and user info when authenticated', () => {
+    useAuthStore.setState({
+      user: { id: '1', name: 'Test User', email: 'test@example.com', role: 'user' },
+      isAuthenticated: true,
+    })
+
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('Aktiviteter')).toBeInTheDocument()
+    expect(screen.getByText('Test User')).toBeInTheDocument()
+    expect(screen.getByText('Logga ut')).toBeInTheDocument()
+  })
+
+  it('logs out and navigates to login when logout clicked', () => {
+    useAuthStore.setState({
+      user: { id: '1', name: 'Test User', email: 'test@example.com', role: 'user' },
+      isAuthenticated: true,
+    })
+
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    )
+
+    const logoutButton = screen.getByText('Logga ut')
+    fireEvent.click(logoutButton)
+
+    const state = useAuthStore.getState()
+    expect(state.isAuthenticated).toBe(false)
+    expect(state.user).toBeNull()
+    expect(mockNavigate).toHaveBeenCalledWith('/login')
   })
 })
