@@ -10,40 +10,46 @@ import { PageLayout } from '@/components/layout/PageLayout'
  * Application Router Configuration
  *
  * Uses React Router v6 with protected routes for authenticated pages.
+ * basename is set to /loneprocess-frontend-v2 for GitHub Pages deployment.
  */
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <PageLayout />,
+      children: [
+        {
+          index: true,
+          element: <Navigate to="/login" replace />,
+        },
+        {
+          path: 'login',
+          element: <LoginPage />,
+        },
+        {
+          path: 'activities',
+          element: (
+            <ProtectedRoute>
+              <ActivitiesPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'activities/:id',
+          element: (
+            <ProtectedRoute>
+              <ActivityDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: '*',
+          element: <NotFoundPage />,
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <PageLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/login" replace />,
-      },
-      {
-        path: 'login',
-        element: <LoginPage />,
-      },
-      {
-        path: 'activities',
-        element: (
-          <ProtectedRoute>
-            <ActivitiesPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'activities/:id',
-        element: (
-          <ProtectedRoute>
-            <ActivityDetailPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
-      },
-    ],
-  },
-])
+    basename: '/loneprocess-frontend-v2',
+  }
+)
