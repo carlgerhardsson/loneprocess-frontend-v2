@@ -1,95 +1,71 @@
 /**
  * API Client
- * Axios-based HTTP client with retry logic and error handling
+ * Axios instance with authentication interceptors
  */
 
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/authStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-const API_TIMEOUT = 30000 // 30 seconds
-const MAX_RETRIES = 3
-const RETRY_DELAY = 1000 // 1 second
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
-// Create axios instance
-const apiClient: AxiosInstance = axios.create({
+/**
+ * Axios instance with interceptors for authentication
+ */
+export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// Request interceptor - add auth token if available
+/**
+ * Request interceptor
+ * Adds authentication token to requests
+ */
 apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Get token from localStorage (auth store persistence)
-    const authStorage = localStorage.getItem('auth-storage')
-    if (authStorage) {
-      try {
-        const { state } = JSON.parse(authStorage)
-        if (state?.session?.token) {
-          config.headers.Authorization = `Bearer ${state.session.token}`
-        }
-      } catch (error) {
-        console.error('Failed to parse auth storage:', error)
-      }
+  config => {
+    const state = useAuthStore.getState()
+    const token = state.session?.token
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
+
     return config
   },
   error => Promise.reject(error)
 )
 
-// Response interceptor - handle errors and retries
+/**
+ * Response interceptor
+ * Handles token expiry and refresh
+ */
 apiClient.interceptors.response.use(
   response => response,
-  async (error: AxiosError) => {
-    const config = error.config as InternalAxiosRequestConfig & { _retryCount?: number }
+  async error => {
+    const originalRequest = error.config
 
-    // Don't retry if no config
-    if (!config) {
-      return Promise.reject(error)
+    // If 401 and we haven't retried yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      try {
+        // Try to refresh the token
+        const success = await useAuthStore.getState().refreshToken()
+
+        if (success) {
+          // Retry the original request with new token
+          const token = useAuthStore.getState().session?.token
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return apiClient(originalRequest)
+        }
+      } catch (refreshError) {
+        // Refresh failed, logout
+        useAuthStore.getState().logout()
+        return Promise.reject(refreshError)
+      }
     }
-
-    // Initialize retry count
-    config._retryCount = config._retryCount || 0
-
-    // Check if we should retry
-    const shouldRetry =
-      config._retryCount < MAX_RETRIES &&
-      error.response?.status &&
-      (error.response.status >= 500 || // Server errors
-        error.response.status === 429 || // Rate limit
-        error.code === 'ECONNABORTED' || // Timeout
-        error.code === 'ERR_NETWORK') // Network error
-
-    if (shouldRetry) {
-      config._retryCount += 1
-
-      // Exponential backoff
-      const delay = RETRY_DELAY * Math.pow(2, config._retryCount - 1)
-
-      console.log(
-        `Retrying request (${config._retryCount}/${MAX_RETRIES}) after ${delay}ms:`,
-        config.url
-      )
-
-      await new Promise(resolve => setTimeout(resolve, delay))
-
-      return apiClient(config)
-    }
-
-    // Log error for debugging
-    console.error('API Error:', {
-      url: config.url,
-      method: config.method,
-      status: error.response?.status,
-      message: error.message,
-      data: error.response?.data,
-    })
 
     return Promise.reject(error)
   }
 )
-
-export { apiClient }
-export default apiClient
