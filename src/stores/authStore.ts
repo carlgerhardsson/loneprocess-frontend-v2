@@ -87,9 +87,9 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
             isLoading: false,
           })
-        } catch (error) {
+        } catch {
           set({
-            error: error instanceof Error ? error.message : 'Login failed',
+            error: 'Login failed',
             isLoading: false,
           })
         }
@@ -164,7 +164,7 @@ export const useAuthStore = create<AuthStore>()(
 
           set({ session: newSession })
           return true
-        } catch (error) {
+        } catch {
           logout()
           return false
         }

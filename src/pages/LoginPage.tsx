@@ -35,7 +35,7 @@ export function LoginPage() {
     try {
       await login({ email: username, password })
       navigate('/activities')
-    } catch (err) {
+    } catch {
       setFormError('Inloggning misslyckades')
     }
   }
