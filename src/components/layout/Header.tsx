@@ -1,28 +1,57 @@
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
+import { LogOut, User } from 'lucide-react'
+
 /**
  * Header Component
- * Top navigation bar with branding and navigation
+ *
+ * Application header with navigation and user menu.
  */
+export function Header() {
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuthStore()
 
-interface HeaderProps {
-  title?: string
-}
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
-export function Header({ title = 'Löneportalen v2.0' }: HeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-[var(--z-sticky)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white shadow-sm">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo & Title */}
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary-600">🚀 {title}</h1>
-            </div>
-          </div>
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-primary-600 rounded-lg" />
+            <span className="text-xl font-bold text-gray-900">Löneportalen</span>
+          </Link>
 
-          {/* Navigation - placeholder for now */}
-          <nav className="hidden md:flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Fas 2: Core Components</span>
-          </nav>
+          {isAuthenticated && (
+            <div className="flex items-center gap-6">
+              <nav className="flex items-center gap-4">
+                <Link
+                  to="/activities"
+                  className="text-gray-700 hover:text-primary-600 font-medium"
+                >
+                  Aktiviteter
+                </Link>
+              </nav>
+
+              <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
+                <div className="flex items-center gap-2 text-sm text-gray-700">
+                  <User className="w-4 h-4" />
+                  <span>{user?.name}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  title="Logga ut"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logga ut
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>
