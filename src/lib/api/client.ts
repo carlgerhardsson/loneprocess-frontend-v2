@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 /**
  * Axios instance configured for backend API
- * 
+ *
  * Uses:
  * - X-API-Key header for backend authentication
  * - Bearer token for future user-level auth (currently mock)

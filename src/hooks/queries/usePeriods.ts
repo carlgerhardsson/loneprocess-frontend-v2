@@ -4,12 +4,12 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { 
-  fetchPeriods, 
-  fetchPeriod, 
-  createPeriod, 
-  updatePeriod, 
-  fetchPeriodProgress 
+import {
+  fetchPeriods,
+  fetchPeriod,
+  createPeriod,
+  updatePeriod,
+  fetchPeriodProgress,
 } from '@/lib/api'
 import { usePeriodsStore } from '@/stores'
 import type { Period } from '@/types'

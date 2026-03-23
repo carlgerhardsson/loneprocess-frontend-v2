@@ -59,7 +59,10 @@ export const useActivitiesStore = create<ActivitiesState & ActivitiesActions>(se
   setError: error => set({ error }),
 }))
 
-export function getFilteredActivities(activities: Activity[], filters: ActivityFilters): Activity[] {
+export function getFilteredActivities(
+  activities: Activity[],
+  filters: ActivityFilters
+): Activity[] {
   let filtered = [...activities]
 
   if (filters.status?.length) {
