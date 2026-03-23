@@ -8,7 +8,8 @@ import { persist } from 'zustand/middleware'
 import type { User, AuthSession, LoginCredentials, AuthState, Permission } from '../types'
 
 interface AuthActions {
-  login: (credentials: LoginCredentials) => Promise<void>
+  login: (user: User) => void
+  loginWithCredentials: (credentials: LoginCredentials) => Promise<void>
   logout: () => void
   setUser: (user: User | null) => void
   setSession: (session: AuthSession | null) => void
@@ -30,10 +31,27 @@ export const useAuthStore = create<AuthStore>()(
       error: null,
 
       // Actions
-      login: async (credentials: LoginCredentials) => {
+      login: (user: User) => {
+        // Direct login with user object (for mock/demo)
+        const mockSession: AuthSession = {
+          token: 'mock-token',
+          expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
+          refreshToken: 'mock-refresh-token',
+        }
+
+        set({
+          user,
+          session: mockSession,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
+      },
+
+      loginWithCredentials: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null })
         try {
-          // TODO: Replace with real API call in Milestone 2.4
+          // TODO: Replace with real API call in Milestone 4.3
           // Simulated login for now
           await new Promise(resolve => setTimeout(resolve, 500))
 

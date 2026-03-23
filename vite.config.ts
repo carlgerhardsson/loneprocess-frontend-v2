@@ -2,28 +2,19 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/loneprocess-frontend-v2/',
+  base: process.env.NODE_ENV === 'production' ? '/loneprocess-frontend-v2/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', 'tests'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'src/test/', 'tests/'],
-    },
+  server: {
+    port: 5173,
   },
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
+  preview: {
+    port: 5173,
   },
 })

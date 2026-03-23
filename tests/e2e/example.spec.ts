@@ -1,25 +1,30 @@
 import { test, expect } from '@playwright/test'
 
-test('homepage loads correctly', async ({ page }) => {
-  await page.goto('/')
+test('login page loads correctly', async ({ page }) => {
+  await page.goto('/login')
 
-  // Check Header
-  await expect(page.getByRole('heading', { name: /🚀 Löneportalen v2.0/ })).toBeVisible()
-
-  // Check main content
-  await expect(page.getByText('Welcome to Löneportalen v2.0')).toBeVisible()
-  await expect(page.getByText(/Modern React \+ TypeScript migration/i)).toBeVisible()
-
-  // Check Footer
-  await expect(page.getByText(/API Status:/i)).toBeVisible()
+  // Check login page elements
+  await expect(page.getByRole('heading', { name: /Löneportalen/i })).toBeVisible()
+  await expect(page.getByText(/Logga in för att fortsätta/i)).toBeVisible()
+  await expect(page.locator('input#username')).toBeVisible()
+  await expect(page.locator('input#password')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Logga in/i })).toBeVisible()
 })
 
-test('counter increments on click', async ({ page }) => {
-  await page.goto('/')
+test('user can login and see activities page', async ({ page }) => {
+  await page.goto('/login')
 
-  const button = page.getByRole('button', { name: /Counter: 0/i })
-  await expect(button).toBeVisible()
+  // Fill in login form
+  await page.locator('input#username').fill('testuser')
+  await page.locator('input#password').fill('password123')
 
-  await button.click()
-  await expect(page.getByText('Counter: 1')).toBeVisible()
+  // Submit form
+  await page.getByRole('button', { name: /Logga in/i }).click()
+
+  // Should show activities page content
+  await expect(page.getByRole('heading', { name: /Aktiviteter/i })).toBeVisible()
+
+  // Check header shows user info
+  await expect(page.getByText('testuser')).toBeVisible()
+  await expect(page.getByText(/Logga ut/i)).toBeVisible()
 })
