@@ -1,25 +1,34 @@
 import { test, expect } from '@playwright/test'
 
-test('homepage loads correctly', async ({ page }) => {
+test('login page loads and redirects to login', async ({ page }) => {
   await page.goto('/')
 
-  // Check Header
-  await expect(page.getByRole('heading', { name: /🚀 Löneportalen v2.0/ })).toBeVisible()
+  // Should redirect to login when not authenticated
+  await expect(page).toHaveURL(/\/login/)
 
-  // Check main content
-  await expect(page.getByText('Welcome to Löneportalen v2.0')).toBeVisible()
-  await expect(page.getByText(/Modern React \+ TypeScript migration/i)).toBeVisible()
-
-  // Check Footer
-  await expect(page.getByText(/API Status:/i)).toBeVisible()
+  // Check login page elements
+  await expect(page.getByRole('heading', { name: /Löneportalen/i })).toBeVisible()
+  await expect(page.getByText(/Logga in för att fortsätta/i)).toBeVisible()
+  await expect(page.getByLabelText(/Användarnamn/i)).toBeVisible()
+  await expect(page.getByLabelText(/Lösenord/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /Logga in/i })).toBeVisible()
 })
 
-test('counter increments on click', async ({ page }) => {
-  await page.goto('/')
+test('user can login and see activities page', async ({ page }) => {
+  await page.goto('/login')
 
-  const button = page.getByRole('button', { name: /Counter: 0/i })
-  await expect(button).toBeVisible()
+  // Fill in login form
+  await page.getByLabelText(/Användarnamn/i).fill('testuser')
+  await page.getByLabelText(/Lösenord/i).fill('password123')
 
-  await button.click()
-  await expect(page.getByText('Counter: 1')).toBeVisible()
+  // Submit form
+  await page.getByRole('button', { name: /Logga in/i }).click()
+
+  // Should redirect to activities page
+  await expect(page).toHaveURL(/\/activities/)
+  await expect(page.getByRole('heading', { name: /Aktiviteter/i })).toBeVisible()
+
+  // Check header shows user info
+  await expect(page.getByText('testuser')).toBeVisible()
+  await expect(page.getByText(/Logga ut/i)).toBeVisible()
 })
