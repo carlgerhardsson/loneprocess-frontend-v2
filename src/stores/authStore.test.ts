@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { useAuthStore } from './authStore'
 
 describe('authStore', () => {
@@ -69,7 +69,15 @@ describe('authStore', () => {
 
   it('logs out correctly', () => {
     useAuthStore.setState({
-      user: { id: '1', name: 'Test', email: 'test@test.com', role: 'user', permissions: [], createdAt: '2024-01-01', lastLogin: '2024-01-01' },
+      user: {
+        id: '1',
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'user',
+        permissions: [],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       isAuthenticated: true,
     })
 
@@ -83,7 +91,15 @@ describe('authStore', () => {
   it('checks session expiry', () => {
     // Set expired session
     useAuthStore.setState({
-      user: { id: '1', name: 'Test', email: 'test@test.com', role: 'user', permissions: [], createdAt: '2024-01-01', lastLogin: '2024-01-01' },
+      user: {
+        id: '1',
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'user',
+        permissions: [],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       session: {
         token: 'test-token',
         expiresAt: new Date(Date.now() - 1000).toISOString(), // Expired 1 second ago
@@ -100,7 +116,15 @@ describe('authStore', () => {
 
   it('validates non-expired session', () => {
     useAuthStore.setState({
-      user: { id: '1', name: 'Test', email: 'test@test.com', role: 'user', permissions: [], createdAt: '2024-01-01', lastLogin: '2024-01-01' },
+      user: {
+        id: '1',
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'user',
+        permissions: [],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       session: {
         token: 'test-token',
         expiresAt: new Date(Date.now() + 3600000).toISOString(), // Expires in 1 hour
@@ -117,7 +141,15 @@ describe('authStore', () => {
 
   it('refreshes token successfully', async () => {
     useAuthStore.setState({
-      user: { id: '1', name: 'Test', email: 'test@test.com', role: 'user', permissions: [], createdAt: '2024-01-01', lastLogin: '2024-01-01' },
+      user: {
+        id: '1',
+        name: 'Test',
+        email: 'test@test.com',
+        role: 'user',
+        permissions: [],
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-01',
+      },
       session: {
         token: 'old-token',
         expiresAt: new Date(Date.now() + 100).toISOString(),

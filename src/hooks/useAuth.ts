@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/stores/authStore'
 import { useCallback } from 'react'
-import type { LoginCredentials, User } from '@/types'
+import type { LoginCredentials } from '@/types'
 
 /**
  * useAuth Hook
