@@ -1,20 +1,11 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
+import { HomePage } from '@/pages/HomePage'
 import { ActivitiesPage } from '@/pages/ActivitiesPage'
 import { ActivityDetailPage } from '@/pages/ActivityDetailPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { PageLayout } from '@/components/layout/PageLayout'
-import { useAuthStore } from '@/stores/authStore'
-
-/**
- * Root Redirect Component
- * Redirects to /login or /activities based on auth state
- */
-function RootRedirect() {
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
-  return <Navigate to={isAuthenticated ? '/activities' : '/login'} replace />
-}
 
 /**
  * Application Router Configuration
@@ -28,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <RootRedirect />,
+        element: <HomePage />,
       },
       {
         path: 'login',

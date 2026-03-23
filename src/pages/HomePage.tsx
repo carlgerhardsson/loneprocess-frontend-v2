@@ -1,10 +1,19 @@
-import { Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
 
 /**
- * Home Page
+ * Home Page - Root Redirect
  *
- * Root route - redirects to activities.
+ * Redirects users to login or activities based on auth state.
  */
 export function HomePage() {
-  return <Navigate to="/activities" replace />
+  const navigate = useNavigate()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+
+  useEffect(() => {
+    navigate(isAuthenticated ? '/activities' : '/login', { replace: true })
+  }, [isAuthenticated, navigate])
+
+  return null
 }
