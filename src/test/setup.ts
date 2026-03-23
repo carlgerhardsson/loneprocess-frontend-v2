@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { beforeAll, afterEach } from 'vitest'
+import { beforeAll, afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
 // Cleanup after each test
@@ -55,3 +55,27 @@ beforeAll(() => {
 afterEach(() => {
   localStorage.clear()
 })
+
+// Mock axios globally for tests
+vi.mock('axios', () => ({
+  default: {
+    create: vi.fn(() => ({
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+      interceptors: {
+        request: { use: vi.fn(), eject: vi.fn() },
+        response: { use: vi.fn(), eject: vi.fn() },
+      },
+      defaults: {
+        baseURL: 'http://localhost:8000/api/v1',
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': 'test-api-key',
+        },
+      },
+    })),
+  },
+}))
