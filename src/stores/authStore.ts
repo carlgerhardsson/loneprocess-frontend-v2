@@ -1,6 +1,6 @@
 /**
  * Authentication Store
- * Manages user authentication state with persistence
+ * Manages user authentication state with persistence and token management
  */
 
 import { create } from 'zustand'
@@ -16,9 +16,19 @@ interface AuthActions {
   setError: (error: string | null) => void
   checkPermission: (permission: string) => boolean
   hasRole: (role: string) => boolean
+  checkSession: () => boolean
+  refreshToken: () => Promise<boolean>
 }
 
 type AuthStore = AuthState & AuthActions
+
+/**
+ * Check if a session is expired
+ */
+function isSessionExpired(session: AuthSession | null): boolean {
+  if (!session) return true
+  return new Date(session.expiresAt) <= new Date()
+}
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -34,9 +44,9 @@ export const useAuthStore = create<AuthStore>()(
       login: (user: User) => {
         // Direct login with user object (for mock/demo)
         const mockSession: AuthSession = {
-          token: 'mock-token',
+          token: 'mock-token-' + Date.now(),
           expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
-          refreshToken: 'mock-refresh-token',
+          refreshToken: 'mock-refresh-token-' + Date.now(),
         }
 
         set({
@@ -66,9 +76,9 @@ export const useAuthStore = create<AuthStore>()(
           }
 
           const mockSession: AuthSession = {
-            token: 'mock-token',
+            token: 'mock-token-' + Date.now(),
             expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
-            refreshToken: 'mock-refresh-token',
+            refreshToken: 'mock-refresh-token-' + Date.now(),
           }
 
           set({
@@ -114,6 +124,50 @@ export const useAuthStore = create<AuthStore>()(
       hasRole: (role: string) => {
         const { user } = get()
         return user?.role === role
+      },
+
+      /**
+       * Check if current session is valid
+       * Returns false if session is expired
+       */
+      checkSession: () => {
+        const { session, logout } = get()
+
+        if (isSessionExpired(session)) {
+          logout()
+          return false
+        }
+
+        return true
+      },
+
+      /**
+       * Refresh the authentication token
+       * Returns true if successful
+       */
+      refreshToken: async () => {
+        const { session, logout } = get()
+
+        if (!session) {
+          return false
+        }
+
+        try {
+          // TODO: Replace with real API call in Milestone 4.3
+          await new Promise(resolve => setTimeout(resolve, 300))
+
+          const newSession: AuthSession = {
+            token: 'mock-token-refreshed-' + Date.now(),
+            expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
+            refreshToken: session.refreshToken,
+          }
+
+          set({ session: newSession })
+          return true
+        } catch (error) {
+          logout()
+          return false
+        }
       },
     }),
     {
