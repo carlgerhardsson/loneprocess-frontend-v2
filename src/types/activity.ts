@@ -3,24 +3,24 @@
  */
 
 export interface Activity {
-  id: string
+  id: number // Backend uses number IDs
   title: string
-  description: string
+  description: string | null
   type: ActivityType
   status: ActivityStatus
   priority: ActivityPriority
-  assignedTo: string | null
-  dueDate: string | null
-  completedAt: string | null
-  createdAt: string
-  updatedAt: string
-  periodId: string
-  checklistItems: ChecklistItem[]
-  comments: Comment[]
-  tags: string[]
+  assigned_to: string | null // Backend uses snake_case
+  due_date: string | null
+  completed_at: string | null
+  created_at: string
+  updated_at: string
+  period_id?: number
+  checklist_items?: ChecklistItem[]
+  comments?: Comment[]
+  tags?: string[]
 }
 
-export type ActivityType = 'salary' | 'tax' | 'reporting' | 'audit' | 'other'
+export type ActivityType = 'salary' | 'tax' | 'reporting' | 'audit' | 'recurring' | 'other'
 
 export type ActivityStatus = 'pending' | 'in_progress' | 'completed' | 'blocked' | 'cancelled'
 
@@ -29,18 +29,18 @@ export type ActivityPriority = 'low' | 'medium' | 'high' | 'urgent'
 export interface ChecklistItem {
   id: string
   text: string
-  isCompleted: boolean
-  completedAt: string | null
-  completedBy: string | null
+  is_completed: boolean
+  completed_at: string | null
+  completed_by: string | null
 }
 
 export interface Comment {
   id: string
   text: string
-  authorId: string
-  authorName: string
-  createdAt: string
-  updatedAt: string | null
+  author_id: string
+  author_name: string
+  created_at: string
+  updated_at: string | null
 }
 
 export interface ActivityFilters {
@@ -59,4 +59,27 @@ export interface ActivitiesState {
   filters: ActivityFilters
   isLoading: boolean
   error: string | null
+}
+
+// API Data Types (for creating/updating)
+export interface CreateActivityData {
+  title: string
+  description?: string
+  type?: ActivityType
+  status?: ActivityStatus
+  priority?: ActivityPriority
+  assigned_to?: string
+  due_date?: string
+  period_id?: number
+}
+
+export interface UpdateActivityData {
+  title?: string
+  description?: string
+  type?: ActivityType
+  status?: ActivityStatus
+  priority?: ActivityPriority
+  assigned_to?: string
+  due_date?: string
+  completed_at?: string
 }

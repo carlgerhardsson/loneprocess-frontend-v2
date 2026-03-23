@@ -35,8 +35,9 @@ export function useActivities(filters?: {
     queryKey: activitiesKeys.list(filters),
     queryFn: async () => {
       const activities = await fetchActivities(filters)
-      // Sync with Zustand store
-      setActivities(activities)
+      // Sync with Zustand store (convert to string IDs for store)
+      const storeActivities = activities.map(a => ({ ...a, id: String(a.id) }))
+      setActivities(storeActivities as never[])
       return activities
     },
   })
@@ -84,8 +85,8 @@ export function useCreateActivity() {
       return { previousActivities }
     },
     onSuccess: data => {
-      // Update Zustand store
-      addActivity(data)
+      // Update Zustand store (convert to string ID)
+      addActivity({ ...data, id: String(data.id) } as never)
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
     },
@@ -121,7 +122,7 @@ export function useUpdateActivity() {
       return { previousActivity }
     },
     onSuccess: data => {
-      updateActivityStore(data.id.toString(), data)
+      updateActivityStore(String(data.id), { ...data, id: String(data.id) } as never)
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
       queryClient.invalidateQueries({ queryKey: activitiesKeys.detail(data.id) })
     },
@@ -155,7 +156,7 @@ export function useDeleteActivity() {
       return { previousActivities }
     },
     onSuccess: (_data, id) => {
-      deleteActivityStore(id.toString())
+      deleteActivityStore(String(id))
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
       queryClient.removeQueries({ queryKey: activitiesKeys.detail(id) })
     },

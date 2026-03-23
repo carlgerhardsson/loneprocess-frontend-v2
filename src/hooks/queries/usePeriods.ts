@@ -41,8 +41,9 @@ export function usePeriods(filters?: {
     queryKey: periodsKeys.list(filters),
     queryFn: async () => {
       const periods = await fetchPeriods(filters)
-      // Sync with Zustand store
-      setPeriods(periods)
+      // Sync with Zustand store (convert to string IDs)
+      const storePeriods = periods.map(p => ({ ...p, id: String(p.id) }))
+      setPeriods(storePeriods as never[])
       return periods
     },
   })
@@ -80,8 +81,8 @@ export function useCreatePeriod() {
   return useMutation({
     mutationFn: createPeriod,
     onSuccess: data => {
-      // Update Zustand store
-      addPeriod(data)
+      // Update Zustand store (convert to string ID)
+      addPeriod({ ...data, id: String(data.id) } as never)
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
     },
@@ -99,7 +100,7 @@ export function useUpdatePeriod() {
     mutationFn: ({ id, data }: { id: number; data: Partial<Period> }) =>
       updatePeriod(id, data),
     onSuccess: data => {
-      updatePeriodStore(data.id.toString(), data)
+      updatePeriodStore(String(data.id), { ...data, id: String(data.id) } as never)
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
       queryClient.invalidateQueries({ queryKey: periodsKeys.detail(data.id) })
     },
