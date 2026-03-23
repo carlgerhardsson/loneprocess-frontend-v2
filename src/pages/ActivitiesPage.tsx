@@ -14,9 +14,7 @@ export function ActivitiesPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <p className="text-gray-600">
-          Aktiviteter visas här när du har kopplat till backend API.
-        </p>
+        <p className="text-gray-600">Aktiviteter visas här när du har kopplat till backend API.</p>
         <p className="text-sm text-gray-500 mt-2">
           Se README.md för instruktioner om hur du startar backend.
         </p>

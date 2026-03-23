@@ -97,8 +97,7 @@ export function useUpdatePeriod() {
   const updatePeriodStore = usePeriodsStore(state => state.updatePeriod)
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Period> }) =>
-      updatePeriod(id, data),
+    mutationFn: ({ id, data }: { id: number; data: Partial<Period> }) => updatePeriod(id, data),
     onSuccess: data => {
       updatePeriodStore(String(data.id), { ...data, id: String(data.id) } as never)
       queryClient.invalidateQueries({ queryKey: periodsKeys.lists() })
