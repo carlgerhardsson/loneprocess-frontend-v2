@@ -1,5 +1,6 @@
 /**
- * Hooks barrel export
+ * Hooks Index
+ * Central export for all custom hooks
  */
 
-export * from './queries'
+export * from './useAuth'
