@@ -43,7 +43,7 @@ describe('ActivityDetails', () => {
 
   it('renders activity type', () => {
     render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Lön')).toBeInTheDocument()
+    expect(screen.getByText('Lönehantering')).toBeInTheDocument()
   })
 
   it('renders due date', () => {
@@ -84,7 +84,7 @@ describe('ActivityDetails', () => {
     }
 
     render(<ActivityDetails activity={completedActivity} />)
-    expect(screen.getByText('Avslutad')).toBeInTheDocument()
+    expect(screen.getByText('Slutförd')).toBeInTheDocument()
   })
 
   it('does not render checklist when no items', () => {
