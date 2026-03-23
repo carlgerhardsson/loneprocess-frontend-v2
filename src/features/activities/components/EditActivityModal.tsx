@@ -6,7 +6,8 @@
 import { Modal } from '@/components/ui'
 import { ActivityForm } from './ActivityForm'
 import { useUpdateActivity } from '@/hooks/queries/useActivities'
-import type { Activity, UpdateActivityData } from '@/types'
+import type { Activity } from '@/types'
+import type { ActivityFormData } from '../schemas/activitySchema'
 
 interface EditActivityModalProps {
   isOpen: boolean
@@ -23,9 +24,20 @@ export function EditActivityModal({
 }: EditActivityModalProps) {
   const updateMutation = useUpdateActivity()
 
-  const handleSubmit = async (data: UpdateActivityData) => {
+  const handleSubmit = async (data: ActivityFormData) => {
     try {
-      await updateMutation.mutateAsync({ id: Number(activity.id), data })
+      // Convert form data to API format
+      const apiData = {
+        title: data.title,
+        description: data.description,
+        type: data.type,
+        status: data.status,
+        priority: data.priority,
+        assignedTo: data.assignedTo || undefined,
+        dueDate: data.dueDate || undefined,
+        tags: data.tags || [],
+      }
+      await updateMutation.mutateAsync({ id: Number(activity.id), data: apiData })
       onSuccess?.()
       onClose()
     } catch (error) {

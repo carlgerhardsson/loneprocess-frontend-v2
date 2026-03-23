@@ -20,7 +20,13 @@ export interface Activity {
   tags: string[]
 }
 
-export type ActivityType = 'salary' | 'tax' | 'reporting' | 'audit' | 'other'
+export type ActivityType =
+  | 'salary'
+  | 'tax'
+  | 'reporting'
+  | 'review'
+  | 'recurring'
+  | 'other'
 
 export type ActivityStatus = 'pending' | 'in_progress' | 'completed' | 'blocked' | 'cancelled'
 
@@ -59,4 +65,31 @@ export interface ActivitiesState {
   filters: ActivityFilters
   isLoading: boolean
   error: string | null
+}
+
+/**
+ * API Types for creating/updating activities
+ */
+export interface CreateActivityData {
+  title: string
+  description: string
+  type: ActivityType
+  status: ActivityStatus
+  priority: ActivityPriority
+  assignedTo?: string
+  dueDate?: string
+  tags?: string[]
+  periodId?: string
+}
+
+export interface UpdateActivityData {
+  title?: string
+  description?: string
+  type?: ActivityType
+  status?: ActivityStatus
+  priority?: ActivityPriority
+  assignedTo?: string
+  dueDate?: string
+  tags?: string[]
+  completedAt?: string
 }
