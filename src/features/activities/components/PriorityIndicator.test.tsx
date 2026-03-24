@@ -34,5 +34,5 @@ describe('PriorityIndicator', () => {
 
     rerender(<PriorityIndicator priority={3} size="md" />)
     expect(container.querySelector('.w-5')).toBeTruthy()
-  }
+  })
 })
