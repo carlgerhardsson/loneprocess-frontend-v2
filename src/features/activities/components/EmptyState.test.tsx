@@ -1,32 +1,29 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
 import { EmptyState } from './EmptyState'
 
-describe('EmptyState', () => {
-  it('renders empty state message', () => {
+describe('EmptyState - READ-ONLY VERSION', () => {
+  it('renders default empty state', () => {
     render(<EmptyState />)
+
     expect(screen.getByText('Inga aktiviteter')).toBeInTheDocument()
-    expect(screen.getByText(/Det finns inga aktiviteter för denna period/)).toBeInTheDocument()
+    expect(screen.getByText('Det finns inga aktiviteter att visa just nu.')).toBeInTheDocument()
   })
 
-  it('renders create button when onCreateActivity is provided', () => {
-    const onCreateActivity = vi.fn()
-    render(<EmptyState onCreateActivity={onCreateActivity} />)
-    expect(screen.getByText('Skapa aktivitet')).toBeInTheDocument()
+  it('renders custom children', () => {
+    render(
+      <EmptyState>
+        <p>Custom empty message</p>
+      </EmptyState>
+    )
+
+    expect(screen.getByText('Custom empty message')).toBeInTheDocument()
   })
 
-  it('does not render create button when onCreateActivity is not provided', () => {
-    render(<EmptyState />)
-    expect(screen.queryByText('Skapa aktivitet')).not.toBeInTheDocument()
-  })
-
-  it('calls onCreateActivity when button is clicked', () => {
-    const onCreateActivity = vi.fn()
-    render(<EmptyState onCreateActivity={onCreateActivity} />)
-
-    const button = screen.getByText('Skapa aktivitet')
-    fireEvent.click(button)
-
-    expect(onCreateActivity).toHaveBeenCalledTimes(1)
+  it('displays file icon', () => {
+    const { container } = render(<EmptyState />)
+    
+    const icon = container.querySelector('svg')
+    expect(icon).toBeInTheDocument()
   })
 })

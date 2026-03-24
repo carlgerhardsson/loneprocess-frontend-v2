@@ -32,7 +32,7 @@ const mockActivities: Activity[] = [
 
 describe('ActivityList', () => {
   it('renders list of activities', () => {
-    render(<ActivityList activities={mockActivities} selectedActivityId={null} onClick={vi.fn()} />)
+    render(<ActivityList activities={mockActivities} onClick={vi.fn()} />)
 
     expect(screen.getByText('Planering Löneprocess')).toBeInTheDocument()
     expect(screen.getByText('Kontroll Aktiv')).toBeInTheDocument()
@@ -49,14 +49,14 @@ describe('ActivityList', () => {
 
   it('calls onClick when activity clicked', () => {
     const onClick = vi.fn()
-    render(<ActivityList activities={mockActivities} selectedActivityId={null} onClick={onClick} />)
+    render(<ActivityList activities={mockActivities} onClick={onClick} />)
 
     fireEvent.click(screen.getByText('Planering Löneprocess'))
     expect(onClick).toHaveBeenCalledWith(mockActivities[0])
   })
 
   it('shows empty state when no activities', () => {
-    render(<ActivityList activities={[]} selectedActivityId={null} onClick={vi.fn()} />)
+    render(<ActivityList activities={[]} onClick={vi.fn()} />)
 
     expect(screen.getByText(/inga aktiviteter/i)).toBeInTheDocument()
   })

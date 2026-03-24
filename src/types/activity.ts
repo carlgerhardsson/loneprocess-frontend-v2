@@ -15,15 +15,15 @@ export interface ActivityAPI {
   id: number
   process_nr: string
   process: string
-  out_input: string
-  ska_inga_i_loneperiod: boolean
+  out_input?: string
+  ska_inga_i_loneperiod?: boolean
   fas: string
   roll: string
   behov: string
-  effekten_vardet: string
-  extra_info: string
-  acceptans: string
-  feature_losning: string
+  effekten_vardet?: string
+  extra_info?: string
+  acceptans?: string
+  feature_losning?: string
   priority: number // 0-4 (integer)
   status: ActivityStatus
   created_at?: string
@@ -43,20 +43,20 @@ export interface Activity {
   id: string // Convert from number to string for UI consistency
   processNr: string
   process: string
-  outInput: string
-  skaIngaILoneperiod: boolean
+  outInput?: string
+  skaIngaILoneperiod?: boolean
   fas: string
   roll: string
   behov: string
-  effektenVardet: string
-  extraInfo: string
-  acceptans: string
-  featureLosning: string
+  effektenVardet?: string
+  extraInfo?: string
+  acceptans?: string
+  featureLosning?: string
   priority: number
   status: ActivityStatus
   createdAt: string
   updatedAt: string
-  senastUtford: string | null
+  senastUtford?: string | null
 }
 
 // ============================================================================
