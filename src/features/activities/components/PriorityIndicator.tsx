@@ -1,67 +1,61 @@
 import { Activity } from '@/types'
-import { AlertCircle, ArrowUp, Minus, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AlertCircle, ArrowUp, ArrowDown, Minus } from 'lucide-react'
 
 interface PriorityIndicatorProps {
   priority: Activity['priority']
   showLabel?: boolean
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md'
 }
 
 /**
  * Priority Indicator
- *
- * Visual indicator for activity priority level.
+ * UPDATED: Now uses number (0-4) instead of string
  */
 export function PriorityIndicator({
   priority,
   showLabel = false,
   size = 'md',
 }: PriorityIndicatorProps) {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6',
-  }
+  const iconSize = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'
 
-  const priorityConfig: Record<
-    Activity['priority'],
-    { label: string; icon: typeof AlertCircle; className: string }
-  > = {
-    urgent: {
-      label: 'Brådskande',
-      icon: AlertTriangle,
-      className: 'text-red-600',
-    },
-    high: {
-      label: 'Hög prioritet',
-      icon: AlertCircle,
-      className: 'text-orange-600',
-    },
-    medium: {
-      label: 'Medium prioritet',
-      icon: ArrowUp,
-      className: 'text-yellow-600',
-    },
-    low: {
-      label: 'Låg prioritet',
-      icon: Minus,
-      className: 'text-gray-400',
-    },
-  }
+  const priorityConfig: Record<number, { label: string; icon: typeof Minus; className: string }> =
+    {
+      0: {
+        label: 'Ingen',
+        icon: Minus,
+        className: 'text-gray-400',
+      },
+      1: {
+        label: 'Låg',
+        icon: ArrowDown,
+        className: 'text-green-600',
+      },
+      2: {
+        label: 'Medel',
+        icon: Minus,
+        className: 'text-yellow-600',
+      },
+      3: {
+        label: 'Hög',
+        icon: ArrowUp,
+        className: 'text-orange-600',
+      },
+      4: {
+        label: 'Brådskande',
+        icon: AlertCircle,
+        className: 'text-red-600',
+      },
+    }
 
-  // Safe fallback if priority value doesn't match our config
-  const config = priorityConfig[priority] || priorityConfig.medium
+  // Safe fallback - default to medium priority
+  const config = priorityConfig[priority] ?? priorityConfig[2]
   const Icon = config.icon
 
-  if (showLabel) {
-    return (
-      <div className="flex items-center gap-1.5">
-        <Icon className={cn(sizeClasses[size], config.className)} />
-        <span className="text-sm font-medium text-gray-700">{config.label}</span>
-      </div>
-    )
-  }
-
-  return <Icon className={cn(sizeClasses[size], config.className)} aria-label={config.label} />
+  return (
+    <div className="flex items-center gap-1.5">
+      <Icon className={cn(iconSize, config.className)} aria-hidden="true" />
+      {showLabel && <span className={cn('text-sm font-medium', config.className)}>{config.label}</span>}
+    </div>
+  )
 }

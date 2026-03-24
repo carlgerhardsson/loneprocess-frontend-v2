@@ -8,8 +8,7 @@ interface StatusBadgeProps {
 
 /**
  * Status Badge
- *
- * Visual indicator for activity status.
+ * UPDATED: Now supports all backend status values
  */
 export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
   const sizeClasses = {
@@ -18,9 +17,17 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
   }
 
   const statusConfig: Record<Activity['status'], { label: string; className: string }> = {
+    active: {
+      label: 'Aktiv',
+      className: 'bg-green-100 text-green-700',
+    },
+    draft: {
+      label: 'Utkast',
+      className: 'bg-gray-100 text-gray-600',
+    },
     pending: {
-      label: 'Väntar',
-      className: 'bg-gray-100 text-gray-700',
+      label: 'Väntande',
+      className: 'bg-yellow-100 text-yellow-700',
     },
     in_progress: {
       label: 'Pågående',
@@ -28,15 +35,11 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     },
     completed: {
       label: 'Klar',
-      className: 'bg-green-100 text-green-700',
+      className: 'bg-emerald-100 text-emerald-700',
     },
     blocked: {
       label: 'Blockerad',
       className: 'bg-red-100 text-red-700',
-    },
-    cancelled: {
-      label: 'Avbruten',
-      className: 'bg-gray-100 text-gray-500',
     },
   }
 
