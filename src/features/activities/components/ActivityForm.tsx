@@ -5,10 +5,10 @@ import type { Activity, ActivityType, ActivityStatus, ActivityPriority } from '@
 import { Save, X } from 'lucide-react'
 
 interface ActivityFormProps {
-  activity?: Activity
+  initialData?: Activity
   onSubmit: (data: ActivityFormData) => void | Promise<void>
   onCancel?: () => void
-  isSubmitting?: boolean
+  isLoading?: boolean
 }
 
 /**
@@ -17,10 +17,10 @@ interface ActivityFormProps {
  * Form for creating or editing activities with validation.
  */
 export function ActivityForm({
-  activity,
+  initialData,
   onSubmit,
   onCancel,
-  isSubmitting = false,
+  isLoading = false,
 }: ActivityFormProps) {
   const {
     register,
@@ -28,16 +28,16 @@ export function ActivityForm({
     formState: { errors },
   } = useForm<ActivityFormData>({
     resolver: zodResolver(activitySchema),
-    defaultValues: activity
+    defaultValues: initialData
       ? {
-          title: activity.title,
-          description: activity.description,
-          type: activity.type,
-          status: activity.status,
-          priority: activity.priority,
-          assignedTo: activity.assignedTo || '',
-          dueDate: activity.dueDate || '',
-          tags: activity.tags,
+          title: initialData.title,
+          description: initialData.description,
+          type: initialData.type,
+          status: initialData.status,
+          priority: initialData.priority,
+          assignedTo: initialData.assignedTo || '',
+          dueDate: initialData.dueDate || '',
+          tags: initialData.tags,
         }
       : {
           type: 'salary',
@@ -47,17 +47,18 @@ export function ActivityForm({
   })
 
   const typeOptions: { value: ActivityType; label: string }[] = [
-    { value: 'salary', label: 'Lön' },
+    { value: 'salary', label: 'Lönehantering' },
     { value: 'tax', label: 'Skatt' },
     { value: 'reporting', label: 'Rapportering' },
-    { value: 'audit', label: 'Granskning' },
+    { value: 'review', label: 'Granskning' },
+    { value: 'recurring', label: 'Återkommande' },
     { value: 'other', label: 'Övrigt' },
   ]
 
   const statusOptions: { value: ActivityStatus; label: string }[] = [
     { value: 'pending', label: 'Väntande' },
     { value: 'in_progress', label: 'Pågående' },
-    { value: 'completed', label: 'Avslutad' },
+    { value: 'completed', label: 'Klar' },
     { value: 'blocked', label: 'Blockerad' },
     { value: 'cancelled', label: 'Avbruten' },
   ]
@@ -81,7 +82,7 @@ export function ActivityForm({
           id="title"
           type="text"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-          disabled={isSubmitting}
+          disabled={isLoading}
         />
         {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
       </div>
@@ -96,7 +97,7 @@ export function ActivityForm({
           id="description"
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-          disabled={isSubmitting}
+          disabled={isLoading}
         />
         {errors.description && (
           <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
@@ -114,7 +115,7 @@ export function ActivityForm({
             {...register('type')}
             id="type"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             {typeOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -134,7 +135,7 @@ export function ActivityForm({
             {...register('status')}
             id="status"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             {statusOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -154,7 +155,7 @@ export function ActivityForm({
             {...register('priority')}
             id="priority"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             {priorityOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -180,7 +181,7 @@ export function ActivityForm({
             id="assignedTo"
             type="text"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isSubmitting}
+            disabled={isLoading}
           />
           {errors.assignedTo && (
             <p className="mt-1 text-sm text-red-600">{errors.assignedTo.message}</p>
@@ -197,7 +198,7 @@ export function ActivityForm({
             id="dueDate"
             type="date"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isSubmitting}
+            disabled={isLoading}
           />
           {errors.dueDate && <p className="mt-1 text-sm text-red-600">{errors.dueDate.message}</p>}
         </div>
@@ -209,7 +210,7 @@ export function ActivityForm({
           <button
             type="button"
             onClick={onCancel}
-            disabled={isSubmitting}
+            disabled={isLoading}
             className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-4 h-4" />
@@ -218,11 +219,11 @@ export function ActivityForm({
         )}
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading}
           className="flex items-center gap-2 px-4 py-2 text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Save className="w-4 h-4" />
-          {isSubmitting ? 'Sparar...' : activity ? 'Uppdatera' : 'Skapa'}
+          {isLoading ? 'Sparar...' : initialData ? 'Uppdatera' : 'Skapa'}
         </button>
       </div>
     </form>

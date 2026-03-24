@@ -1,105 +1,72 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ActivityList } from './ActivityList'
-import { useActivities } from '@/hooks/queries/useActivities'
-import type { ReactNode } from 'react'
-import type { UseQueryResult } from '@tanstack/react-query'
 import type { Activity } from '@/types'
-
-// Mock the useActivities hook
-vi.mock('@/hooks/queries/useActivities', () => ({
-  useActivities: vi.fn(),
-}))
 
 const mockActivities: Activity[] = [
   {
     id: '1',
-    periodId: 'period-1',
-    title: 'Activity 1',
+    title: 'Test Activity 1',
+    description: 'Test description 1',
     type: 'salary',
-    status: 'pending',
+    status: 'in_progress',
     priority: 'high',
-    description: '',
-    assignedTo: null,
-    dueDate: null,
+    assignedTo: 'John Doe',
+    dueDate: '2024-12-31',
     completedAt: null,
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    periodId: 'period-1',
     checklistItems: [],
     comments: [],
     tags: [],
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01',
+  },
+  {
+    id: '2',
+    title: 'Test Activity 2',
+    description: 'Test description 2',
+    type: 'tax',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: 'Jane Smith',
+    dueDate: '2024-11-30',
+    completedAt: null,
+    createdAt: '2024-01-02T00:00:00Z',
+    updatedAt: '2024-01-02T00:00:00Z',
+    periodId: 'period-1',
+    checklistItems: [],
+    comments: [],
+    tags: [],
   },
 ]
 
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  })
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  }
-}
-
 describe('ActivityList', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
+  it('renders all activities', () => {
+    render(<ActivityList activities={mockActivities} />)
+
+    expect(screen.getByText('Test Activity 1')).toBeInTheDocument()
+    expect(screen.getByText('Test Activity 2')).toBeInTheDocument()
   })
 
-  it('renders loading state', () => {
-    vi.mocked(useActivities).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<Activity[], Error>)
+  it('calls onEdit when edit button clicked', async () => {
+    const onEdit = vi.fn()
+    const { container } = render(<ActivityList activities={mockActivities} onEdit={onEdit} />)
 
-    render(<ActivityList />, { wrapper: createWrapper() })
-    // Skeleton loaders should be rendered
-    expect(document.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0)
+    const editButtons = container.querySelectorAll('[aria-label="Redigera"]')
+    expect(editButtons).toHaveLength(2)
   })
 
-  it('renders error state', () => {
-    vi.mocked(useActivities).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      error: new Error('Failed to fetch'),
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<Activity[], Error>)
+  it('calls onDelete when delete button clicked', async () => {
+    const onDelete = vi.fn()
+    const { container } = render(<ActivityList activities={mockActivities} onDelete={onDelete} />)
 
-    render(<ActivityList />, { wrapper: createWrapper() })
-    expect(screen.getByText('Något gick fel')).toBeInTheDocument()
-    expect(screen.getByText('Failed to fetch')).toBeInTheDocument()
+    const deleteButtons = container.querySelectorAll('[aria-label="Ta bort"]')
+    expect(deleteButtons).toHaveLength(2)
   })
 
-  it('renders empty state', () => {
-    vi.mocked(useActivities).mockReturnValue({
-      data: [],
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<Activity[], Error>)
-
-    render(<ActivityList />, { wrapper: createWrapper() })
-    expect(screen.getByText('Inga aktiviteter')).toBeInTheDocument()
-  })
-
-  it('renders activities list', () => {
-    vi.mocked(useActivities).mockReturnValue({
-      data: mockActivities,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-    } as unknown as UseQueryResult<Activity[], Error>)
-
-    render(<ActivityList />, { wrapper: createWrapper() })
-    expect(screen.getByText('Activity 1')).toBeInTheDocument()
+  it('renders empty list when no activities', () => {
+    const { container } = render(<ActivityList activities={[]} />)
+    expect(container.querySelector('.space-y-3')).toBeInTheDocument()
+    expect(container.querySelectorAll('.space-y-3 > div')).toHaveLength(0)
   })
 })

@@ -16,7 +16,7 @@ export const activitySchema = z.object({
     .min(1, 'Beskrivning är obligatorisk')
     .min(10, 'Beskrivning måste vara minst 10 tecken')
     .max(1000, 'Beskrivning får max vara 1000 tecken'),
-  type: z.enum(['salary', 'tax', 'reporting', 'audit', 'other'] as const, {
+  type: z.enum(['salary', 'tax', 'reporting', 'review', 'recurring', 'other'] as const, {
     errorMap: () => ({ message: 'Välj en giltig typ' }),
   }),
   status: z.enum(['pending', 'in_progress', 'completed', 'blocked', 'cancelled'] as const, {
