@@ -1,12 +1,11 @@
 /**
- * Activity Details Component
- * UPDATED: Displays löneprocess-specific fields
+ * Activity Details Component - READ-ONLY VERSION
+ * Displays löneprocess-specific fields
  */
 
 import { formatDate } from '@/lib/utils'
 import { StatusBadge } from './StatusBadge'
 import { PriorityIndicator } from './PriorityIndicator'
-import { ChecklistDisplay } from './ChecklistDisplay'
 import { Tag, User, Clock, CheckSquare } from 'lucide-react'
 import type { Activity } from '@/types'
 
@@ -143,14 +142,6 @@ export function ActivityDetails({ activity }: ActivityDetailsProps) {
               <dd className="text-gray-900 whitespace-pre-wrap">{activity.extraInfo}</dd>
             </div>
           )}
-        </div>
-      )}
-
-      {/* Checklist (if needed in future) */}
-      {activity.checklistItems && activity.checklistItems.length > 0 && (
-        <div className="border-t pt-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Checklista</h3>
-          <ChecklistDisplay items={activity.checklistItems} />
         </div>
       )}
     </div>
