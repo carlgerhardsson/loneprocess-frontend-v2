@@ -1,6 +1,6 @@
 /**
  * Edit Activity Modal
- * Modal for editing existing activities with optimistic updates
+ * UPDATED: Now uses backend API schema
  */
 
 import { Modal } from '@/components/ui'
@@ -8,6 +8,7 @@ import { ActivityForm } from './ActivityForm'
 import { useUpdateActivity } from '@/hooks/mutations'
 import type { Activity } from '@/types'
 import type { ActivityFormData } from '../schemas/activitySchema'
+import type { UpdateActivityData } from '@/types'
 
 interface EditActivityModalProps {
   isOpen: boolean
@@ -28,24 +29,30 @@ export function EditActivityModal({
       onClose()
     },
     onError: (error) => {
-      console.error('Failed to update activity:', error)
+      console.error('[EditActivityModal] Failed to update activity:', error)
     },
   })
 
-  const handleSubmit = async (data: ActivityFormData) => {
-    // Convert form data to API format
-    const apiData = {
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      status: data.status,
-      priority: data.priority,
-      assignedTo: data.assignedTo || undefined,
-      dueDate: data.dueDate || undefined,
-      tags: data.tags || [],
+  const handleSubmit = (formData: ActivityFormData) => {
+    // Form data already matches backend UpdateActivityData format
+    const apiData: UpdateActivityData = {
+      process_nr: formData.process_nr,
+      process: formData.process,
+      out_input: formData.out_input,
+      ska_inga_i_loneperiod: formData.ska_inga_i_loneperiod,
+      fas: formData.fas,
+      roll: formData.roll,
+      behov: formData.behov,
+      effekten_vardet: formData.effekten_vardet,
+      extra_info: formData.extra_info,
+      acceptans: formData.acceptans,
+      feature_losning: formData.feature_losning,
+      priority: formData.priority,
+      status: formData.status,
     }
     
-    // Optimistic update happens automatically in mutation hook
+    console.log('[EditActivityModal] Submitting:', apiData)
+    
     updateMutation.mutate({ id: Number(activity.id), data: apiData })
   }
 

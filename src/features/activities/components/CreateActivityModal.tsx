@@ -1,12 +1,13 @@
 /**
  * Create Activity Modal
- * Modal for creating new activities with optimistic updates
+ * UPDATED: Now uses backend API schema
  */
 
 import { Modal } from '@/components/ui'
 import { ActivityForm } from './ActivityForm'
 import { useCreateActivity } from '@/hooks/mutations'
 import type { ActivityFormData } from '../schemas/activitySchema'
+import type { CreateActivityData } from '@/types'
 
 interface CreateActivityModalProps {
   isOpen: boolean
@@ -21,24 +22,31 @@ export function CreateActivityModal({ isOpen, onClose, onSuccess }: CreateActivi
       onClose()
     },
     onError: (error) => {
-      console.error('Failed to create activity:', error)
+      console.error('[CreateActivityModal] Failed to create activity:', error)
     },
   })
 
-  const handleSubmit = async (data: ActivityFormData) => {
-    // Convert form data to API format
-    const apiData = {
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      status: data.status,
-      priority: data.priority,
-      assignedTo: data.assignedTo || undefined,
-      dueDate: data.dueDate || undefined,
-      tags: data.tags || [],
+  const handleSubmit = (formData: ActivityFormData) => {
+    // Form data already matches backend CreateActivityData format
+    const apiData: CreateActivityData = {
+      process_nr: formData.process_nr || '',
+      process: formData.process,
+      out_input: formData.out_input || '',
+      ska_inga_i_loneperiod: formData.ska_inga_i_loneperiod || false,
+      fas: formData.fas,
+      roll: formData.roll,
+      behov: formData.behov,
+      effekten_vardet: formData.effekten_vardet || '',
+      extra_info: formData.extra_info || '',
+      acceptans: formData.acceptans || '',
+      feature_losning: formData.feature_losning || '',
+      priority: formData.priority || 2,
+      status: formData.status,
     }
     
-    // Optimistic update happens automatically in mutation hook
+    console.log('[CreateActivityModal] Submitting:', apiData)
+    
+    // No transformation needed - types match exactly!
     createMutation.mutate(apiData)
   }
 
