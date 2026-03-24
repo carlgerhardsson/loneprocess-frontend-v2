@@ -1,5 +1,5 @@
 /**
- * Activities feature components
+ * Activities feature components - READ-ONLY VERSION
  */
 
 export { ActivityList } from './ActivityList'
@@ -8,12 +8,7 @@ export { ActivityDetails } from './ActivityDetails'
 export { StatusBadge } from './StatusBadge'
 export { PriorityIndicator } from './PriorityIndicator'
 export { EmptyState } from './EmptyState'
-export { ChecklistDisplay } from './ChecklistDisplay'
-export { CommentsList } from './CommentsList'
-export { CommentItem } from './CommentItem'
-export { CommentForm } from './CommentForm'
 export { SearchBar } from './SearchBar'
 export { FilterPanel } from './FilterPanel'
 export { ActiveFilters } from './ActiveFilters'
-export { ActivityForm } from './ActivityForm'
 export { FormField } from './FormField'
