@@ -42,7 +42,9 @@ describe('FilterPanel - READ-ONLY VERSION', () => {
     const onFilterChange = vi.fn()
     const filters: ActivityFilters = {}
 
-    render(<FilterPanel filters={filters} onFilterChange={onFilterChange} onClearFilters={vi.fn()} />)
+    render(
+      <FilterPanel filters={filters} onFilterChange={onFilterChange} onClearFilters={vi.fn()} />
+    )
 
     const pendingCheckbox = screen.getByLabelText('Väntande')
     fireEvent.click(pendingCheckbox)
@@ -66,7 +68,9 @@ describe('FilterPanel - READ-ONLY VERSION', () => {
       status: ['pending'],
     }
 
-    render(<FilterPanel filters={filters} onFilterChange={vi.fn()} onClearFilters={onClearFilters} />)
+    render(
+      <FilterPanel filters={filters} onFilterChange={vi.fn()} onClearFilters={onClearFilters} />
+    )
 
     const clearButton = screen.getByText('Rensa')
     fireEvent.click(clearButton)

@@ -84,10 +84,10 @@ export function ActivitiesPage() {
       if (key === 'search') {
         return { ...prev, search: '' }
       }
-      
+
       const currentValues = prev[key] as (string | number)[] | undefined
       if (!currentValues) return prev
-      
+
       return {
         ...prev,
         [key]: currentValues.filter(v => v !== value),
@@ -112,7 +112,10 @@ export function ActivitiesPage() {
               <AlertCircle className="w-5 h-5" />
               <div>
                 <span className="font-semibold">Read-only vy:</span>
-                <span className="ml-2">Denna applikation visar endast aktiviteter från backend. Aktiviteter skapas manuellt någon annanstans.</span>
+                <span className="ml-2">
+                  Denna applikation visar endast aktiviteter från backend. Aktiviteter skapas
+                  manuellt någon annanstans.
+                </span>
               </div>
             </div>
             {/* Auto-refresh indicator */}
@@ -146,10 +149,10 @@ export function ActivitiesPage() {
           {/* Active Filters */}
           {hasActiveFilters && (
             <div className="mt-4">
-              <ActiveFilters 
-                filters={filters} 
+              <ActiveFilters
+                filters={filters}
                 onRemoveFilter={handleRemoveFilter}
-                onClearAll={handleClearFilters} 
+                onClearAll={handleClearFilters}
               />
             </div>
           )}
@@ -161,8 +164,8 @@ export function ActivitiesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Filters Sidebar */}
           <aside className="lg:col-span-1">
-            <FilterPanel 
-              filters={filters} 
+            <FilterPanel
+              filters={filters}
               onFilterChange={setFilters}
               onClearFilters={handleClearFilters}
             />
@@ -185,7 +188,9 @@ export function ActivitiesPage() {
                   <AlertCircle className="w-5 h-5" />
                   <div>
                     <p className="font-semibold">Kunde inte hämta aktiviteter</p>
-                    <p className="text-sm mt-1">Kontrollera att backend API är igång och CORS är aktiverat.</p>
+                    <p className="text-sm mt-1">
+                      Kontrollera att backend API är igång och CORS är aktiverat.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -204,7 +209,9 @@ export function ActivitiesPage() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-gray-600">Inga aktiviteter än. Aktiviteter kommer att visas här när de finns i backend.</p>
+                  <p className="text-gray-600">
+                    Inga aktiviteter än. Aktiviteter kommer att visas här när de finns i backend.
+                  </p>
                 )}
               </EmptyState>
             )}

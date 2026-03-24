@@ -22,7 +22,7 @@ describe('EmptyState - READ-ONLY VERSION', () => {
 
   it('displays file icon', () => {
     const { container } = render(<EmptyState />)
-    
+
     const icon = container.querySelector('svg')
     expect(icon).toBeInTheDocument()
   })

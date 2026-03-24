@@ -67,7 +67,7 @@ export interface Activity {
  * Activity Status
  * From backend Swagger: "active|draft|pending|in_progress|completed|blocked"
  */
-export type ActivityStatus = 
+export type ActivityStatus =
   | 'active'
   | 'draft'
   | 'pending'
@@ -87,7 +87,7 @@ export const PRIORITY_LEVELS = {
   URGENT: 4,
 } as const
 
-export type PriorityLevel = typeof PRIORITY_LEVELS[keyof typeof PRIORITY_LEVELS]
+export type PriorityLevel = (typeof PRIORITY_LEVELS)[keyof typeof PRIORITY_LEVELS]
 
 /**
  * Fas (Phase) options - common Swedish löneprocess phases
