@@ -1,11 +1,11 @@
 /**
- * Activities Page
- * READ-ONLY MODE: Only displays data from backend
- * AUTO-REFRESHES: Polls backend every 30 seconds
+ * Activities Page - READ-ONLY VERSION
+ * This app ONLY displays activities from backend API
+ * NO Create/Update/Delete functionality
  */
 
 import { useState } from 'react'
-import { Plus, AlertCircle, RefreshCw } from 'lucide-react'
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import {
   ActivityList,
   ActivityDetails,
@@ -88,19 +88,19 @@ export function ActivitiesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* READ-ONLY MODE BANNER */}
-      <div className="bg-yellow-50 border-b border-yellow-200">
+      {/* READ-ONLY INFO BANNER */}
+      <div className="bg-blue-50 border-b border-blue-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-yellow-800">
+            <div className="flex items-center gap-2 text-blue-800">
               <AlertCircle className="w-5 h-5" />
               <div>
-                <span className="font-semibold">Read-only mode:</span>
-                <span className="ml-2">Visar data från backend. Create/Edit/Delete inaktiverat tills backend enabler CORS.</span>
+                <span className="font-semibold">Read-only vy:</span>
+                <span className="ml-2">Denna applikation visar endast aktiviteter från backend. Aktiviteter skapas manuellt någon annanstans.</span>
               </div>
             </div>
             {/* Auto-refresh indicator */}
-            <div className="flex items-center gap-2 text-sm text-yellow-700">
+            <div className="flex items-center gap-2 text-sm text-blue-700">
               <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
               <span>Uppdateras var 30s • Senast: {lastUpdated}</span>
             </div>
@@ -111,22 +111,11 @@ export function ActivitiesPage() {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Löneprocess Aktiviteter</h1>
-              <p className="mt-1 text-sm text-gray-500">
-                {filteredActivities.length} av {activities.length} aktiviteter
-              </p>
-            </div>
-            {/* CREATE BUTTON - DISABLED */}
-            <button
-              disabled
-              className="flex items-center gap-2 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-              title="Create inaktiverat - backend CORS problem"
-            >
-              <Plus className="w-5 h-5" />
-              Skapa aktivitet
-            </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Löneprocess Aktiviteter</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {filteredActivities.length} av {activities.length} aktiviteter
+            </p>
           </div>
 
           {/* Search Bar */}
@@ -195,9 +184,6 @@ export function ActivitiesPage() {
                 activities={filteredActivities}
                 selectedId={selectedActivity?.id}
                 onSelect={setSelectedActivity}
-                // EDIT/DELETE DISABLED
-                onEdit={undefined}
-                onDelete={undefined}
               />
             )}
           </main>
