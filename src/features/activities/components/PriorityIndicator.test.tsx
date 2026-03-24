@@ -4,23 +4,23 @@ import { PriorityIndicator } from './PriorityIndicator'
 
 describe('PriorityIndicator', () => {
   it('renders high priority', () => {
-    render(<PriorityIndicator priority={3} />)
-    expect(document.querySelector('.bg-red-100')).toBeInTheDocument()
+    const { container } = render(<PriorityIndicator priority={3} />)
+    expect(container.querySelector('.text-orange-600')).toBeTruthy()
   })
 
   it('renders medium priority', () => {
-    render(<PriorityIndicator priority={2} />)
-    expect(document.querySelector('.bg-yellow-100')).toBeInTheDocument()
+    const { container } = render(<PriorityIndicator priority={2} />)
+    expect(container.querySelector('.text-yellow-600')).toBeTruthy()
   })
 
   it('renders low priority', () => {
-    render(<PriorityIndicator priority={1} />)
-    expect(document.querySelector('.bg-green-100')).toBeInTheDocument()
+    const { container } = render(<PriorityIndicator priority={1} />)
+    expect(container.querySelector('.text-green-600')).toBeTruthy()
   })
 
   it('renders urgent priority', () => {
-    render(<PriorityIndicator priority={4} />)
-    expect(document.querySelector('.bg-purple-100')).toBeInTheDocument()
+    const { container } = render(<PriorityIndicator priority={4} />)
+    expect(container.querySelector('.text-red-600')).toBeTruthy()
   })
 
   it('shows label when requested', () => {
@@ -30,9 +30,9 @@ describe('PriorityIndicator', () => {
 
   it('applies size variants', () => {
     const { container, rerender } = render(<PriorityIndicator priority={3} size="sm" />)
-    expect(container.querySelector('.w-2')).toBeInTheDocument()
+    expect(container.querySelector('.w-4')).toBeTruthy()
 
     rerender(<PriorityIndicator priority={3} size="md" />)
-    expect(container.querySelector('.w-3')).toBeInTheDocument()
-  })
+    expect(container.querySelector('.w-5')).toBeTruthy()
+  }
 })

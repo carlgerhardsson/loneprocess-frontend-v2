@@ -44,7 +44,7 @@ describe('ActivityList', () => {
     )
 
     const selectedItem = container.querySelector('[data-selected="true"]')
-    expect(selectedItem).toBeInTheDocument()
+    expect(selectedItem).toBeTruthy()
   })
 
   it('calls onClick when activity clicked', () => {
