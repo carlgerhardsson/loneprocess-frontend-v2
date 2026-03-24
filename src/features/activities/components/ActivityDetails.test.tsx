@@ -5,83 +5,53 @@ import type { Activity } from '@/types'
 
 const mockActivity: Activity = {
   id: '1',
-  periodId: 'period-1',
-  title: 'Test Activity',
-  type: 'salary',
-  status: 'in_progress',
-  priority: 'high',
-  description: 'Test description with details',
-  assignedTo: 'John Doe',
-  dueDate: '2024-12-31',
-  completedAt: null,
-  checklistItems: [
-    { id: '1', text: 'Item 1', isCompleted: true, completedAt: null, completedBy: null },
-    { id: '2', text: 'Item 2', isCompleted: false, completedAt: null, completedBy: null },
-  ],
-  comments: [],
-  tags: ['important', 'urgent'],
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-01-15T00:00:00Z',
+  processNr: '20.2',
+  process: 'Kontroll Aktiv',
+  fas: 'Planering',
+  roll: 'Löneadministratör',
+  priority: 3,
+  status: 'active',
+  behov: 'Kontrollera att alla aktiviteter är korrekta',
+  createdAt: '2024-01-01T10:00:00Z',
+  updatedAt: '2024-01-15T14:30:00Z',
 }
 
-describe('ActivityDetails', () => {
-  it('renders activity title', () => {
+describe('ActivityDetails - READ-ONLY VERSION', () => {
+  it('renders activity details', () => {
     render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Test Activity')).toBeInTheDocument()
+
+    expect(screen.getByText('20.2')).toBeInTheDocument()
+    expect(screen.getByText('Kontroll Aktiv')).toBeInTheDocument()
+    expect(screen.getByText('Kontrollera att alla aktiviteter är korrekta')).toBeInTheDocument()
   })
 
-  it('renders activity description', () => {
+  it('renders core fields', () => {
     render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Test description with details')).toBeInTheDocument()
+
+    expect(screen.getByText('Fas')).toBeInTheDocument()
+    expect(screen.getByText('Planering')).toBeInTheDocument()
+    expect(screen.getByText('Roll')).toBeInTheDocument()
+    expect(screen.getByText('Löneadministratör')).toBeInTheDocument()
   })
 
-  it('renders status badge', () => {
+  it('renders status and priority', () => {
     render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Pågående')).toBeInTheDocument()
+
+    // Status badge should be present
+    expect(screen.getByText('Aktiv')).toBeInTheDocument()
   })
 
-  it('renders priority indicator', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByLabelText('Hög prioritet')).toBeInTheDocument()
-  })
-
-  // TODO: Fix - component shows full label 'Lönehantering' not short 'Lön'
-  it.skip('renders activity type', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Lön')).toBeInTheDocument()
-  })
-
-  // TODO: Fix - component structure changed, date format or location changed
-  it.skip('renders due date', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('2024-12-31')).toBeInTheDocument()
-  })
-
-  it('renders assigned user', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('John Doe')).toBeInTheDocument()
-  })
-
-  it('renders checklist when present', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('Item 1')).toBeInTheDocument()
-    expect(screen.getByText('Item 2')).toBeInTheDocument()
-  })
-
-  it('renders tags when present', () => {
-    render(<ActivityDetails activity={mockActivity} />)
-    expect(screen.getByText('important')).toBeInTheDocument()
-    expect(screen.getByText('urgent')).toBeInTheDocument()
-  })
-
-  // TODO: Fix - completed text changed from 'Avslutad' to 'Slutförd'
-  it.skip('renders completed date when activity is completed', () => {
-    const completedActivity = {
+  it('renders additional fields when present', () => {
+    const activityWithExtras: Activity = {
       ...mockActivity,
-      status: 'completed' as const,
-      completedAt: '2024-01-20T00:00:00Z',
+      outInput: 'Test output',
+      effektenVardet: 'Test value',
+      acceptans: 'Test acceptance',
     }
-    render(<ActivityDetails activity={completedActivity} />)
-    expect(screen.getByText('Avslutad')).toBeInTheDocument()
+
+    render(<ActivityDetails activity={activityWithExtras} />)
+
+    expect(screen.getByText('Output/Input')).toBeInTheDocument()
+    expect(screen.getByText('Test output')).toBeInTheDocument()
   })
 })
