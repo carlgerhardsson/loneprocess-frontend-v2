@@ -50,7 +50,8 @@ export function PriorityIndicator({
     },
   }
 
-  const config = priorityConfig[priority]
+  // Safe fallback if priority value doesn't match our config
+  const config = priorityConfig[priority] || priorityConfig.medium
   const Icon = config.icon
 
   if (showLabel) {
