@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { activitySchema, type ActivityFormData } from '../schemas/activitySchema'
-import type { Activity, ActivityType, ActivityStatus, ActivityPriority } from '@/types'
+import type { Activity } from '@/types'
+import { FAS_OPTIONS, ROLL_OPTIONS, PRIORITY_LEVELS } from '@/types'
 import { Save, X } from 'lucide-react'
 
 interface ActivityFormProps {
@@ -12,9 +13,10 @@ interface ActivityFormProps {
 }
 
 /**
- * Activity Form
- *
- * Form for creating or editing activities with validation.
+ * Activity Form - Löneprocess
+ * 
+ * UPDATED: Now matches actual backend API schema
+ * Backend uses Swedish löneprocess-specific fields
  */
 export function ActivityForm({
   initialData,
@@ -30,103 +32,143 @@ export function ActivityForm({
     resolver: zodResolver(activitySchema),
     defaultValues: initialData
       ? {
-          title: initialData.title,
-          description: initialData.description,
-          type: initialData.type,
+          process_nr: initialData.processNr || '',
+          process: initialData.process,
+          fas: initialData.fas,
+          roll: initialData.roll,
+          behov: initialData.behov,
+          effekten_vardet: initialData.effektenVardet || '',
+          extra_info: initialData.extraInfo || '',
+          acceptans: initialData.acceptans || '',
+          feature_losning: initialData.featureLosning || '',
+          out_input: initialData.outInput || '',
+          ska_inga_i_loneperiod: initialData.skaIngaILoneperiod || false,
           status: initialData.status,
           priority: initialData.priority,
-          assignedTo: initialData.assignedTo || '',
-          dueDate: initialData.dueDate || '',
-          tags: initialData.tags,
         }
       : {
-          type: 'salary',
+          process_nr: '',
+          fas: FAS_OPTIONS[0],
+          roll: ROLL_OPTIONS[0],
           status: 'pending',
-          priority: 'medium',
+          priority: PRIORITY_LEVELS.MEDIUM,
+          ska_inga_i_loneperiod: false,
         },
   })
 
-  const typeOptions: { value: ActivityType; label: string }[] = [
-    { value: 'salary', label: 'Lönehantering' },
-    { value: 'tax', label: 'Skatt' },
-    { value: 'reporting', label: 'Rapportering' },
-    { value: 'review', label: 'Granskning' },
-    { value: 'recurring', label: 'Återkommande' },
-    { value: 'other', label: 'Övrigt' },
-  ]
-
-  const statusOptions: { value: ActivityStatus; label: string }[] = [
+  const statusOptions = [
+    { value: 'active', label: 'Aktiv' },
+    { value: 'draft', label: 'Utkast' },
     { value: 'pending', label: 'Väntande' },
     { value: 'in_progress', label: 'Pågående' },
     { value: 'completed', label: 'Klar' },
     { value: 'blocked', label: 'Blockerad' },
-    { value: 'cancelled', label: 'Avbruten' },
-  ]
+  ] as const
 
-  const priorityOptions: { value: ActivityPriority; label: string }[] = [
-    { value: 'low', label: 'Låg' },
-    { value: 'medium', label: 'Medel' },
-    { value: 'high', label: 'Hög' },
-    { value: 'urgent', label: 'Brådskande' },
-  ]
+  const priorityOptions = [
+    { value: PRIORITY_LEVELS.NONE, label: 'Ingen' },
+    { value: PRIORITY_LEVELS.LOW, label: 'Låg' },
+    { value: PRIORITY_LEVELS.MEDIUM, label: 'Medel' },
+    { value: PRIORITY_LEVELS.HIGH, label: 'Hög' },
+    { value: PRIORITY_LEVELS.URGENT, label: 'Brådskande' },
+  ] as const
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Title */}
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-          Titel *
-        </label>
-        <input
-          {...register('title')}
-          id="title"
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-          disabled={isLoading}
-        />
-        {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
-      </div>
-
-      {/* Description */}
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Beskrivning *
-        </label>
-        <textarea
-          {...register('description')}
-          id="description"
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-          disabled={isLoading}
-        />
-        {errors.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-        )}
-      </div>
-
-      {/* Type, Status, Priority */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Type */}
+      {/* Process Number & Process Name */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-            Typ *
+          <label htmlFor="process_nr" className="block text-sm font-medium text-gray-700 mb-1">
+            Processnr
+          </label>
+          <input
+            {...register('process_nr')}
+            id="process_nr"
+            type="text"
+            placeholder="t.ex. P001"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            disabled={isLoading}
+          />
+          {errors.process_nr && (
+            <p className="mt-1 text-sm text-red-600">{errors.process_nr.message}</p>
+          )}
+        </div>
+
+        <div className="md:col-span-3">
+          <label htmlFor="process" className="block text-sm font-medium text-gray-700 mb-1">
+            Process *
+          </label>
+          <input
+            {...register('process')}
+            id="process"
+            type="text"
+            placeholder="t.ex. Löneberäkning månadslön"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            disabled={isLoading}
+          />
+          {errors.process && <p className="mt-1 text-sm text-red-600">{errors.process.message}</p>}
+        </div>
+      </div>
+
+      {/* Fas & Roll */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="fas" className="block text-sm font-medium text-gray-700 mb-1">
+            Fas *
           </label>
           <select
-            {...register('type')}
-            id="type"
+            {...register('fas')}
+            id="fas"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             disabled={isLoading}
           >
-            {typeOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {FAS_OPTIONS.map(fas => (
+              <option key={fas} value={fas}>
+                {fas}
               </option>
             ))}
           </select>
-          {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>}
+          {errors.fas && <p className="mt-1 text-sm text-red-600">{errors.fas.message}</p>}
         </div>
 
-        {/* Status */}
+        <div>
+          <label htmlFor="roll" className="block text-sm font-medium text-gray-700 mb-1">
+            Roll *
+          </label>
+          <select
+            {...register('roll')}
+            id="roll"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            disabled={isLoading}
+          >
+            {ROLL_OPTIONS.map(roll => (
+              <option key={roll} value={roll}>
+                {roll}
+              </option>
+            ))}
+          </select>
+          {errors.roll && <p className="mt-1 text-sm text-red-600">{errors.roll.message}</p>}
+        </div>
+      </div>
+
+      {/* Behov (Main description) */}
+      <div>
+        <label htmlFor="behov" className="block text-sm font-medium text-gray-700 mb-1">
+          Behov *
+        </label>
+        <textarea
+          {...register('behov')}
+          id="behov"
+          rows={4}
+          placeholder="Beskriv behovet för denna aktivitet..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+          disabled={isLoading}
+        />
+        {errors.behov && <p className="mt-1 text-sm text-red-600">{errors.behov.message}</p>}
+      </div>
+
+      {/* Status, Priority & Löneperiod */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
             Status *
@@ -146,13 +188,12 @@ export function ActivityForm({
           {errors.status && <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>}
         </div>
 
-        {/* Priority */}
         <div>
           <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-            Prioritet *
+            Prioritet
           </label>
           <select
-            {...register('priority')}
+            {...register('priority', { valueAsNumber: true })}
             id="priority"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             disabled={isLoading}
@@ -167,42 +208,104 @@ export function ActivityForm({
             <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
           )}
         </div>
-      </div>
 
-      {/* Assigned To & Due Date */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Assigned To */}
-        <div>
-          <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700 mb-1">
-            Tilldelad till
-          </label>
+        <div className="flex items-center pt-7">
           <input
-            {...register('assignedTo')}
-            id="assignedTo"
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            {...register('ska_inga_i_loneperiod')}
+            id="ska_inga_i_loneperiod"
+            type="checkbox"
+            className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             disabled={isLoading}
           />
-          {errors.assignedTo && (
-            <p className="mt-1 text-sm text-red-600">{errors.assignedTo.message}</p>
-          )}
-        </div>
-
-        {/* Due Date */}
-        <div>
-          <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
-            Förfallodatum
+          <label htmlFor="ska_inga_i_loneperiod" className="ml-2 text-sm text-gray-700">
+            Ska ingå i löneperiod
           </label>
-          <input
-            {...register('dueDate')}
-            id="dueDate"
-            type="date"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            disabled={isLoading}
-          />
-          {errors.dueDate && <p className="mt-1 text-sm text-red-600">{errors.dueDate.message}</p>}
         </div>
       </div>
+
+      {/* Optional fields - Collapsible section */}
+      <details className="border border-gray-200 rounded-lg p-4">
+        <summary className="cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+          Ytterligare information (valfritt)
+        </summary>
+        
+        <div className="mt-4 space-y-4">
+          {/* Output/Input */}
+          <div>
+            <label htmlFor="out_input" className="block text-sm font-medium text-gray-700 mb-1">
+              Output/Input
+            </label>
+            <input
+              {...register('out_input')}
+              id="out_input"
+              type="text"
+              placeholder="t.ex. Löneunderlag, Skattedeklaration"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Effekten/Värdet */}
+          <div>
+            <label htmlFor="effekten_vardet" className="block text-sm font-medium text-gray-700 mb-1">
+              Effekten/Värdet
+            </label>
+            <textarea
+              {...register('effekten_vardet')}
+              id="effekten_vardet"
+              rows={2}
+              placeholder="Beskriv värdet eller effekten..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Acceptans */}
+          <div>
+            <label htmlFor="acceptans" className="block text-sm font-medium text-gray-700 mb-1">
+              Acceptans
+            </label>
+            <textarea
+              {...register('acceptans')}
+              id="acceptans"
+              rows={2}
+              placeholder="Acceptanskriterier..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Feature/Lösning */}
+          <div>
+            <label htmlFor="feature_losning" className="block text-sm font-medium text-gray-700 mb-1">
+              Feature/Lösning
+            </label>
+            <textarea
+              {...register('feature_losning')}
+              id="feature_losning"
+              rows={2}
+              placeholder="Beskriv feature eller lösning..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Extra Info */}
+          <div>
+            <label htmlFor="extra_info" className="block text-sm font-medium text-gray-700 mb-1">
+              Extra information
+            </label>
+            <textarea
+              {...register('extra_info')}
+              id="extra_info"
+              rows={3}
+              placeholder="Övrig information..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+      </details>
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
