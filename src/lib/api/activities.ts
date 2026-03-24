@@ -8,11 +8,14 @@ import type { Activity, ActivityAPI, CreateActivityData, UpdateActivityData } fr
 import { activityFromAPI } from '@/types'
 
 /**
- * Map frontend data to backend Swedish field names and formats
- * Backend uses Swedish field names: namn, beskrivning, ansvarig, etc.
+ * Map frontend data to backend format
+ * Backend API schema (from Swagger):
+ * - Uses MIXED Swedish/English field names
+ * - Status: English values (pending, in_progress, completed, blocked, active, draft)
+ * - Priority: Integer 1-4
  */
 function mapToBackendFormat(data: CreateActivityData | UpdateActivityData): any {
-  // Map priority string to integer
+  // Map priority string to integer (1-4)
   let priority: number | undefined
   if ('priority' in data && data.priority) {
     const priorityMap: Record<string, number> = {
@@ -24,44 +27,40 @@ function mapToBackendFormat(data: CreateActivityData | UpdateActivityData): any 
     priority = priorityMap[data.priority] || 2
   }
 
-  // Map status to backend format (might need Swedish mapping)
+  // Status: Keep English values (backend wants: pending, in_progress, completed, blocked, active, draft)
   let status: string | undefined
   if ('status' in data && data.status) {
-    const statusMap: Record<string, string> = {
-      pending: 'ej_startad',
-      in_progress: 'pagaende',
-      completed: 'slutford',
-      blocked: 'blockerad',
-      cancelled: 'avbruten',
-    }
-    status = statusMap[data.status] || 'ej_startad'
+    // Frontend already uses correct English values, just pass through
+    status = data.status
   }
 
-  // Map type to backend format
-  let type: string | undefined
-  if ('type' in data && data.type) {
-    // Backend might use Swedish type names or different format
-    // For now, keep as-is but prepared for mapping
-    type = data.type
-  }
-
-  // Build backend payload with Swedish field names
+  // Build backend payload
   const backendData: any = {}
 
+  // Map title/description to Swedish field names (namn/beskrivning)
   if ('title' in data && data.title) backendData.namn = data.title
   if ('description' in data && data.description) backendData.beskrivning = data.description
-  if ('assignedTo' in data && data.assigned_to) backendData.ansvarig = data.assigned_to
   
-  // Set default values for required fields if not provided
-  if (!backendData.ansvarig) backendData.ansvarig = 'Okänd' // Default assignee
-  if (!backendData.beskrivning) backendData.beskrivning = '' // Default description
+  // Map assignedTo to Swedish (ansvarig)
+  if ('assigned_to' in data && data.assigned_to) {
+    backendData.ansvarig = data.assigned_to
+  } else {
+    backendData.ansvarig = 'Okänd' // Default assignee
+  }
 
-  // Add other fields
-  if (type) backendData.typ = type
+  // Set default description if empty
+  if (!backendData.beskrivning) backendData.beskrivning = ''
+
+  // Add type (keep as-is)
+  if ('type' in data && data.type) backendData.typ = data.type
+  
+  // Add status (English)
   if (status) backendData.status = status
+  
+  // Add priority (integer)
   if (priority !== undefined) backendData.prioritet = priority
 
-  // Add calculation frequency (required field in backend)
+  // Add required field: berakning_frekvens (calculation frequency)
   backendData.berakning_frekvens = 'manatlig' // Default to monthly
 
   return backendData
