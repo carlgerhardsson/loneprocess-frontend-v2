@@ -1,6 +1,23 @@
 /**
  * Activities API Service
  * Handles all activity-related API calls
+ * 
+ * Backend schema (from Swagger /docs):
+ * {
+ *   "process_nr": "string",
+ *   "process": "string",
+ *   "out_input": "string",
+ *   "ska_inga_i_loneperiod": false,
+ *   "fas": "string",
+ *   "roll": "string",
+ *   "behov": "string",
+ *   "effekten_vardet": "string",
+ *   "extra_info": "string",
+ *   "acceptans": "string",
+ *   "feature_losning": "string",
+ *   "priority": 1,  // integer >= 1
+ *   "status": "active" // active|draft|pending|in_progress|completed|blocked
+ * }
  */
 
 import { apiClient } from './client'
@@ -8,15 +25,12 @@ import type { Activity, ActivityAPI, CreateActivityData, UpdateActivityData } fr
 import { activityFromAPI } from '@/types'
 
 /**
- * Map frontend data to backend format
- * Backend API schema (from Swagger):
- * - Uses MIXED Swedish/English field names
- * - Status: English values (pending, in_progress, completed, blocked, active, draft)
- * - Priority: Integer 1-4
+ * Map frontend data to backend schema
+ * This is a best-effort mapping from our UI fields to backend's expected schema
  */
 function mapToBackendFormat(data: CreateActivityData | UpdateActivityData): any {
-  // Map priority string to integer (1-4)
-  let priority: number | undefined
+  // Map priority to integer (1-4, must be >= 1)
+  let priority: number = 2 // Default to medium
   if ('priority' in data && data.priority) {
     const priorityMap: Record<string, number> = {
       low: 1,
@@ -27,41 +41,36 @@ function mapToBackendFormat(data: CreateActivityData | UpdateActivityData): any 
     priority = priorityMap[data.priority] || 2
   }
 
-  // Status: Keep English values (backend wants: pending, in_progress, completed, blocked, active, draft)
-  let status: string | undefined
-  if ('status' in data && data.status) {
-    // Frontend already uses correct English values, just pass through
-    status = data.status
+  // Map status (already in correct format: pending, in_progress, completed, etc.)
+  const status = ('status' in data && data.status) ? data.status : 'pending'
+
+  // Build backend payload with required schema
+  const backendData: any = {
+    // Map our title to backend's process field
+    process: ('title' in data && data.title) ? data.title : 'Ny aktivitet',
+    
+    // Map our description to behov (need/requirement)
+    behov: ('description' in data && data.description) ? data.description : '',
+    
+    // Map type to fas (phase)
+    fas: ('type' in data && data.type) ? data.type : 'other',
+    
+    // Map assignedTo to roll (role)
+    roll: ('assigned_to' in data && data.assigned_to) ? data.assigned_to : 'Okänd',
+    
+    // Required fields with defaults
+    process_nr: '', // Empty for now
+    out_input: '', // Empty for now
+    ska_inga_i_loneperiod: false,
+    effekten_vardet: '',
+    extra_info: '',
+    acceptans: '',
+    feature_losning: '',
+    
+    // Status and priority
+    status: status,
+    priority: priority,
   }
-
-  // Build backend payload
-  const backendData: any = {}
-
-  // Map title/description to Swedish field names (namn/beskrivning)
-  if ('title' in data && data.title) backendData.namn = data.title
-  if ('description' in data && data.description) backendData.beskrivning = data.description
-  
-  // Map assignedTo to Swedish (ansvarig)
-  if ('assigned_to' in data && data.assigned_to) {
-    backendData.ansvarig = data.assigned_to
-  } else {
-    backendData.ansvarig = 'Okänd' // Default assignee
-  }
-
-  // Set default description if empty
-  if (!backendData.beskrivning) backendData.beskrivning = ''
-
-  // Add type (keep as-is)
-  if ('type' in data && data.type) backendData.typ = data.type
-  
-  // Add status (English)
-  if (status) backendData.status = status
-  
-  // Add priority (integer)
-  if (priority !== undefined) backendData.prioritet = priority
-
-  // Add required field: berakning_frekvens (calculation frequency)
-  backendData.berakning_frekvens = 'manatlig' // Default to monthly
 
   return backendData
 }
