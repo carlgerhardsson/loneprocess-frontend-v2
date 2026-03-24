@@ -1,6 +1,6 @@
 # 📊 SESSION STATUS - MILESTONE 4.4 CRUD OPERATIONS
 
-**Senast uppdaterad:** 2026-03-23 17:30 CET  
+**Senast uppdaterad:** 2026-03-23 18:00 CET  
 **Status:** ✅ **KLAR FÖR MERGE!**
 
 ---
@@ -14,6 +14,23 @@
 - **E2E Tests:** ✅ 2 passing
 
 **CI Run:** https://github.com/carlgerhardsson/loneprocess-frontend-v2/actions
+
+---
+
+## 🚀 WORKFLOW-BESLUT FÖR FAS 5
+
+### **BESLUT:** Desktop (MCP) + Code (CLI) från Fas 5
+
+**Fas 4 (4.5 + 4.6):** Behåll nuvarande workflow  
+**Fas 5 och framåt:** Ny workflow med Desktop + CLI
+
+**Motivering:**
+- ✅ Slutför Fas 4 utan att störa momentum
+- ✅ Naturlig brytpunkt efter Milestone 4.6
+- ✅ Tid för pilottest och learnings i Fas 5
+- ✅ Färre CI-iterationer framåt
+
+**Se:** `FAS5_WORKFLOW_PLAN.md` för detaljer
 
 ---
 
@@ -35,6 +52,7 @@
 ### 4. **Dokumentation** ✅
 - Skapade `CONTRIBUTING.md` (3000 chars, streamlinad version)
 - Skapade `LOKAL_TEST_GUIDE.md` (komplett guide för lokal testning)
+- Skapade `FAS5_WORKFLOW_PLAN.md` (plan för Desktop+CLI workflow)
 
 ### 5. **E2E Fixes** ✅
 - Fixade route: `/aktiviteter` → `/activities`
@@ -90,6 +108,8 @@ Efter merge, starta nästa milestone:
 - Cache strategies (stale-while-revalidate)
 - Retry logic för misslyckade requests
 
+**Workflow:** Nuvarande (Desktop för allt)
+
 ---
 
 ## 📁 VIKTIGA FILER
@@ -104,6 +124,7 @@ src/features/activities/components/EditActivityModal.tsx
 src/features/activities/components/DeleteActivityDialog.tsx
 CONTRIBUTING.md
 LOKAL_TEST_GUIDE.md
+FAS5_WORKFLOW_PLAN.md
 ```
 
 ### **Uppdaterade Filer**
@@ -168,8 +189,11 @@ Efter merge av PR #32, i separat PR.
 - ✅ 4.4: CRUD Operations (KLAR FÖR MERGE!)
 
 **Återstående:**
-- ⏳ 4.5: Data Persistence
-- ⏳ 4.6: Production Error Handling
+- ⏳ 4.5: Data Persistence (nuvarande workflow)
+- ⏳ 4.6: Production Error Handling (nuvarande workflow)
+
+### **Fas 5:** 🔮 Desktop + CLI Workflow
+**Start efter Milestone 4.6**
 
 ---
 
