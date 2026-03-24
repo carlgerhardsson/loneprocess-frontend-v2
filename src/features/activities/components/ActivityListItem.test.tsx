@@ -12,6 +12,13 @@ const mockActivity: Activity = {
   priority: 3,
   status: 'active',
   behov: 'Test need',
+  outInput: null,
+  skaIngaILoneperiod: false,
+  effektenVardet: null,
+  extraInfo: null,
+  acceptans: null,
+  featureLosning: null,
+  senastUtford: null,
   createdAt: '2024-01-01T10:00:00Z',
   updatedAt: '2024-01-01T10:00:00Z',
 }
