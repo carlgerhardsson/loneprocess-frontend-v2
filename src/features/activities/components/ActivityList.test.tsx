@@ -58,6 +58,6 @@ describe('ActivityList', () => {
   it('shows empty state when no activities', () => {
     render(<ActivityList activities={[]} onClick={vi.fn()} />)
 
-    expect(screen.getByText(/inga aktiviteter/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /inga aktiviteter/i })).toBeInTheDocument()
   })
 })

@@ -39,6 +39,7 @@ export function ActivityListItem({
         isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
       }`}
       onClick={() => onClick?.(activity)}
+      data-selected={isSelected}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
