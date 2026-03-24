@@ -13,13 +13,6 @@ const mockActivities: Activity[] = [
     priority: 3,
     status: 'active',
     behov: 'Planera löneprocessen',
-    outInput: null,
-    skaIngaILoneperiod: false,
-    effektenVardet: null,
-    extraInfo: null,
-    acceptans: null,
-    featureLosning: null,
-    senastUtford: null,
     createdAt: '2024-01-01T10:00:00Z',
     updatedAt: '2024-01-01T10:00:00Z',
   },
@@ -32,13 +25,6 @@ const mockActivities: Activity[] = [
     priority: 2,
     status: 'pending',
     behov: 'Kontrollera aktiviteter',
-    outInput: null,
-    skaIngaILoneperiod: false,
-    effektenVardet: null,
-    extraInfo: null,
-    acceptans: null,
-    featureLosning: null,
-    senastUtford: null,
     createdAt: '2024-01-02T10:00:00Z',
     updatedAt: '2024-01-02T10:00:00Z',
   },
@@ -46,7 +32,7 @@ const mockActivities: Activity[] = [
 
 describe('ActivityList', () => {
   it('renders list of activities', () => {
-    render(<ActivityList activities={mockActivities} selectedActivityId={undefined} onClick={vi.fn()} />)
+    render(<ActivityList activities={mockActivities} selectedActivityId={null} onClick={vi.fn()} />)
 
     expect(screen.getByText('Planering Löneprocess')).toBeInTheDocument()
     expect(screen.getByText('Kontroll Aktiv')).toBeInTheDocument()
@@ -63,14 +49,14 @@ describe('ActivityList', () => {
 
   it('calls onClick when activity clicked', () => {
     const onClick = vi.fn()
-    render(<ActivityList activities={mockActivities} selectedActivityId={undefined} onClick={onClick} />)
+    render(<ActivityList activities={mockActivities} selectedActivityId={null} onClick={onClick} />)
 
     fireEvent.click(screen.getByText('Planering Löneprocess'))
     expect(onClick).toHaveBeenCalledWith(mockActivities[0])
   })
 
   it('shows empty state when no activities', () => {
-    render(<ActivityList activities={[]} selectedActivityId={undefined} onClick={vi.fn()} />)
+    render(<ActivityList activities={[]} selectedActivityId={null} onClick={vi.fn()} />)
 
     expect(screen.getByText(/inga aktiviteter/i)).toBeInTheDocument()
   })
