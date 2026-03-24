@@ -6,7 +6,7 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://loneprocess-api-922770673146.us-central1.run.app'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://loneprocess-api-922770673146.us-central1.run.app/api/v1'
 const API_KEY = import.meta.env.VITE_LONEPROCESS_API_KEY
 
 /**
