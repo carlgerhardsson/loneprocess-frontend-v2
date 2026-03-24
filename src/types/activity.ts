@@ -1,6 +1,6 @@
 /**
  * Activity & Checklist Types
- * UPDATED: Based on actual backend API schema from Swagger UI
+ * READ-ONLY VERSION: No Create/Update data types
  */
 
 // ============================================================================
@@ -29,44 +29,6 @@ export interface ActivityAPI {
   created_at?: string
   updated_at?: string
   senast_utford?: string
-}
-
-/**
- * Create Activity Data (what we POST)
- */
-export interface CreateActivityData {
-  process_nr: string
-  process: string
-  out_input: string
-  ska_inga_i_loneperiod: boolean
-  fas: string
-  roll: string
-  behov: string
-  effekten_vardet: string
-  extra_info: string
-  acceptans: string
-  feature_losning: string
-  priority: number // 0-4
-  status: ActivityStatus
-}
-
-/**
- * Update Activity Data (what we PUT)
- */
-export interface UpdateActivityData {
-  process_nr?: string
-  process?: string
-  out_input?: string
-  ska_inga_i_loneperiod?: boolean
-  fas?: string
-  roll?: string
-  behov?: string
-  effekten_vardet?: string
-  extra_info?: string
-  acceptans?: string
-  feature_losning?: string
-  priority?: number
-  status?: ActivityStatus
 }
 
 // ============================================================================
@@ -182,50 +144,9 @@ export function activityFromAPI(api: ActivityAPI): Activity {
   }
 }
 
-/**
- * Convert frontend UI activity to backend API format
- */
-export function activityToAPI(activity: Partial<Activity>): Partial<CreateActivityData> {
-  const data: Partial<CreateActivityData> = {}
-  
-  if (activity.processNr !== undefined) data.process_nr = activity.processNr
-  if (activity.process !== undefined) data.process = activity.process
-  if (activity.outInput !== undefined) data.out_input = activity.outInput
-  if (activity.skaIngaILoneperiod !== undefined) data.ska_inga_i_loneperiod = activity.skaIngaILoneperiod
-  if (activity.fas !== undefined) data.fas = activity.fas
-  if (activity.roll !== undefined) data.roll = activity.roll
-  if (activity.behov !== undefined) data.behov = activity.behov
-  if (activity.effektenVardet !== undefined) data.effekten_vardet = activity.effektenVardet
-  if (activity.extraInfo !== undefined) data.extra_info = activity.extraInfo
-  if (activity.acceptans !== undefined) data.acceptans = activity.acceptans
-  if (activity.featureLosning !== undefined) data.feature_losning = activity.featureLosning
-  if (activity.priority !== undefined) data.priority = activity.priority
-  if (activity.status !== undefined) data.status = activity.status
-  
-  return data
-}
-
 // ============================================================================
-// LEGACY TYPES (for backward compatibility during migration)
+// FILTER TYPES
 // ============================================================================
-
-// Keep old interfaces temporarily for components that haven't been updated yet
-export interface ChecklistItem {
-  id: string
-  text: string
-  isCompleted: boolean
-  completedAt: string | null
-  completedBy: string | null
-}
-
-export interface Comment {
-  id: string
-  text: string
-  authorId: string
-  authorName: string
-  createdAt: string
-  updatedAt: string | null
-}
 
 export interface ActivityFilters {
   status?: ActivityStatus[]
