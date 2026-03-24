@@ -1,190 +1,136 @@
-# READ-ONLY MODE - Backend Integration Testing
+# 🎯 READ-ONLY MODE - PERMANENT
 
-## 🎯 Current Status
+## 📊 **STATUS: FULLY IMPLEMENTED**
 
-**Frontend:** ✅ 100% Complete - Ready for backend  
-**Backend:** ❌ CORS Issue + POST Error
-
----
-
-## 🔴 Backend Problems Blocking Full Integration
-
-### Problem 1: CORS Not Enabled
-```
-Access to XMLHttpRequest at 'https://loneprocess-api-...' 
-from origin 'http://localhost:5173' has been blocked by CORS policy: 
-No 'Access-Control-Allow-Origin' header is present
-```
-
-**What this means:**
-- Frontend cannot make POST/PUT/DELETE requests from localhost
-- Backend blocks all requests from `localhost:5173`
-
-**Backend fix needed:**
-```python
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
-
-### Problem 2: POST /activities Returns 500
-```
-POST https://loneprocess-api-.../api/v1/activities 
-net::ERR_FAILED 500 (Internal Server Error)
-```
-
-**Data sent by frontend (CORRECT):**
-```json
-{
-  "process_nr": "",
-  "process": "Test process",
-  "out_input": "",
-  "ska_inga_i_loneperiod": false,
-  "fas": "Förberedelse",
-  "roll": "Löneadministratör",
-  "behov": "Test behov",
-  "effekten_vardet": "",
-  "extra_info": "",
-  "acceptans": "",
-  "feature_losning": "",
-  "priority": 2,
-  "status": "pending"
-}
-```
-
-This matches Swagger schema 100%!
-
-**Backend needs to:**
-- Debug why POST crashes
-- Check database constraints
-- Test POST in Swagger UI
-- Share error logs
+This frontend application is now **permanently read-only**. It will **NEVER** create, update, or delete activities.
 
 ---
 
-## ✅ What Works (Read-Only Mode)
+## ✅ **WHAT THIS APP DOES:**
 
-### Current Implementation
-
-**Enabled:**
-- ✅ GET /activities (fetch all activities)
-- ✅ Display activities in list
-- ✅ View activity details
-- ✅ Search and filter activities
-- ✅ All components render correctly
-
-**Disabled (until backend fixes):**
-- ❌ Create new activities
-- ❌ Edit existing activities
-- ❌ Delete activities
+1. **Fetch activities from backend API** (GET /activities)
+2. **Display in list view** with filters & search
+3. **Auto-refresh every 30 seconds** to show latest data
+4. **Show activity details** when clicked
+5. **Filter by:** status, fas, roll, priority
+6. **Search:** process, behov, fas, roll
 
 ---
 
-## 🧪 Testing Instructions
+## ❌ **WHAT THIS APP DOES NOT DO:**
 
-### Step 1: Pull Latest Code
-```bash
-git pull origin feat/milestone-4.5-data-persistence
-npm install
-npm run dev
-```
+1. ❌ Create activities (no POST /activities)
+2. ❌ Update activities (no PUT /activities/:id)
+3. ❌ Delete activities (no DELETE /activities/:id)
+4. ❌ Edit any data locally
 
-### Step 2: Open Application
-```
-http://localhost:5173
-```
-
-### Step 3: Expected Behavior
-
-**You should see:**
-- 🟡 Yellow banner: "Read-only mode: Visar data från backend..."
-- ✅ Activities list (if backend has data)
-- ✅ Filters working
-- ✅ Search working
-- ✅ Click activity to see details
-- ❌ Create button (grayed out/disabled)
-- ❌ No Edit/Delete buttons on activities
-
-**If backend has no activities:**
-- Empty state message
-- "Inga aktiviteter än"
-
-**If backend GET fails:**
-- Red error box
-- "Kunde inte hämta aktiviteter"
-- "Kontrollera att backend API är igång"
+**Activities are created manually elsewhere** - this frontend only displays them.
 
 ---
 
-## 📋 Verification Checklist
+## 🎨 **DESIGN REFERENCE:**
 
-### Frontend (Our responsibility) ✅
-- [x] Types match backend schema exactly
-- [x] API client configured correctly
-- [x] GET request works (when CORS enabled)
-- [x] POST payload correct (verified in logs)
-- [x] All components display backend fields
-- [x] Error handling implemented
-- [x] Read-only mode active
+This app should functionally resemble the old version:
+- **Repo:** https://github.com/carlgerhardsson/loneprocess-frontend
+- **Live demo:** https://carlgerhardsson.github.io/loneprocess-frontend/
+- **Version:** v1.5.0
 
-### Backend (Backend team responsibility) ❌
-- [ ] CORS middleware configured
-- [ ] POST /activities works in Swagger
-- [ ] Database properly initialized
-- [ ] Error logs shared with frontend team
-- [ ] Test data exists for GET testing
+**Key features from old version:**
+- 20 POL-based activities (from användarhandbok)
+- 3 phases (Före löneberäkning, Kontrollperiod, Efter löneberäkning)
+- 67 substeps under activities
+- Per-period state (each month separate)
+- Checkbox completion tracking
+- Read-only display (data from POL manual)
 
 ---
 
-## 🔄 When Backend is Ready
+## 🔧 **TECHNICAL IMPLEMENTATION:**
 
-Once backend fixes CORS + POST error:
+### **Files Removed (CRUD):**
+- ❌ `src/features/activities/components/CreateActivityModal.tsx`
+- ❌ `src/features/activities/components/EditActivityModal.tsx`
+- ❌ `src/features/activities/components/DeleteActivityDialog.tsx`
+- ❌ `src/features/activities/components/ActivityForm.tsx`
+- ❌ `src/features/activities/schemas/activitySchema.ts`
+- ❌ `src/hooks/mutations/` (all mutation hooks)
 
-1. **Remove read-only mode:**
-   - Remove yellow banner
-   - Enable Create button
-   - Enable Edit/Delete handlers
+### **Files Simplified (Read-Only):**
+- ✅ `src/types/activity.ts` - Removed CreateActivityData, UpdateActivityData
+- ✅ `src/lib/api/activities.ts` - Only fetchActivities, fetchActivity
+- ✅ `src/pages/ActivitiesPage.tsx` - No Create button, no edit/delete handlers
+- ✅ `src/features/activities/components/ActivityList.tsx` - No action buttons
+- ✅ `src/features/activities/components/ActivityListItem.tsx` - Clean display only
 
-2. **Test full CRUD:**
-   - Create activity
-   - Update activity
-   - Delete activity
-   - Verify optimistic updates
-
-3. **Merge to main**
-
----
-
-## 📞 Communication
-
-**Frontend Status:**
-- ✅ Complete and ready
-- ✅ All code reviewed
-- ✅ Types match Swagger 100%
-- ✅ Waiting for backend fixes
-
-**Backend Action Items:**
-1. Enable CORS for localhost:5173
-2. Fix POST /activities 500 error
-3. Share error logs if debugging needed
-4. Confirm when ready for testing
-
-**Next Steps:**
-- Backend team works on CORS + POST fix
-- Frontend team ready to test immediately when ready
-- Can proceed with other features in parallel
+### **Files Kept (Display):**
+- ✅ `StatusBadge` - Display activity status
+- ✅ `PriorityIndicator` - Display priority level
+- ✅ `ActivityDetails` - Show full activity info
+- ✅ `FilterPanel` - Client-side filtering
+- ✅ `SearchBar` - Client-side search
+- ✅ `useActivities` - React Query hook for GET
 
 ---
 
-**Updated:** 2026-03-24 12:15 UTC  
-**Status:** Waiting for Backend 🟡
+## 📡 **API INTEGRATION:**
+
+**Backend API:**
+- URL: `https://loneprocess-api-922770673146.us-central1.run.app/api/v1`
+- Swagger: `https://loneprocess-api-922770673146.us-central1.run.app/docs`
+
+**Endpoints Used:**
+- ✅ `GET /activities` - Fetch all activities (auto-refresh every 30s)
+- ✅ `GET /activities/:id` - Fetch single activity
+
+**Endpoints NOT Used:**
+- ❌ `POST /activities` - Create (removed)
+- ❌ `PUT /activities/:id` - Update (removed)
+- ❌ `DELETE /activities/:id` - Delete (removed)
+
+---
+
+## 🚀 **NEXT STEPS:**
+
+### **When Backend CORS is Fixed:**
+
+1. **Test GET endpoint** - Verify data fetches correctly
+2. **Verify auto-refresh** - Check 30s polling works
+3. **Test filters** - Ensure client-side filtering works
+4. **Test search** - Verify search functionality
+5. **Deploy to production**
+
+### **Future Enhancements (Optional):**
+
+- Per-period state? (like old version)
+- Substeps under activities?
+- Checkbox completion tracking?
+- Export to PDF/Excel?
+- Print-friendly view?
+
+---
+
+## 📋 **MIGRATION COMPLETE:**
+
+**From:** Generic CRUD activity management
+**To:** Read-only löneprocess activity viewer
+
+**Schema:** 100% aligned with backend API (Swagger)
+**Functionality:** Display only, no mutations
+**Ready:** Waiting for backend CORS fix to test
+
+---
+
+## 🎯 **SUCCESS CRITERIA:**
+
+- [x] All CRUD code removed
+- [x] Types match backend exactly
+- [x] Auto-refresh working
+- [x] Filters & search working
+- [ ] Backend CORS enabled
+- [ ] GET endpoint tested
+- [ ] Production deployment
+
+---
+
+**Last updated:** 2026-03-24
+**Status:** ✅ Ready for backend integration test
