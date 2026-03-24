@@ -40,7 +40,8 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     },
   }
 
-  const config = statusConfig[status]
+  // Safe fallback if status value doesn't match our config
+  const config = statusConfig[status] || statusConfig.pending
 
   return (
     <span
