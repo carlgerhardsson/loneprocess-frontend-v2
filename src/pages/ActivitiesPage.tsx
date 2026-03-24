@@ -2,7 +2,7 @@
  * Activities Page
  *
  * Main page for viewing and managing activities.
- * Now with full CRUD operations connected to backend API.
+ * Now with full CRUD operations and optimistic updates.
  */
 
 import { useState } from 'react'
@@ -22,24 +22,23 @@ export function ActivitiesPage() {
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
   const [deletingActivity, setDeletingActivity] = useState<Activity | null>(null)
 
-  const { data: activities, isLoading, isError, error, refetch } = useActivities()
+  const { data: activities, isLoading, isError, error } = useActivities()
   const { toast, showToast, hideToast } = useToast()
 
+  // Success handlers with toast notifications
+  // Note: No manual refetch needed - optimistic updates handle cache automatically
   const handleCreateSuccess = () => {
     showToast('Aktivitet skapad!', 'success')
-    refetch()
   }
 
   const handleEditSuccess = () => {
     showToast('Aktivitet uppdaterad!', 'success')
     setEditingActivity(null)
-    refetch()
   }
 
   const handleDeleteSuccess = () => {
     showToast('Aktivitet borttagen!', 'success')
     setDeletingActivity(null)
-    refetch()
   }
 
   if (isLoading) {
@@ -72,12 +71,6 @@ export function ActivitiesPage() {
         <p className="text-gray-600 mb-6 max-w-sm mx-auto">
           {error instanceof Error ? error.message : 'Kunde inte hämta aktiviteter.'}
         </p>
-        <button
-          onClick={() => refetch()}
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Försök igen
-        </button>
       </div>
     )
   }
@@ -119,7 +112,7 @@ export function ActivitiesPage() {
         )}
       </div>
 
-      {/* Modals */}
+      {/* Modals with optimistic updates */}
       <CreateActivityModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

@@ -1,11 +1,11 @@
 /**
  * Delete Activity Dialog
- * Confirmation dialog for deleting activities
+ * Confirmation dialog for deleting activities with optimistic updates
  */
 
 import { Modal } from '@/components/ui'
 import { AlertTriangle } from 'lucide-react'
-import { useDeleteActivity } from '@/hooks/queries/useActivities'
+import { useDeleteActivity } from '@/hooks/mutations'
 import type { Activity } from '@/types'
 
 interface DeleteActivityDialogProps {
@@ -21,16 +21,19 @@ export function DeleteActivityDialog({
   activity,
   onSuccess,
 }: DeleteActivityDialogProps) {
-  const deleteMutation = useDeleteActivity()
-
-  const handleDelete = async () => {
-    try {
-      await deleteMutation.mutateAsync(Number(activity.id))
+  const deleteMutation = useDeleteActivity({
+    onSuccess: () => {
       onSuccess?.()
       onClose()
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Failed to delete activity:', error)
-    }
+    },
+  })
+
+  const handleDelete = () => {
+    // Optimistic update happens automatically in mutation hook
+    deleteMutation.mutate(Number(activity.id))
   }
 
   return (

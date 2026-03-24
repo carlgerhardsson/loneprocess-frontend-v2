@@ -1,11 +1,11 @@
 /**
  * Create Activity Modal
- * Modal for creating new activities
+ * Modal for creating new activities with optimistic updates
  */
 
 import { Modal } from '@/components/ui'
 import { ActivityForm } from './ActivityForm'
-import { useCreateActivity } from '@/hooks/queries/useActivities'
+import { useCreateActivity } from '@/hooks/mutations'
 import type { ActivityFormData } from '../schemas/activitySchema'
 
 interface CreateActivityModalProps {
@@ -15,27 +15,31 @@ interface CreateActivityModalProps {
 }
 
 export function CreateActivityModal({ isOpen, onClose, onSuccess }: CreateActivityModalProps) {
-  const createMutation = useCreateActivity()
-
-  const handleSubmit = async (data: ActivityFormData) => {
-    try {
-      // Convert form data to API format
-      const apiData = {
-        title: data.title,
-        description: data.description,
-        type: data.type,
-        status: data.status,
-        priority: data.priority,
-        assignedTo: data.assignedTo || undefined,
-        dueDate: data.dueDate || undefined,
-        tags: data.tags || [],
-      }
-      await createMutation.mutateAsync(apiData)
+  const createMutation = useCreateActivity({
+    onSuccess: () => {
       onSuccess?.()
       onClose()
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Failed to create activity:', error)
+    },
+  })
+
+  const handleSubmit = async (data: ActivityFormData) => {
+    // Convert form data to API format
+    const apiData = {
+      title: data.title,
+      description: data.description,
+      type: data.type,
+      status: data.status,
+      priority: data.priority,
+      assignedTo: data.assignedTo || undefined,
+      dueDate: data.dueDate || undefined,
+      tags: data.tags || [],
     }
+    
+    // Optimistic update happens automatically in mutation hook
+    createMutation.mutate(apiData)
   }
 
   return (
