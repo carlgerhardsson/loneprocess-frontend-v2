@@ -35,14 +35,14 @@ export function ActivitiesPage() {
 
   // Apply filters
   const filteredActivities = activities.filter(activity => {
-    // Search filter
+    // Search filter - with null checks for backend data
     if (filters.search) {
       const searchLower = filters.search.toLowerCase()
       const matchesSearch =
-        activity.process.toLowerCase().includes(searchLower) ||
-        activity.behov.toLowerCase().includes(searchLower) ||
-        activity.fas.toLowerCase().includes(searchLower) ||
-        activity.roll.toLowerCase().includes(searchLower)
+        (activity.process?.toLowerCase() || '').includes(searchLower) ||
+        (activity.behov?.toLowerCase() || '').includes(searchLower) ||
+        (activity.fas?.toLowerCase() || '').includes(searchLower) ||
+        (activity.roll?.toLowerCase() || '').includes(searchLower)
       if (!matchesSearch) return false
     }
 
@@ -182,8 +182,8 @@ export function ActivitiesPage() {
             {!isLoading && !error && filteredActivities.length > 0 && (
               <ActivityList
                 activities={filteredActivities}
-                selectedId={selectedActivity?.id}
-                onSelect={setSelectedActivity}
+                selectedActivityId={selectedActivity?.id}
+                onClick={setSelectedActivity}
               />
             )}
           </main>
