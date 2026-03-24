@@ -1,12 +1,11 @@
 /**
  * Activity List Item Component
- * Individual activity item in the list with action buttons
+ * UPDATED: Now displays löneprocess-specific fields
  */
 
-import { Calendar, User, Edit2, Trash2 } from 'lucide-react'
+import { Tag, User, Edit2, Trash2 } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'
 import { PriorityIndicator } from './PriorityIndicator'
-import { formatDate } from '@/lib/utils'
 import type { Activity } from '@/types'
 
 interface ActivityListItemProps {
@@ -43,32 +42,37 @@ export function ActivityListItem({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
+          {/* Process Number & Title */}
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">{activity.title}</h3>
+            {activity.processNr && (
+              <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                {activity.processNr}
+              </span>
+            )}
+            <h3 className="text-lg font-semibold text-gray-900 truncate">{activity.process}</h3>
             <StatusBadge status={activity.status} size="sm" />
             <PriorityIndicator priority={activity.priority} size="sm" />
           </div>
 
-          {activity.description && (
-            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{activity.description}</p>
+          {/* Behov (Description) */}
+          {activity.behov && (
+            <p className="text-sm text-gray-600 line-clamp-2 mb-3">{activity.behov}</p>
           )}
 
+          {/* Fas & Roll */}
           <div className="flex items-center gap-4 text-sm text-gray-500">
-            {activity.dueDate && (
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDate(activity.dueDate)}</span>
-              </div>
-            )}
-            {activity.assignedTo && (
-              <div className="flex items-center gap-1">
-                <User className="w-4 h-4" />
-                <span>{activity.assignedTo}</span>
-              </div>
-            )}
+            <div className="flex items-center gap-1">
+              <Tag className="w-4 h-4" />
+              <span>{activity.fas}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <User className="w-4 h-4" />
+              <span>{activity.roll}</span>
+            </div>
           </div>
         </div>
 
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
           {onEdit && (
             <button
