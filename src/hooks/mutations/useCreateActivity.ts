@@ -29,17 +29,28 @@ export function useCreateActivity(options?: UseCreateActivityOptions) {
       // Snapshot previous value for rollback
       const previousActivities = queryClient.getQueryData<Activity[]>(activitiesKeys.lists())
 
-      // Optimistically update cache with temporary activity
+      // Create temporary optimistic activity with proper Activity structure
+      const tempActivity: Activity = {
+        id: `temp-${Date.now()}`,
+        title: newActivity.title,
+        description: newActivity.description || '',
+        type: newActivity.type || 'other',
+        status: newActivity.status || 'pending',
+        priority: newActivity.priority || 'medium',
+        assignedTo: newActivity.assigned_to || null,
+        dueDate: newActivity.due_date || null,
+        completedAt: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        periodId: newActivity.period_id ? String(newActivity.period_id) : '',
+        checklistItems: [],
+        comments: [],
+        tags: [],
+      }
+
+      // Optimistically update cache
       queryClient.setQueryData<Activity[]>(activitiesKeys.lists(), (old = []) => [
-        {
-          ...newActivity,
-          id: `temp-${Date.now()}`, // Temporary ID
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          checklistItems: newActivity.checklistItems || [],
-          comments: [],
-          tags: newActivity.tags || [],
-        } as Activity,
+        tempActivity,
         ...old,
       ])
 
