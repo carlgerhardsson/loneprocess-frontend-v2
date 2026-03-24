@@ -1,11 +1,11 @@
 /**
  * Activities Page
  * READ-ONLY MODE: Only displays data from backend
- * Create/Edit/Delete disabled until backend enables CORS
+ * AUTO-REFRESHES: Polls backend every 30 seconds
  */
 
 import { useState } from 'react'
-import { Plus, AlertCircle } from 'lucide-react'
+import { Plus, AlertCircle, RefreshCw } from 'lucide-react'
 import {
   ActivityList,
   ActivityDetails,
@@ -27,8 +27,11 @@ export function ActivitiesPage() {
     search: '',
   })
 
-  // Fetch activities from backend
-  const { data: activities = [], isLoading, error } = useActivities()
+  // Fetch activities from backend (auto-refreshes every 30s)
+  const { data: activities = [], isLoading, error, dataUpdatedAt, isFetching } = useActivities()
+
+  // Format last updated time
+  const lastUpdated = new Date(dataUpdatedAt).toLocaleTimeString('sv-SE')
 
   // Apply filters
   const filteredActivities = activities.filter(activity => {
@@ -88,11 +91,18 @@ export function ActivitiesPage() {
       {/* READ-ONLY MODE BANNER */}
       <div className="bg-yellow-50 border-b border-yellow-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-2 text-yellow-800">
-            <AlertCircle className="w-5 h-5" />
-            <div>
-              <span className="font-semibold">Read-only mode:</span>
-              <span className="ml-2">Visar data från backend. Create/Edit/Delete inaktiverat tills backend enabler CORS.</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-yellow-800">
+              <AlertCircle className="w-5 h-5" />
+              <div>
+                <span className="font-semibold">Read-only mode:</span>
+                <span className="ml-2">Visar data från backend. Create/Edit/Delete inaktiverat tills backend enabler CORS.</span>
+              </div>
+            </div>
+            {/* Auto-refresh indicator */}
+            <div className="flex items-center gap-2 text-sm text-yellow-700">
+              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+              <span>Uppdateras var 30s • Senast: {lastUpdated}</span>
             </div>
           </div>
         </div>
@@ -149,7 +159,10 @@ export function ActivitiesPage() {
           <main className="lg:col-span-2">
             {isLoading && (
               <div className="flex items-center justify-center py-12">
-                <div className="text-gray-500">Laddar aktiviteter från backend...</div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  <span>Laddar aktiviteter från backend...</span>
+                </div>
               </div>
             )}
 
@@ -159,7 +172,7 @@ export function ActivitiesPage() {
                   <AlertCircle className="w-5 h-5" />
                   <div>
                     <p className="font-semibold">Kunde inte hämta aktiviteter</p>
-                    <p className="text-sm mt-1">Kontrollera att backend API är igång.</p>
+                    <p className="text-sm mt-1">Kontrollera att backend API är igång och CORS är aktiverat.</p>
                   </div>
                 </div>
               </div>

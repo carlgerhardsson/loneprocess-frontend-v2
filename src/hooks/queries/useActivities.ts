@@ -1,6 +1,7 @@
 /**
  * Activities Query Hooks
  * React Query hooks for activity data fetching and mutations
+ * NOW WITH AUTO-REFRESH: Polls backend every 30 seconds
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -27,6 +28,7 @@ export const activitiesKeys = {
 
 /**
  * Hook to fetch all activities with optional filtering
+ * AUTO-REFRESHES: Polls backend every 30 seconds to stay in sync
  */
 export function useActivities(filters?: {
   skip?: number
@@ -40,11 +42,18 @@ export function useActivities(filters?: {
   return useQuery({
     queryKey: activitiesKeys.list(filters),
     queryFn: async () => {
+      console.log('[useActivities] Fetching from backend...', new Date().toLocaleTimeString())
       const activities = await fetchActivities(filters)
       // Sync with Zustand store
       setActivities(activities)
+      console.log(`[useActivities] Fetched ${activities.length} activities`)
       return activities
     },
+    // AUTO-REFRESH CONFIGURATION
+    refetchInterval: 30000, // Poll every 30 seconds
+    refetchOnWindowFocus: true, // Refresh when user returns to tab
+    staleTime: 20000, // Data considered fresh for 20 seconds
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   })
 }
 
@@ -56,6 +65,10 @@ export function useActivity(id: number | null) {
     queryKey: activitiesKeys.detail(id!),
     queryFn: () => fetchActivity(id!),
     enabled: id !== null,
+    // Refresh single activity less frequently
+    refetchInterval: 60000, // Poll every 60 seconds
+    refetchOnWindowFocus: true,
+    staleTime: 30000,
   })
 }
 
@@ -71,7 +84,7 @@ export function useCreateActivity() {
     onSuccess: data => {
       // Update Zustand store
       addActivity(data)
-      // Invalidate and refetch
+      // Invalidate and refetch immediately
       queryClient.invalidateQueries({ queryKey: activitiesKeys.lists() })
     },
   })
