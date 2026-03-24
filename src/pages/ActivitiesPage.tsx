@@ -79,6 +79,22 @@ export function ActivitiesPage() {
     })
   }
 
+  const handleRemoveFilter = (key: keyof ActivityFilters, value?: string | number) => {
+    setFilters(prev => {
+      if (key === 'search') {
+        return { ...prev, search: '' }
+      }
+      
+      const currentValues = prev[key] as (string | number)[] | undefined
+      if (!currentValues) return prev
+      
+      return {
+        ...prev,
+        [key]: currentValues.filter(v => v !== value),
+      }
+    })
+  }
+
   const hasActiveFilters =
     (filters.status?.length ?? 0) > 0 ||
     (filters.fas?.length ?? 0) > 0 ||
@@ -130,7 +146,11 @@ export function ActivitiesPage() {
           {/* Active Filters */}
           {hasActiveFilters && (
             <div className="mt-4">
-              <ActiveFilters filters={filters} onClearAll={handleClearFilters} />
+              <ActiveFilters 
+                filters={filters} 
+                onRemoveFilter={handleRemoveFilter}
+                onClearAll={handleClearFilters} 
+              />
             </div>
           )}
         </div>
@@ -141,7 +161,11 @@ export function ActivitiesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Filters Sidebar */}
           <aside className="lg:col-span-1">
-            <FilterPanel filters={filters} onFiltersChange={setFilters} />
+            <FilterPanel 
+              filters={filters} 
+              onFilterChange={setFilters}
+              onClearFilters={handleClearFilters}
+            />
           </aside>
 
           {/* Activities List */}
@@ -168,15 +192,21 @@ export function ActivitiesPage() {
             )}
 
             {!isLoading && !error && filteredActivities.length === 0 && (
-              <EmptyState
-                title={hasActiveFilters ? 'Inga aktiviteter matchar filtren' : 'Inga aktiviteter än'}
-                description={
-                  hasActiveFilters
-                    ? 'Prova att justera dina filter för att se fler aktiviteter.'
-                    : 'Aktiviteter kommer att visas här när de finns i backend.'
-                }
-                action={hasActiveFilters ? { label: 'Rensa filter', onClick: handleClearFilters } : undefined}
-              />
+              <EmptyState>
+                {hasActiveFilters ? (
+                  <>
+                    <p className="text-gray-600 mb-4">Inga aktiviteter matchar dina filter</p>
+                    <button
+                      onClick={handleClearFilters}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                    >
+                      Rensa filter
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-gray-600">Inga aktiviteter än. Aktiviteter kommer att visas här när de finns i backend.</p>
+                )}
+              </EmptyState>
             )}
 
             {!isLoading && !error && filteredActivities.length > 0 && (
