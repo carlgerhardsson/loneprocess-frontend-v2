@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { ActivitiesPage } from '@/pages/ActivitiesPage'
 import { ActivityDetailPage } from '@/pages/ActivityDetailPage'
+import DashboardPage from '@/pages/DashboardPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { PageLayout } from '@/components/layout/PageLayout'
@@ -20,11 +21,19 @@ export const router = createBrowserRouter(
       children: [
         {
           index: true,
-          element: <Navigate to="/login" replace />,
+          element: <Navigate to="/dashboard" replace />,
         },
         {
           path: 'login',
           element: <LoginPage />,
+        },
+        {
+          path: 'dashboard',
+          element: (
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          ),
         },
         {
           path: 'activities',
