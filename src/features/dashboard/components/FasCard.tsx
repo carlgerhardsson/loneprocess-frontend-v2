@@ -26,12 +26,19 @@ export function FasCard({ fas, activities, title, subtitle, colorScheme }: FasCa
   const { completedCount, totalCount, overallPercentage } = useFasProgress(activities)
 
   // Convert colorScheme to format expected by ActivityListItemExpanded
-  // Use VERY dark colors (800) for checkboxes so white checkmark is visible
+  // Map each phase to its DARKEST color variant for maximum checkbox visibility
+  const getFasAccentColor = (border: string) => {
+    if (border.includes('blue')) return 'bg-blue-900'
+    if (border.includes('orange')) return 'bg-orange-900'
+    if (border.includes('green')) return 'bg-green-900'
+    return 'bg-gray-900' // fallback
+  }
+
   const expandedColorScheme = {
     bg: colorScheme.bg,
     border: colorScheme.border,
     text: colorScheme.text,
-    accent: colorScheme.border.replace('border-', 'bg-').replace('-200', '-800') // e.g. border-blue-200 -> bg-blue-800
+    accent: getFasAccentColor(colorScheme.border)
   }
 
   return (
