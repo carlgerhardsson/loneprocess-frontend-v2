@@ -2,7 +2,7 @@
 
 **Issue:** [#35](https://github.com/carlgerhardsson/loneprocess-frontend-v2/issues/35)  
 **Status:** 🟢 **STEG 1-3 KLARA!** (60% komplett)  
-**Estimat:** 6-8 timmar (4h kvar)
+**Estimat:** 6-8 timmar (2h kvar)
 
 ---
 
@@ -13,6 +13,7 @@ Bygga om frontend för att matcha v1:s design med:
 - ✅ **Aktivitetslista** med expanderbara rader
 - ✅ **20 aktiviteter** hårdkodade i frontend
 - ✅ **localStorage** för användarstatus
+- ✅ **Comprehensive unit tests** för alla komponenter
 - ⏳ **Backend API** för specifik lönedata (återstår)
 
 ---
@@ -97,6 +98,14 @@ Bygga om frontend för att matcha v1:s design med:
 - ✅ `src/contexts/ActivityProgressContext.tsx` - Delad state via Context
 - ✅ `src/hooks/useActivityProgress.ts` - Progress hook
 
+**Test Coverage (49 nya tests):**
+- ✅ `src/contexts/ActivityProgressContext.test.tsx` (8 tests)
+- ✅ `src/hooks/useActivityProgress.test.ts` (4 tests)
+- ✅ `src/features/activities/components/DelstegChecklist.test.tsx` (8 tests)
+- ✅ `src/features/activities/components/ActivityComments.test.tsx` (7 tests)
+- ✅ `src/features/activities/components/ActivityListItemExpanded.test.tsx` (13 tests)
+- ✅ `src/features/activities/components/ActivityReferences.test.tsx` (9 tests)
+
 **Features:**
 - ✅ Klick för expandera/kollapsa
 - ✅ Interaktiva checkboxar för delsteg
@@ -113,8 +122,9 @@ Bygga om frontend för att matcha v1:s design med:
 - ✅ Routing till `/dashboard`
 - ✅ ESLint warnings fixade
 - ✅ TypeScript errors fixade
-- ✅ Unit tests uppdaterade (191 passed)
+- ✅ Unit tests uppdaterade (240 passed - 49 nya!)
 - ✅ E2E tests uppdaterade (2 passed)
+- ✅ Prettier formatting fixade
 
 ---
 
@@ -190,11 +200,67 @@ Bygga om frontend för att matcha v1:s design med:
 
 ## 🧪 TESTING
 
-### **Unit Tests:** ✅ **PASSAR**
+### **Unit Tests:** ✅ **240 TESTS PASSING**
+
+**Test Files:** 46 passed (46)
+**Tests:** 240 passed (240)
+  - Previous: 191 tests
+  - **New:** 49 tests (STEG 3 components)
+
+**STEG 3 Test Coverage:**
+1. ✅ `ActivityProgressContext.test.tsx` (8 tests)
+   - Context provider state management
+   - Toggle delsteg with localStorage persistence
+   - Update comments and assignee
+   - Calculate completion percentage
+   - Reset progress functionality
+   - Persist across re-renders
+
+2. ✅ `useActivityProgress.test.ts` (4 tests)
+   - Hook throws error outside Provider
+   - Returns all context values correctly
+   - All functions available
+
+3. ✅ `DelstegChecklist.test.tsx` (8 tests)
+   - Renders all checkboxes with correct structure
+   - Toggle functionality via button clicks
+   - Shows "Obligatorisk" badge for required items
+   - Applies line-through styling when checked
+   - Persists to localStorage
+   - Applies correct accent colors
+
+4. ✅ `ActivityComments.test.tsx` (7 tests)
+   - Renders textarea
+   - Displays existing comments from localStorage
+   - Saves on blur
+   - Saves on Cmd+Enter (Mac) and Ctrl+Enter (Windows)
+   - Updates on typing
+   - Shows helper text
+
+5. ✅ `ActivityListItemExpanded.test.tsx` (13 tests)
+   - Renders activity title and process number
+   - Starts collapsed, expands/collapses on click
+   - Shows progress bar and completion percentage
+   - Shows API badge when applicable
+   - Chevron rotates 90 degrees when expanded
+   - Shows references and comment field when expanded
+   - Shows default assignee if provided
+   - Shows completed checkmark at 100%
+
+6. ✅ `ActivityReferences.test.tsx` (9 tests)
+   - Renders all references with correct structure
+   - Links have correct href and open in new tab
+   - Shows icons for each reference type
+   - Shows type labels (POL, Extern, Intern)
+   - Shows section heading
+   - Shows message when no references
+   - Applies correct styling classes
+
+**All other tests:**
 - ✅ smoke.test.ts
 - ✅ LoginPage.test.tsx
 - ✅ Header.test.tsx
-- ✅ 191 tests passed
+- ✅ Plus 37 other test files
 
 ### **E2E Tests:** ✅ **PASSAR**
 - ✅ Dashboard visar 3 faskort
@@ -204,12 +270,12 @@ Bygga om frontend för att matcha v1:s design med:
 - ✅ 2 tests passed
 
 ### **CI/CD:** ✅ **GRÖN**
-- ✅ Type check
-- ✅ Lint
-- ✅ Format check
-- ✅ Unit tests
-- ✅ E2E tests
-- ✅ Build
+- ✅ Type check (TypeScript)
+- ✅ Lint (ESLint)
+- ✅ Format check (Prettier)
+- ✅ Unit tests (Vitest - 240 tests)
+- ✅ E2E tests (Playwright - 2 tests)
+- ✅ Build (Vite)
 
 ---
 
@@ -219,9 +285,10 @@ Bygga om frontend för att matcha v1:s design med:
 - [x] **STEG 1: Data Layer** ✅
 - [x] **STEG 2: Dashboard** ✅
 - [x] **STEG 3: Aktivitetslista** ✅
+- [x] **STEG 3: Unit Tests** ✅ (49 nya tests!)
 - [ ] STEG 4: API Integration ⏳
 - [ ] STEG 5: Styling ⏳
-- [x] Testing (191 unit + 2 E2E) ✅
+- [x] Testing (240 unit + 2 E2E) ✅
 - [x] CI/CD Pipeline ✅
 - [ ] Final Deployment
 
@@ -243,7 +310,37 @@ Bygga om frontend för att matcha v1:s design med:
 
 ## 📝 SESSION NOTES
 
-### **Session 2026-03-25:**
+### **Session 2026-03-25 (Part 2):**
+
+**Completed:**
+- ✅ STEG 3: Comprehensive unit tests (49 nya tests!)
+- ✅ Created 6 test files for all STEG 3 components
+- ✅ Fixed all test failures (29 failed → 0 failed)
+- ✅ Fixed Prettier formatting issues
+- ✅ All tests passing (240 total)
+- ✅ CI/CD pipeline green
+
+**Test Creation Process:**
+1. ✅ Created initial 6 test files (6b8debca)
+2. ✅ Fixed DelstegChecklist & ActivityReferences tests (3e8cb8fc)
+3. ✅ Fixed ActivityListItemExpanded tests (d5cb1ae9)
+4. ✅ Fixed placeholder text matching (20ddc2f6)
+5. ✅ Fixed Prettier formatting (c30faec3)
+
+**Key Fixes:**
+- Updated DelstegChecklist to use `Delsteg[]` type with `{ id, text, required }`
+- Changed colorScheme prop to match implementation
+- Fixed ActivityReferences to use `{ type, title, url }` structure
+- Updated ActivityListItemExpanded to use `ActivityDefinition` type
+- Fixed chevron rotation expectation (rotate-90)
+- Fixed placeholder text regex patterns
+- Removed extra indentation and parentheses
+
+**Next Session:**
+- [ ] STEG 4: API Integration (~1h)
+- [ ] STEG 5: Styling Polish (~1h)
+
+### **Session 2026-03-25 (Part 1):**
 
 **Completed:**
 - ✅ STEG 1: Data Layer (PR #36)
@@ -258,10 +355,6 @@ Bygga om frontend för att matcha v1:s design med:
 - ✅ Updated E2E tests (2 passed)
 - ✅ CI/CD pipeline green
 
-**Next Session:**
-- [ ] STEG 4: API Integration (~1h)
-- [ ] STEG 5: Styling Polish (~1h)
-
 ---
 
-_Uppdaterad: 2026-03-25 16:00 CET_
+_Uppdaterad: 2026-03-25 21:00 CET_
