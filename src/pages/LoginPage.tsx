@@ -19,7 +19,7 @@ export function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/activities', { replace: true })
+      navigate('/dashboard', { replace: true })
     }
   }, [isAuthenticated, navigate])
 
@@ -34,7 +34,7 @@ export function LoginPage() {
 
     try {
       await login({ email: username, password })
-      navigate('/activities')
+      navigate('/dashboard')
     } catch {
       setFormError('Inloggning misslyckades')
     }
