@@ -3,7 +3,7 @@
  * Shared state for all activity progress across the app
  */
 
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import type { ActivityProgress, LoneportalProgress } from '@/types/activityDef'
 
 const STORAGE_KEY = 'loneportal-progress'
