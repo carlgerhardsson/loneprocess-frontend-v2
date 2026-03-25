@@ -1,5 +1,5 @@
 /**
- * Activities Store
+ * Activities Store - READ-ONLY VERSION
  * Manages activities list, selection, and filters
  */
 
@@ -90,22 +90,29 @@ export const useActivitiesStore = create<ActivitiesStore>((set, get) => ({
         if (!filters.status.includes(activity.status)) return false
       }
 
-      // Type filter
-      if (filters.type && filters.type.length > 0) {
-        if (!filters.type.includes(activity.type)) return false
-      }
-
       // Priority filter
       if (filters.priority && filters.priority.length > 0) {
         if (!filters.priority.includes(activity.priority)) return false
       }
 
-      // Search filter
+      // Fas filter
+      if (filters.fas && filters.fas.length > 0) {
+        if (!filters.fas.includes(activity.fas)) return false
+      }
+
+      // Roll filter
+      if (filters.roll && filters.roll.length > 0) {
+        if (!filters.roll.includes(activity.roll)) return false
+      }
+
+      // Search filter (using process and behov instead of title/description)
       if (filters.search) {
         const searchLower = filters.search.toLowerCase()
-        const matchesTitle = activity.title.toLowerCase().includes(searchLower)
-        const matchesDescription = activity.description.toLowerCase().includes(searchLower)
-        if (!matchesTitle && !matchesDescription) return false
+        const matchesProcess = (activity.process || '').toLowerCase().includes(searchLower)
+        const matchesBehov = (activity.behov || '').toLowerCase().includes(searchLower)
+        const matchesFas = (activity.fas || '').toLowerCase().includes(searchLower)
+        const matchesRoll = (activity.roll || '').toLowerCase().includes(searchLower)
+        if (!matchesProcess && !matchesBehov && !matchesFas && !matchesRoll) return false
       }
 
       return true

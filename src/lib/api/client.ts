@@ -6,7 +6,9 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://loneprocess-api-922770673146.us-central1.run.app/api/v1'
+const API_KEY = import.meta.env.VITE_LONEPROCESS_API_KEY
 
 /**
  * Axios instance with interceptors for authentication
@@ -16,6 +18,8 @@ export const apiClient = axios.create({
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    // Add API key if available
+    ...(API_KEY && { 'X-API-Key': API_KEY }),
   },
 })
 

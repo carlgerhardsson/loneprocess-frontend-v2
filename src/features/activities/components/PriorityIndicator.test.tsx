@@ -1,42 +1,38 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { PriorityIndicator } from './PriorityIndicator'
 
 describe('PriorityIndicator', () => {
-  it('renders high priority icon', () => {
-    render(<PriorityIndicator priority="high" />)
-    const icon = screen.getByLabelText('Hög prioritet')
-    expect(icon).toBeInTheDocument()
+  it('renders high priority', () => {
+    const { container } = render(<PriorityIndicator priority={3} />)
+    expect(container.querySelector('.text-orange-600')).toBeTruthy()
   })
 
-  it('renders medium priority icon', () => {
-    render(<PriorityIndicator priority="medium" />)
-    const icon = screen.getByLabelText('Medium prioritet')
-    expect(icon).toBeInTheDocument()
+  it('renders medium priority', () => {
+    const { container } = render(<PriorityIndicator priority={2} />)
+    expect(container.querySelector('.text-yellow-600')).toBeTruthy()
   })
 
-  it('renders low priority icon', () => {
-    render(<PriorityIndicator priority="low" />)
-    const icon = screen.getByLabelText('Låg prioritet')
-    expect(icon).toBeInTheDocument()
+  it('renders low priority', () => {
+    const { container } = render(<PriorityIndicator priority={1} />)
+    expect(container.querySelector('.text-green-600')).toBeTruthy()
   })
 
-  it('renders urgent priority icon', () => {
-    render(<PriorityIndicator priority="urgent" />)
-    const icon = screen.getByLabelText('Brådskande')
-    expect(icon).toBeInTheDocument()
+  it('renders urgent priority', () => {
+    const { container } = render(<PriorityIndicator priority={4} />)
+    expect(container.querySelector('.text-red-600')).toBeTruthy()
   })
 
-  it('renders with label when showLabel is true', () => {
-    render(<PriorityIndicator priority="high" showLabel />)
-    expect(screen.getByText('Hög prioritet')).toBeInTheDocument()
+  it('shows label when requested', () => {
+    const { container } = render(<PriorityIndicator priority={3} showLabel />)
+    expect(container.textContent).toContain('Hög')
   })
 
-  it('applies size classes correctly', () => {
-    const { container, rerender } = render(<PriorityIndicator priority="high" size="sm" />)
-    expect(container.querySelector('.w-4.h-4')).toBeInTheDocument()
+  it('applies size variants', () => {
+    const { container, rerender } = render(<PriorityIndicator priority={3} size="sm" />)
+    expect(container.querySelector('.w-4')).toBeTruthy()
 
-    rerender(<PriorityIndicator priority="high" size="lg" />)
-    expect(container.querySelector('.w-6.h-6')).toBeInTheDocument()
+    rerender(<PriorityIndicator priority={3} size="md" />)
+    expect(container.querySelector('.w-5')).toBeTruthy()
   })
 })

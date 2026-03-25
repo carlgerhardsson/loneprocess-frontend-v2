@@ -1,151 +1,246 @@
 /**
- * Activities Page
- *
- * Main page for viewing and managing activities.
- * Now with full CRUD operations connected to backend API.
+ * Activities Page - READ-ONLY VERSION
+ * This app ONLY displays activities from backend API
+ * NO Create/Update/Delete functionality
  */
 
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { useActivities } from '@/hooks/queries/useActivities'
-import { useToast } from '@/hooks/useToast'
-import { Toast } from '@/components/ui'
-import { ActivityList } from '@/features/activities/components/ActivityList'
-import { CreateActivityModal } from '@/features/activities/components/CreateActivityModal'
-import { EditActivityModal } from '@/features/activities/components/EditActivityModal'
-import { DeleteActivityDialog } from '@/features/activities/components/DeleteActivityDialog'
-import { Spinner } from '@/components/loading/Spinner'
-import type { Activity } from '@/types'
+import { AlertCircle, RefreshCw } from 'lucide-react'
+import {
+  ActivityList,
+  ActivityDetails,
+  SearchBar,
+  FilterPanel,
+  ActiveFilters,
+  EmptyState,
+} from '@/features/activities/components'
+import { useActivities } from '@/hooks/queries'
+import type { Activity, ActivityFilters } from '@/types'
 
 export function ActivitiesPage() {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
-  const [deletingActivity, setDeletingActivity] = useState<Activity | null>(null)
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
+  const [filters, setFilters] = useState<ActivityFilters>({
+    status: [],
+    fas: [],
+    roll: [],
+    priority: [],
+    search: '',
+  })
 
-  const { data: activities, isLoading, isError, error, refetch } = useActivities()
-  const { toast, showToast, hideToast } = useToast()
+  // Fetch activities from backend (auto-refreshes every 30s)
+  const { data: activities = [], isLoading, error, dataUpdatedAt, isFetching } = useActivities()
 
-  const handleCreateSuccess = () => {
-    showToast('Aktivitet skapad!', 'success')
-    refetch()
+  // Format last updated time
+  const lastUpdated = new Date(dataUpdatedAt).toLocaleTimeString('sv-SE')
+
+  // Apply filters
+  const filteredActivities = activities.filter(activity => {
+    // Search filter - with null checks for backend data
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase()
+      const matchesSearch =
+        (activity.process?.toLowerCase() || '').includes(searchLower) ||
+        (activity.behov?.toLowerCase() || '').includes(searchLower) ||
+        (activity.fas?.toLowerCase() || '').includes(searchLower) ||
+        (activity.roll?.toLowerCase() || '').includes(searchLower)
+      if (!matchesSearch) return false
+    }
+
+    // Status filter
+    if (filters.status && filters.status.length > 0) {
+      if (!filters.status.includes(activity.status)) return false
+    }
+
+    // Fas filter
+    if (filters.fas && filters.fas.length > 0) {
+      if (!filters.fas.includes(activity.fas)) return false
+    }
+
+    // Roll filter
+    if (filters.roll && filters.roll.length > 0) {
+      if (!filters.roll.includes(activity.roll)) return false
+    }
+
+    // Priority filter
+    if (filters.priority && filters.priority.length > 0) {
+      if (!filters.priority.includes(activity.priority)) return false
+    }
+
+    return true
+  })
+
+  const handleClearFilters = () => {
+    setFilters({
+      status: [],
+      fas: [],
+      roll: [],
+      priority: [],
+      search: '',
+    })
   }
 
-  const handleEditSuccess = () => {
-    showToast('Aktivitet uppdaterad!', 'success')
-    setEditingActivity(null)
-    refetch()
+  const handleRemoveFilter = (key: keyof ActivityFilters, value?: string | number) => {
+    setFilters(prev => {
+      if (key === 'search') {
+        return { ...prev, search: '' }
+      }
+
+      const currentValues = prev[key] as (string | number)[] | undefined
+      if (!currentValues) return prev
+
+      return {
+        ...prev,
+        [key]: currentValues.filter(v => v !== value),
+      }
+    })
   }
 
-  const handleDeleteSuccess = () => {
-    showToast('Aktivitet borttagen!', 'success')
-    setDeletingActivity(null)
-    refetch()
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Spinner size="lg" />
-      </div>
-    )
-  }
-
-  if (isError) {
-    return (
-      <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
-          <svg
-            className="w-8 h-8 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Något gick fel</h3>
-        <p className="text-gray-600 mb-6 max-w-sm mx-auto">
-          {error instanceof Error ? error.message : 'Kunde inte hämta aktiviteter.'}
-        </p>
-        <button
-          onClick={() => refetch()}
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Försök igen
-        </button>
-      </div>
-    )
-  }
+  const hasActiveFilters =
+    (filters.status?.length ?? 0) > 0 ||
+    (filters.fas?.length ?? 0) > 0 ||
+    (filters.roll?.length ?? 0) > 0 ||
+    (filters.priority?.length ?? 0) > 0 ||
+    (filters.search?.length ?? 0) > 0
 
   return (
-    <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Aktiviteter</h1>
-            <p className="mt-2 text-gray-600">Hantera och följ upp löneprocessens aktiviteter</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* READ-ONLY INFO BANNER */}
+      <div className="bg-blue-50 border-b border-blue-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-blue-800">
+              <AlertCircle className="w-5 h-5" />
+              <div>
+                <span className="font-semibold">Read-only vy:</span>
+                <span className="ml-2">
+                  Denna applikation visar endast aktiviteter från backend. Aktiviteter skapas
+                  manuellt någon annanstans.
+                </span>
+              </div>
+            </div>
+            {/* Auto-refresh indicator */}
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+              <span>Uppdateras var 30s • Senast: {lastUpdated}</span>
+            </div>
           </div>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Skapa aktivitet
-          </button>
         </div>
-
-        {activities && activities.length > 0 ? (
-          <ActivityList
-            activities={activities}
-            onEdit={activity => setEditingActivity(activity)}
-            onDelete={activity => setDeletingActivity(activity)}
-          />
-        ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 mb-4">Inga aktiviteter ännu</p>
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Skapa första aktiviteten
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Modals */}
-      <CreateActivityModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={handleCreateSuccess}
-      />
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Löneprocess Aktiviteter</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {filteredActivities.length} av {activities.length} aktiviteter
+            </p>
+          </div>
 
-      {editingActivity && (
-        <EditActivityModal
-          isOpen={true}
-          onClose={() => setEditingActivity(null)}
-          activity={editingActivity}
-          onSuccess={handleEditSuccess}
-        />
-      )}
+          {/* Search Bar */}
+          <div className="mt-6">
+            <SearchBar
+              value={filters.search || ''}
+              onChange={search => setFilters(prev => ({ ...prev, search }))}
+              placeholder="Sök efter process, behov, fas eller roll..."
+            />
+          </div>
 
-      {deletingActivity && (
-        <DeleteActivityDialog
-          isOpen={true}
-          onClose={() => setDeletingActivity(null)}
-          activity={deletingActivity}
-          onSuccess={handleDeleteSuccess}
-        />
-      )}
+          {/* Active Filters */}
+          {hasActiveFilters && (
+            <div className="mt-4">
+              <ActiveFilters
+                filters={filters}
+                onRemoveFilter={handleRemoveFilter}
+                onClearAll={handleClearFilters}
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
-      {/* Toast */}
-      {toast.isVisible && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-    </>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Filters Sidebar */}
+          <aside className="lg:col-span-1">
+            <FilterPanel
+              filters={filters}
+              onFilterChange={setFilters}
+              onClearFilters={handleClearFilters}
+            />
+          </aside>
+
+          {/* Activities List */}
+          <main className="lg:col-span-2">
+            {isLoading && (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center gap-2 text-gray-500">
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  <span>Laddar aktiviteter från backend...</span>
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-red-800">
+                  <AlertCircle className="w-5 h-5" />
+                  <div>
+                    <p className="font-semibold">Kunde inte hämta aktiviteter</p>
+                    <p className="text-sm mt-1">
+                      Kontrollera att backend API är igång och CORS är aktiverat.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!isLoading && !error && filteredActivities.length === 0 && (
+              <EmptyState>
+                {hasActiveFilters ? (
+                  <>
+                    <p className="text-gray-600 mb-4">Inga aktiviteter matchar dina filter</p>
+                    <button
+                      onClick={handleClearFilters}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                    >
+                      Rensa filter
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-gray-600">
+                    Inga aktiviteter än. Aktiviteter kommer att visas här när de finns i backend.
+                  </p>
+                )}
+              </EmptyState>
+            )}
+
+            {!isLoading && !error && filteredActivities.length > 0 && (
+              <ActivityList
+                activities={filteredActivities}
+                selectedActivityId={selectedActivity?.id}
+                onClick={setSelectedActivity}
+              />
+            )}
+          </main>
+
+          {/* Activity Details Sidebar */}
+          <aside className="lg:col-span-1">
+            {selectedActivity ? (
+              <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-6">
+                <ActivityDetails activity={selectedActivity} />
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-6">
+                <p className="text-sm text-gray-500 text-center">
+                  Välj en aktivitet för att se detaljer
+                </p>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
+    </div>
   )
 }

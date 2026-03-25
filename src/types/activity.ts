@@ -1,93 +1,159 @@
 /**
  * Activity & Checklist Types
+ * READ-ONLY VERSION: No Create/Update data types
  */
 
-// Backend API types (snake_case, number IDs)
+// ============================================================================
+// BACKEND API TYPES (Exact schema from Swagger)
+// ============================================================================
+
+/**
+ * Activity from backend API (what we GET)
+ * Based on: https://loneprocess-api-922770673146.us-central1.run.app/docs
+ */
 export interface ActivityAPI {
   id: number
-  title: string
-  description: string | null
-  type: ActivityType
+  process_nr: string
+  process: string
+  out_input?: string
+  ska_inga_i_loneperiod?: boolean
+  fas: string
+  roll: string
+  behov: string
+  effekten_vardet?: string
+  extra_info?: string
+  acceptans?: string
+  feature_losning?: string
+  priority: number // 0-4 (integer)
   status: ActivityStatus
-  priority: ActivityPriority
-  assigned_to: string | null
-  due_date: string | null
-  completed_at: string | null
-  created_at: string
-  updated_at: string
-  period_id?: number
-  checklist_items?: ChecklistItemAPI[]
-  comments?: CommentAPI[]
-  tags?: string[]
+  created_at?: string
+  updated_at?: string
+  senast_utford?: string
 }
 
-// Frontend UI types (camelCase, string IDs for compatibility)
+// ============================================================================
+// FRONTEND UI TYPES (for display)
+// ============================================================================
+
+/**
+ * Activity for Frontend UI
+ * Matches backend schema 1:1 - no transformation needed
+ */
 export interface Activity {
-  id: string
-  title: string
-  description: string
-  type: ActivityType
+  id: string // Convert from number to string for UI consistency
+  processNr: string
+  process: string
+  outInput?: string
+  skaIngaILoneperiod?: boolean
+  fas: string
+  roll: string
+  behov: string
+  effektenVardet?: string
+  extraInfo?: string
+  acceptans?: string
+  featureLosning?: string
+  priority: number
   status: ActivityStatus
-  priority: ActivityPriority
-  assignedTo: string | null
-  dueDate: string | null
-  completedAt: string | null
   createdAt: string
   updatedAt: string
-  periodId: string
-  checklistItems: ChecklistItem[]
-  comments: Comment[]
-  tags: string[]
+  senastUtford?: string | null
 }
 
-export type ActivityType = 'salary' | 'tax' | 'reporting' | 'review' | 'recurring' | 'other'
+// ============================================================================
+// ENUMS & CONSTANTS
+// ============================================================================
 
-export type ActivityStatus = 'pending' | 'in_progress' | 'completed' | 'blocked' | 'cancelled'
+/**
+ * Activity Status
+ * From backend Swagger: "active|draft|pending|in_progress|completed|blocked"
+ */
+export type ActivityStatus =
+  | 'active'
+  | 'draft'
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'blocked'
 
-export type ActivityPriority = 'low' | 'medium' | 'high' | 'urgent'
+/**
+ * Priority levels (0-4)
+ * Based on backend schema
+ */
+export const PRIORITY_LEVELS = {
+  NONE: 0,
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+  URGENT: 4,
+} as const
 
-export interface ChecklistItemAPI {
-  id: string
-  text: string
-  is_completed: boolean
-  completed_at: string | null
-  completed_by: string | null
+export type PriorityLevel = (typeof PRIORITY_LEVELS)[keyof typeof PRIORITY_LEVELS]
+
+/**
+ * Fas (Phase) options - common Swedish löneprocess phases
+ */
+export const FAS_OPTIONS = [
+  'Förberedelse',
+  'Insamling',
+  'Beräkning',
+  'Granskning',
+  'Godkännande',
+  'Utbetalning',
+  'Rapportering',
+  'Avstämning',
+] as const
+
+/**
+ * Roll (Role) options - common Swedish löneprocess roles
+ */
+export const ROLL_OPTIONS = [
+  'Löneadministratör',
+  'Lönechef',
+  'HR',
+  'Manager',
+  'Controller',
+  'Systemansvarig',
+] as const
+
+// ============================================================================
+// ADAPTER FUNCTIONS
+// ============================================================================
+
+/**
+ * Convert backend API activity to frontend UI format
+ */
+export function activityFromAPI(api: ActivityAPI): Activity {
+  return {
+    id: String(api.id),
+    processNr: api.process_nr,
+    process: api.process,
+    outInput: api.out_input,
+    skaIngaILoneperiod: api.ska_inga_i_loneperiod,
+    fas: api.fas,
+    roll: api.roll,
+    behov: api.behov,
+    effektenVardet: api.effekten_vardet,
+    extraInfo: api.extra_info,
+    acceptans: api.acceptans,
+    featureLosning: api.feature_losning,
+    priority: api.priority,
+    status: api.status,
+    createdAt: api.created_at || new Date().toISOString(),
+    updatedAt: api.updated_at || new Date().toISOString(),
+    senastUtford: api.senast_utford || null,
+  }
 }
 
-export interface ChecklistItem {
-  id: string
-  text: string
-  isCompleted: boolean
-  completedAt: string | null
-  completedBy: string | null
-}
-
-export interface CommentAPI {
-  id: string
-  text: string
-  author_id: string
-  author_name: string
-  created_at: string
-  updated_at: string | null
-}
-
-export interface Comment {
-  id: string
-  text: string
-  authorId: string
-  authorName: string
-  createdAt: string
-  updatedAt: string | null
-}
+// ============================================================================
+// FILTER TYPES
+// ============================================================================
 
 export interface ActivityFilters {
   status?: ActivityStatus[]
-  type?: ActivityType[]
-  priority?: ActivityPriority[]
-  assignedTo?: string[]
+  fas?: string[]
+  roll?: string[]
+  priority?: number[]
   search?: string
-  dateFrom?: string
-  dateTo?: string
 }
 
 export interface ActivitiesState {
@@ -96,69 +162,4 @@ export interface ActivitiesState {
   filters: ActivityFilters
   isLoading: boolean
   error: string | null
-}
-
-// API Data Types (for creating/updating)
-export interface CreateActivityData {
-  title: string
-  description?: string
-  type?: ActivityType
-  status?: ActivityStatus
-  priority?: ActivityPriority
-  assigned_to?: string
-  due_date?: string
-  period_id?: number
-}
-
-export interface UpdateActivityData {
-  title?: string
-  description?: string
-  type?: ActivityType
-  status?: ActivityStatus
-  priority?: ActivityPriority
-  assigned_to?: string
-  due_date?: string
-  completed_at?: string
-}
-
-// Adapter functions
-export function activityFromAPI(api: ActivityAPI): Activity {
-  return {
-    id: String(api.id),
-    title: api.title,
-    description: api.description || '',
-    type: api.type,
-    status: api.status,
-    priority: api.priority,
-    assignedTo: api.assigned_to,
-    dueDate: api.due_date,
-    completedAt: api.completed_at,
-    createdAt: api.created_at,
-    updatedAt: api.updated_at,
-    periodId: api.period_id ? String(api.period_id) : '',
-    checklistItems: api.checklist_items?.map(checklistFromAPI) || [],
-    comments: api.comments?.map(commentFromAPI) || [],
-    tags: api.tags || [],
-  }
-}
-
-function checklistFromAPI(api: ChecklistItemAPI): ChecklistItem {
-  return {
-    id: api.id,
-    text: api.text,
-    isCompleted: api.is_completed,
-    completedAt: api.completed_at,
-    completedBy: api.completed_by,
-  }
-}
-
-function commentFromAPI(api: CommentAPI): Comment {
-  return {
-    id: api.id,
-    text: api.text,
-    authorId: api.author_id,
-    authorName: api.author_name,
-    createdAt: api.created_at,
-    updatedAt: api.updated_at,
-  }
 }

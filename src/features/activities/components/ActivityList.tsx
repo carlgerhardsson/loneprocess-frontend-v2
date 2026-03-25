@@ -7,6 +7,7 @@
 
 import { Activity } from '@/types'
 import { ActivityListItem } from './ActivityListItem'
+import { EmptyState } from './EmptyState'
 
 interface ActivityListProps {
   activities: Activity[]
@@ -23,6 +24,10 @@ export function ActivityList({
   onClick,
   selectedActivityId,
 }: ActivityListProps) {
+  if (activities.length === 0) {
+    return <EmptyState />
+  }
+
   return (
     <div className="space-y-3">
       {activities.map(activity => (

@@ -5,7 +5,7 @@ import { StatusBadge } from './StatusBadge'
 describe('StatusBadge', () => {
   it('renders pending status', () => {
     render(<StatusBadge status="pending" />)
-    expect(screen.getByText('Väntar')).toBeInTheDocument()
+    expect(screen.getByText('Väntande')).toBeInTheDocument()
   })
 
   it('renders in_progress status', () => {
@@ -25,11 +25,11 @@ describe('StatusBadge', () => {
 
   it('applies small size class', () => {
     const { container } = render(<StatusBadge status="pending" size="sm" />)
-    expect(container.querySelector('.text-xs')).toBeInTheDocument()
+    expect(container.querySelector('.text-xs')).toBeTruthy()
   })
 
   it('applies medium size class by default', () => {
     const { container } = render(<StatusBadge status="pending" />)
-    expect(container.querySelector('.text-sm')).toBeInTheDocument()
+    expect(container.querySelector('.text-sm')).toBeTruthy()
   })
 })

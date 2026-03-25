@@ -1,14 +1,15 @@
 /**
- * Activities API Service
- * Handles all activity-related API calls
+ * Activities API Service - READ-ONLY VERSION
+ * Only GET operations - no Create/Update/Delete
  */
 
 import { apiClient } from './client'
-import type { Activity, ActivityAPI, CreateActivityData, UpdateActivityData } from '@/types'
+import type { Activity, ActivityAPI } from '@/types'
 import { activityFromAPI } from '@/types'
 
 /**
  * Fetch all activities with optional filtering
+ * Auto-refreshes every 30 seconds via React Query configuration
  */
 export async function fetchActivities(params?: {
   skip?: number
@@ -27,27 +28,4 @@ export async function fetchActivities(params?: {
 export async function fetchActivity(id: number): Promise<Activity> {
   const response = await apiClient.get<ActivityAPI>(`/activities/${id}`)
   return activityFromAPI(response.data)
-}
-
-/**
- * Create a new activity
- */
-export async function createActivity(data: CreateActivityData): Promise<Activity> {
-  const response = await apiClient.post<ActivityAPI>('/activities', data)
-  return activityFromAPI(response.data)
-}
-
-/**
- * Update an existing activity
- */
-export async function updateActivity(id: number, data: UpdateActivityData): Promise<Activity> {
-  const response = await apiClient.put<ActivityAPI>(`/activities/${id}`, data)
-  return activityFromAPI(response.data)
-}
-
-/**
- * Delete an activity
- */
-export async function deleteActivity(id: number): Promise<void> {
-  await apiClient.delete(`/activities/${id}`)
 }

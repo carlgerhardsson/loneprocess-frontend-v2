@@ -1,10 +1,10 @@
 /**
- * Filter Panel Component
+ * Filter Panel Component - READ-ONLY VERSION
  * Provides filtering options for activities
  */
 
 import { X } from 'lucide-react'
-import type { ActivityFilters, ActivityStatus, ActivityType, ActivityPriority } from '@/types'
+import type { ActivityFilters, ActivityStatus } from '@/types'
 
 interface FilterPanelProps {
   filters: ActivityFilters
@@ -14,27 +14,20 @@ interface FilterPanelProps {
 
 export function FilterPanel({ filters, onFilterChange, onClearFilters }: FilterPanelProps) {
   const statusOptions: { value: ActivityStatus; label: string }[] = [
+    { value: 'active', label: 'Aktiv' },
+    { value: 'draft', label: 'Utkast' },
     { value: 'pending', label: 'Väntande' },
     { value: 'in_progress', label: 'Pågående' },
     { value: 'completed', label: 'Klar' },
     { value: 'blocked', label: 'Blockerad' },
-    { value: 'cancelled', label: 'Avbruten' },
   ]
 
-  const typeOptions: { value: ActivityType; label: string }[] = [
-    { value: 'salary', label: 'Lönehantering' },
-    { value: 'tax', label: 'Skatt' },
-    { value: 'reporting', label: 'Rapportering' },
-    { value: 'review', label: 'Granskning' },
-    { value: 'recurring', label: 'Återkommande' },
-    { value: 'other', label: 'Övrigt' },
-  ]
-
-  const priorityOptions: { value: ActivityPriority; label: string }[] = [
-    { value: 'low', label: 'Låg' },
-    { value: 'medium', label: 'Medel' },
-    { value: 'high', label: 'Hög' },
-    { value: 'urgent', label: 'Brådskande' },
+  const priorityOptions: { value: number; label: string }[] = [
+    { value: 0, label: 'Ingen prioritet' },
+    { value: 1, label: 'Låg' },
+    { value: 2, label: 'Medel' },
+    { value: 3, label: 'Hög' },
+    { value: 4, label: 'Brådskande' },
   ]
 
   const toggleFilter = <T,>(filterKey: keyof ActivityFilters, value: T) => {
@@ -51,7 +44,6 @@ export function FilterPanel({ filters, onFilterChange, onClearFilters }: FilterP
 
   const hasActiveFilters =
     (filters.status && filters.status.length > 0) ||
-    (filters.type && filters.type.length > 0) ||
     (filters.priority && filters.priority.length > 0)
 
   return (
@@ -82,26 +74,6 @@ export function FilterPanel({ filters, onFilterChange, onClearFilters }: FilterP
                   type="checkbox"
                   checked={filters.status?.includes(option.value) || false}
                   onChange={() => toggleFilter('status', option.value)}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                />
-                <span className="text-sm text-gray-700">{option.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Type Filter */}
-        <div>
-          <label className="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2 block">
-            Typ
-          </label>
-          <div className="space-y-2">
-            {typeOptions.map(option => (
-              <label key={option.value} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.type?.includes(option.value) || false}
-                  onChange={() => toggleFilter('type', option.value)}
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700">{option.label}</span>
