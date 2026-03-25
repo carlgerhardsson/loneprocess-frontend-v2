@@ -20,7 +20,7 @@ export function Header() {
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary-600 rounded-lg" />
             <span className="text-xl font-bold text-gray-900">Löneportalen</span>
           </Link>
@@ -28,8 +28,8 @@ export function Header() {
           {isAuthenticated && (
             <div className="flex items-center gap-6">
               <nav className="flex items-center gap-4">
-                <Link to="/activities" className="text-gray-700 hover:text-primary-600 font-medium">
-                  Aktiviteter
+                <Link to="/dashboard" className="text-gray-700 hover:text-primary-600 font-medium">
+                  Dashboard
                 </Link>
               </nav>
 
