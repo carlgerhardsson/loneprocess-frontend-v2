@@ -22,9 +22,15 @@ interface ActivityListItemExpandedProps {
 
 export function ActivityListItemExpanded({ activity, colorScheme }: ActivityListItemExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { getCompletionPercentage } = useActivityProgress()
+  const { progress, getCompletionPercentage } = useActivityProgress()
   const percentage = getCompletionPercentage(activity.id)
   const isComplete = percentage === 100
+
+  // Calculate completed delsteg count
+  const activityProgress = progress[activity.id]
+  const completedDelsteg = activityProgress
+    ? activityProgress.delstegCompleted.filter(Boolean).length
+    : 0
 
   return (
     <div className="bg-white rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all overflow-hidden">
@@ -89,10 +95,7 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
               {percentage}%
             </div>
             <div className="text-xs text-gray-500">
-              {activity.delsteg.filter((_, i) => {
-                const progress = useActivityProgress().progress[activity.id]
-                return progress?.delstegCompleted[i]
-              }).length} / {activity.delsteg.length}
+              {completedDelsteg} / {activity.delsteg.length}
             </div>
           </div>
         </div>
