@@ -177,7 +177,7 @@ describe('ActivityListItemExpanded', () => {
     fireEvent.click(header!)
 
     // Comment textarea should be visible
-    expect(screen.getByPlaceholderText(/Lägg till anteckningar/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/kommentarer, anteckningar/i)).toBeInTheDocument()
   })
 
   it('shows completion percentage', () => {

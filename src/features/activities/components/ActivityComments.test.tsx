@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ActivityComments } from './ActivityComments'
@@ -16,7 +16,7 @@ describe('ActivityComments', () => {
   it('renders textarea', () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    expect(screen.getByPlaceholderText(/Lägg till anteckningar/i)).toBeInTheDocument()
+    expect(screen.getByPlaceholderText(/kommentarer, anteckningar/i)).toBeInTheDocument()
   })
 
   it('displays existing comment', () => {
@@ -38,14 +38,14 @@ describe('ActivityComments', () => {
 
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/Lägg till anteckningar/i) as HTMLTextAreaElement
+    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i) as HTMLTextAreaElement
     expect(textarea.value).toBe('Existing comment text')
   })
 
   it('saves comment on blur', async () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/Lägg till anteckningar/i)
+    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i)
 
     // Type comment
     await userEvent.type(textarea, 'Test comment')
@@ -64,7 +64,7 @@ describe('ActivityComments', () => {
   it('saves comment on Cmd+Enter (Mac)', async () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/Lägg till anteckningar/i)
+    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i)
 
     // Type comment
     await userEvent.type(textarea, 'Test comment')
@@ -87,7 +87,7 @@ describe('ActivityComments', () => {
   it('saves comment on Ctrl+Enter (Windows)', async () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/Lägg till anteckningar/i)
+    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i)
 
     // Type comment
     await userEvent.type(textarea, 'Test comment')
@@ -110,7 +110,7 @@ describe('ActivityComments', () => {
   it('updates comment when typing', async () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/Lägg till anteckningar/i) as HTMLTextAreaElement
+    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i) as HTMLTextAreaElement
 
     await userEvent.type(textarea, 'New text')
 
