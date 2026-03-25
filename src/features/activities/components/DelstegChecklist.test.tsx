@@ -44,7 +44,7 @@ describe('DelstegChecklist', () => {
 
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(3)
-    
+
     // Check aria-labels indicate unchecked state
     expect(buttons[0]).toHaveAttribute('aria-label', 'Markera som klar: Kontrollera systemstatus')
   })
@@ -66,7 +66,7 @@ describe('DelstegChecklist', () => {
 
     // Click to check
     fireEvent.click(firstButton)
-    
+
     // Should update aria-label
     expect(firstButton).toHaveAttribute('aria-label', 'Avmarkera: Kontrollera systemstatus')
 

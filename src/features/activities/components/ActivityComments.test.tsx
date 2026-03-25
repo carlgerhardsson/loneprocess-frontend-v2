@@ -38,7 +38,9 @@ describe('ActivityComments', () => {
 
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i) as HTMLTextAreaElement
+    const textarea = screen.getByPlaceholderText(
+      /kommentarer, anteckningar/i
+    ) as HTMLTextAreaElement
     expect(textarea.value).toBe('Existing comment text')
   })
 
@@ -110,7 +112,9 @@ describe('ActivityComments', () => {
   it('updates comment when typing', async () => {
     renderWithProvider(<ActivityComments activityId="1.1" />)
 
-    const textarea = screen.getByPlaceholderText(/kommentarer, anteckningar/i) as HTMLTextAreaElement
+    const textarea = screen.getByPlaceholderText(
+      /kommentarer, anteckningar/i
+    ) as HTMLTextAreaElement
 
     await userEvent.type(textarea, 'New text')
 

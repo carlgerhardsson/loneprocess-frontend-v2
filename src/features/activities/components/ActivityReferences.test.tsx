@@ -47,7 +47,7 @@ describe('ActivityReferences', () => {
     render(<ActivityReferences references={mockReferences} />)
 
     const links = screen.getAllByRole('link')
-    links.forEach((link) => {
+    links.forEach(link => {
       expect(link).toHaveAttribute('target', '_blank')
       expect(link).toHaveAttribute('rel', 'noopener noreferrer')
     })
@@ -88,7 +88,7 @@ describe('ActivityReferences', () => {
     const { container } = render(<ActivityReferences references={mockReferences} />)
 
     const links = container.querySelectorAll('a')
-    links.forEach((link) => {
+    links.forEach(link => {
       // Links should have group class for hover effects
       expect(link.className).toContain('group')
       expect(link.className).toContain('hover:bg-gray-100')
