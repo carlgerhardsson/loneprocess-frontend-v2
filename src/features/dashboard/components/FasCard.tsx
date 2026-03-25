@@ -4,13 +4,12 @@
  * UPDATED: Now uses expandable ActivityListItemExpanded
  */
 
-import type { FasType, ActivityDefinition } from '@/types/activityDef'
+import type { ActivityDefinition } from '@/types/activityDef'
 import { CircularProgress } from './CircularProgress'
 import { useFasProgress } from '../hooks/useFasProgress'
 import { ActivityListItemExpanded } from '@/features/activities/components/ActivityListItemExpanded'
 
 interface FasCardProps {
-  fas: FasType
   activities: ActivityDefinition[]
   title: string
   subtitle: string
@@ -22,7 +21,7 @@ interface FasCardProps {
   }
 }
 
-export function FasCard({ fas, activities, title, subtitle, colorScheme }: FasCardProps) {
+export function FasCard({ activities, title, subtitle, colorScheme }: FasCardProps) {
   const { completedCount, totalCount, overallPercentage } = useFasProgress(activities)
 
   // Convert colorScheme to format expected by ActivityListItemExpanded
