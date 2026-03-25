@@ -10,7 +10,7 @@ test('login page loads correctly', async ({ page }) => {
   await expect(page.locator('input#password')).toBeVisible()
 })
 
-test('user can login and see activities page', async ({ page }) => {
+test('user can login and see dashboard', async ({ page }) => {
   await page.goto('/')
 
   // Fill in login form
@@ -20,8 +20,8 @@ test('user can login and see activities page', async ({ page }) => {
   // Submit form
   await page.click('button[type="submit"]')
 
-  // Wait for navigation to activities page
-  await page.waitForURL('/activities')
+  // Wait for navigation to dashboard
+  await page.waitForURL('/dashboard')
 
   // Verify we're logged in by checking header shows user info
   // (Don't wait for activities to load - that requires mock API setup)
