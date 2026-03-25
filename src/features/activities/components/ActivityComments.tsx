@@ -26,7 +26,7 @@ export function ActivityComments({ activityId }: ActivityCommentsProps) {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.currentTarget.blur()
     }
