@@ -3,12 +3,12 @@
  * Shared state for all activity progress across the app
  */
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useState, useCallback, ReactNode } from 'react'
 import type { ActivityProgress, LoneportalProgress } from '@/types/activityDef'
 
 const STORAGE_KEY = 'loneportal-progress'
 
-interface ActivityProgressContextValue {
+export interface ActivityProgressContextValue {
   progress: Record<string, ActivityProgress>
   toggleDelsteg: (activityId: string, delstegIndex: number, totalDelsteg: number) => void
   updateComment: (activityId: string, comment: string) => void
@@ -18,7 +18,7 @@ interface ActivityProgressContextValue {
   getCompletionPercentage: (activityId: string) => number
 }
 
-const ActivityProgressContext = createContext<ActivityProgressContextValue | null>(null)
+export const ActivityProgressContext = createContext<ActivityProgressContextValue | null>(null)
 
 function getStoredProgress(): LoneportalProgress {
   try {
@@ -170,12 +170,4 @@ export function ActivityProgressProvider({ children }: { children: ReactNode }) 
       {children}
     </ActivityProgressContext.Provider>
   )
-}
-
-export function useActivityProgress() {
-  const context = useContext(ActivityProgressContext)
-  if (!context) {
-    throw new Error('useActivityProgress must be used within ActivityProgressProvider')
-  }
-  return context
 }
