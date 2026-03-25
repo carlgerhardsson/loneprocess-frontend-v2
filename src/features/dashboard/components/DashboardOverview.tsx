@@ -83,7 +83,6 @@ export function DashboardOverview() {
             return (
               <FasCard
                 key={config.fas}
-                fas={config.fas}
                 activities={activities}
                 title={config.title}
                 subtitle={config.subtitle}
