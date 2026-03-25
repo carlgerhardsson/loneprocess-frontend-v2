@@ -41,7 +41,7 @@ export function DelstegChecklist({ activityId, delsteg, colorScheme }: DelstegCh
               <div
                 className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                   isChecked
-                    ? 'bg-gray-900 border-gray-900'
+                    ? `${colorScheme?.accent || 'bg-blue-800'} border-transparent`
                     : 'border-gray-300 hover:border-gray-400 bg-white'
                 }`}
               >
