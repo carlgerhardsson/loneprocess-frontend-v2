@@ -1,145 +1,134 @@
 /**
- * FasCard Component
- * Shows a phase card with progress and activity list
+ * FasCard - Phase Card Component
+ * Displays a phase with its activities and progress
  */
 
+import type { FasType, ActivityDefinition } from '@/types/activityDef'
 import { CircularProgress } from './CircularProgress'
 import { useFasProgress } from '../hooks/useFasProgress'
-import { getActivitiesByFas } from '@/data/activities'
-import { useActivityProgress } from '@/hooks/useActivityProgress'
-import type { FasType } from '@/types/activityDef'
 
 interface FasCardProps {
   fas: FasType
+  activities: ActivityDefinition[]
   title: string
   subtitle: string
-  colorScheme: 'blue' | 'orange' | 'green'
-}
-
-const colorClasses = {
-  blue: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-700',
-    ring: 'text-blue-600',
-    checkmark: 'text-blue-500',
-    hover: 'hover:bg-blue-100'
-  },
-  orange: {
-    bg: 'bg-orange-50',
-    border: 'border-orange-200',
-    text: 'text-orange-700',
-    ring: 'text-orange-600',
-    checkmark: 'text-orange-500',
-    hover: 'hover:bg-orange-100'
-  },
-  green: {
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    text: 'text-green-700',
-    ring: 'text-green-600',
-    checkmark: 'text-green-500',
-    hover: 'hover:bg-green-100'
+  colorScheme: {
+    bg: string
+    border: string
+    text: string
+    progressColor: string
   }
 }
 
-export function FasCard({ fas, title, subtitle, colorScheme }: FasCardProps) {
-  const { total, completed, percentage } = useFasProgress(fas)
-  const { getCompletionPercentage } = useActivityProgress()
-  const activities = getActivitiesByFas(fas)
-  const colors = colorClasses[colorScheme]
+export function FasCard({ fas, activities, title, subtitle, colorScheme }: FasCardProps) {
+  const { completedCount, totalCount, overallPercentage } = useFasProgress(activities)
 
   return (
-    <div className={`rounded-xl border-2 ${colors.border} ${colors.bg} overflow-hidden shadow-sm`}>
+    <div className={`${colorScheme.bg} ${colorScheme.border} border-2 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 bg-white">
-        <h2 className={`text-2xl font-bold ${colors.text} mb-1`}>
-          {title}
-        </h2>
-        <p className="text-sm text-gray-600">{subtitle}</p>
-      </div>
-
-      {/* Progress Section */}
-      <div className="p-6 flex items-center justify-between border-b border-gray-200 bg-white">
-        <div>
-          <div className="text-3xl font-bold text-gray-900">
-            {completed} <span className="text-gray-400">av</span> {total}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h2 className={`text-2xl font-bold ${colorScheme.text} mb-1`}>
+              {title}
+            </h2>
+            <p className="text-gray-600 text-sm">
+              {subtitle}
+            </p>
           </div>
-          <div className="text-sm text-gray-600 mt-1">aktiviteter klara</div>
+          <CircularProgress 
+            percentage={overallPercentage} 
+            size={100}
+            color={colorScheme.progressColor}
+          />
         </div>
-        <div className={colors.ring}>
-          <CircularProgress percentage={percentage} color="currentColor" />
+        
+        <div className="flex items-center gap-2">
+          <div className={`text-lg font-semibold ${colorScheme.text}`}>
+            {completedCount} av {totalCount} klara
+          </div>
+          <div className="text-gray-500 text-sm">
+            ({activities.length} aktiviteter)
+          </div>
         </div>
       </div>
 
-      {/* Activities List */}
-      <div className="p-4">
-        <div className="space-y-2">
-          {activities.map(activity => {
-            const activityPct = getCompletionPercentage(activity.id)
-            const isComplete = activityPct === 100
+      {/* Activity List */}
+      <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
+        {activities.map((activity) => (
+          <ActivityItem 
+            key={activity.id} 
+            activity={activity}
+            colorScheme={colorScheme}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
-            return (
-              <div
-                key={activity.id}
-                className={`p-3 rounded-lg bg-white border border-gray-200 transition-colors ${
-                  isComplete ? 'opacity-60' : ''
-                } ${colors.hover}`}
-              >
-                <div className="flex items-start gap-3">
-                  {/* Checkmark or Process Number */}
-                  <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                    {isComplete ? (
-                      <svg
-                        className={`w-5 h-5 ${colors.checkmark}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    ) : (
-                      <span className="text-xs font-mono font-semibold text-gray-500">
-                        {activity.processNr}
-                      </span>
-                    )}
-                  </div>
+function ActivityItem({ 
+  activity, 
+  colorScheme 
+}: { 
+  activity: ActivityDefinition
+  colorScheme: FasCardProps['colorScheme']
+}) {
+  const { getCompletionPercentage } = useFasProgress([activity])
+  const percentage = getCompletionPercentage(activity.id)
+  const isComplete = percentage === 100
 
-                  {/* Activity Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-gray-900 leading-tight">
-                        {activity.process}
-                      </h3>
-                      {activity.hasApiIntegration && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                          API
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Progress bar */}
-                    {activityPct > 0 && activityPct < 100 && (
-                      <div className="mt-2">
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
-                          <div
-                            className={`h-1.5 rounded-full transition-all ${colors.bg}`}
-                            style={{ width: `${activityPct}%` }}
-                          />
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {activityPct}% klart
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+  return (
+    <div className="bg-white rounded-lg p-3 border border-gray-200 hover:border-gray-300 transition-colors">
+      <div className="flex items-center gap-3">
+        {/* Checkbox indicator */}
+        <div className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center ${
+          isComplete 
+            ? `${colorScheme.border.replace('border-', 'bg-')} border-transparent` 
+            : 'border-gray-300'
+        }`}>
+          {isComplete && (
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </div>
+
+        {/* Activity info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-xs font-bold text-gray-500">
+              {activity.processNr}
+            </span>
+            {activity.hasApiIntegration && (
+              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                API
+              </span>
+            )}
+          </div>
+          <div className="text-sm text-gray-900 font-medium truncate">
+            {activity.process}
+          </div>
+          {activity.defaultAssignee && (
+            <div className="text-xs text-gray-500 mt-1">
+              {activity.defaultAssignee}
+            </div>
+          )}
+        </div>
+
+        {/* Progress bar */}
+        <div className="flex-shrink-0 w-24">
+          <div className="flex items-center justify-end gap-1">
+            <span className={`text-xs font-semibold ${isComplete ? colorScheme.text : 'text-gray-600'}`}>
+              {percentage}%
+            </span>
+          </div>
+          <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+            <div 
+              className={`h-full ${colorScheme.border.replace('border-', 'bg-')} transition-all duration-300`}
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>

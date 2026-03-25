@@ -1,48 +1,51 @@
 /**
  * useFasProgress Hook
- * Calculates completion statistics for each Fas
+ * Calculate completion statistics for a set of activities
  */
 
 import { useMemo } from 'react'
-import { getActivitiesByFas } from '@/data/activities'
+import type { ActivityDefinition } from '@/types/activityDef'
 import { useActivityProgress } from '@/hooks/useActivityProgress'
-import type { FasType } from '@/types/activityDef'
 
-interface FasProgressStats {
-  total: number
-  completed: number
-  percentage: number
-}
-
-export function useFasProgress(fas: FasType): FasProgressStats {
-  const { progress } = useActivityProgress()
-  const activities = useMemo(() => getActivitiesByFas(fas), [fas])
+export function useFasProgress(activities: ActivityDefinition[]) {
+  const { progress, getCompletionPercentage } = useActivityProgress()
 
   const stats = useMemo(() => {
-    let completed = 0
-    const total = activities.length
+    let totalDelsteg = 0
+    let completedDelsteg = 0
+    let fullyCompletedActivities = 0
 
     activities.forEach(activity => {
       const activityProgress = progress[activity.id]
-      if (!activityProgress) return
+      const delstegCount = activity.delsteg.length
+      
+      totalDelsteg += delstegCount
 
-      // Count as completed if ALL required delsteg are checked
-      const requiredDelsteg = activity.delsteg.filter(d => d.required)
-      const allRequiredComplete = requiredDelsteg.every((delsteg, index) => {
-        return activityProgress.delstegCompleted[index] === true
-      })
-
-      if (allRequiredComplete && requiredDelsteg.length > 0) {
-        completed++
+      if (activityProgress) {
+        const completed = activityProgress.delstegCompleted.filter(Boolean).length
+        completedDelsteg += completed
+        
+        if (completed === delstegCount) {
+          fullyCompletedActivities++
+        }
       }
     })
 
+    const overallPercentage = totalDelsteg > 0 
+      ? Math.round((completedDelsteg / totalDelsteg) * 100) 
+      : 0
+
     return {
-      total,
-      completed,
-      percentage: total > 0 ? (completed / total) * 100 : 0
+      completedCount: fullyCompletedActivities,
+      totalCount: activities.length,
+      totalDelsteg,
+      completedDelsteg,
+      overallPercentage
     }
   }, [activities, progress])
 
-  return stats
+  return {
+    ...stats,
+    getCompletionPercentage
+  }
 }

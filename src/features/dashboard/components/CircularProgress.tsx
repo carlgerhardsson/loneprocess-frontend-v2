@@ -1,20 +1,22 @@
 /**
- * Circular Progress Component
- * Shows completion percentage as a ring
+ * CircularProgress - SVG Progress Ring
+ * Shows completion percentage in a circular format
  */
 
 interface CircularProgressProps {
   percentage: number // 0-100
-  size?: number // diameter in pixels
+  size?: number
   strokeWidth?: number
   color?: string
+  backgroundColor?: string
 }
 
 export function CircularProgress({
   percentage,
   size = 120,
   strokeWidth = 8,
-  color = 'currentColor'
+  color = '#3b82f6',
+  backgroundColor = '#e5e7eb'
 }: CircularProgressProps) {
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
@@ -28,10 +30,9 @@ export function CircularProgress({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="currentColor"
+          stroke={backgroundColor}
           strokeWidth={strokeWidth}
           fill="none"
-          className="text-gray-200"
         />
         {/* Progress circle */}
         <circle
@@ -44,7 +45,7 @@ export function CircularProgress({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          className="transition-all duration-500 ease-out"
+          className="transition-all duration-300 ease-in-out"
         />
       </svg>
       {/* Percentage text */}
