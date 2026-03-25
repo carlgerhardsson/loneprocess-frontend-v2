@@ -18,6 +18,7 @@ export interface ActivityProgressContextValue {
   getCompletionPercentage: (activityId: string) => number
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ActivityProgressContext = createContext<ActivityProgressContextValue | null>(null)
 
 function getStoredProgress(): LoneportalProgress {
