@@ -18,26 +18,26 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.1.1',
         text: 'Kontrollera att alla korrigeringar är genomförda',
-        required: true
+        required: true,
       },
       {
         id: '3.1.2',
         text: 'Starta definitiv lönekörning',
-        required: true
+        required: true,
       },
       {
         id: '3.1.3',
         text: 'Övervaka körningsstatus via API',
-        required: true
+        required: true,
       },
       {
         id: '3.1.4',
         text: 'Bekräfta att körningen slutförts utan fel',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
+    defaultAssignee: 'Hassan Sundberg',
   },
   {
     id: '3.2',
@@ -50,26 +50,26 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.2.1',
         text: 'Generera lönespecifikationer för alla anställda',
-        required: true
+        required: true,
       },
       {
         id: '3.2.2',
         text: 'Granska slumpvält urval för kvalitet',
-        required: true
+        required: true,
       },
       {
         id: '3.2.3',
         text: 'Verifiera att alla beräkningar stämmer',
-        required: true
+        required: true,
       },
       {
         id: '3.2.4',
         text: 'Godkänn för utskick till anställda',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Elif Bylund'
+    defaultAssignee: 'Elif Bylund',
   },
   {
     id: '3.3',
@@ -82,21 +82,21 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.3.1',
         text: 'Granska lista över extratutbetalningar',
-        required: true
+        required: true,
       },
       {
         id: '3.3.2',
         text: 'Verifiera underlag för justeringar',
-        required: true
+        required: true,
       },
       {
         id: '3.3.3',
         text: 'Godkänn och registrera extratutbetalningar',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Elif Bylund'
+    defaultAssignee: 'Elif Bylund',
   },
   {
     id: '3.4',
@@ -109,26 +109,26 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.4.1',
         text: 'Generera bankfil för löneutbetalningar',
-        required: true
+        required: true,
       },
       {
         id: '3.4.2',
         text: 'Verifiera totalbelopp mot beräknad lönesumma',
-        required: true
+        required: true,
       },
       {
         id: '3.4.3',
         text: 'Skicka bankfil till bank',
-        required: true
+        required: true,
       },
       {
         id: '3.4.4',
         text: 'Bekräfta att utbetalning genomförts',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
+    defaultAssignee: 'Hassan Sundberg',
   },
   {
     id: '3.5',
@@ -141,32 +141,32 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.5.1',
         text: 'Granska arbetsgivardeklaration (AGI)',
-        required: true
+        required: true,
       },
       {
         id: '3.5.2',
         text: 'Verifiera skatteavdrag och arbetsgivaravgifter',
-        required: true
+        required: true,
       },
       {
         id: '3.5.3',
         text: 'Skicka in AGI till Skatteverket',
-        required: true
+        required: true,
       },
       {
         id: '3.5.4',
         text: 'Bekräfta att redovisningen mottagits',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [
       {
         title: 'Skatteverket: Arbetsgivardeklaration',
         url: 'https://www.skatteverket.se/foretagochorganisationer/arbetsgivare/arbetsgivardeklaration.4.233f91f71260075abe8800020817.html',
-        type: 'External'
-      }
+        type: 'External',
+      },
     ],
-    defaultAssignee: 'Tua Jonasson'
+    defaultAssignee: 'Tua Jonasson',
   },
   {
     id: '3.6',
@@ -179,21 +179,21 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.6.1',
         text: 'Samla alla löneunderlag för perioden',
-        required: true
+        required: true,
       },
       {
         id: '3.6.2',
         text: 'Generera och spara arkiveringsrapporter',
-        required: true
+        required: true,
       },
       {
         id: '3.6.3',
         text: 'Arkivera enligt rutiner',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Tua Jonasson'
+    defaultAssignee: 'Tua Jonasson',
   },
   {
     id: '3.7',
@@ -206,25 +206,25 @@ export const FAS3_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '3.7.1',
         text: 'Verifiera att alla aktiviteter är slutförda',
-        required: true
+        required: true,
       },
       {
         id: '3.7.2',
         text: 'Stäng löneperiod i systemet',
-        required: true
+        required: true,
       },
       {
         id: '3.7.3',
         text: 'Skapa nästa löneperiod',
-        required: true
+        required: true,
       },
       {
         id: '3.7.4',
         text: 'Förbered checklistor för nästa period',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
-  }
+    defaultAssignee: 'Hassan Sundberg',
+  },
 ]

@@ -18,34 +18,33 @@ export function useFasProgress(activities: ActivityDefinition[]) {
     activities.forEach(activity => {
       const activityProgress = progress[activity.id]
       const delstegCount = activity.delsteg.length
-      
+
       totalDelsteg += delstegCount
 
       if (activityProgress) {
         const completed = activityProgress.delstegCompleted.filter(Boolean).length
         completedDelsteg += completed
-        
+
         if (completed === delstegCount) {
           fullyCompletedActivities++
         }
       }
     })
 
-    const overallPercentage = totalDelsteg > 0 
-      ? Math.round((completedDelsteg / totalDelsteg) * 100) 
-      : 0
+    const overallPercentage =
+      totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
 
     return {
       completedCount: fullyCompletedActivities,
       totalCount: activities.length,
       totalDelsteg,
       completedDelsteg,
-      overallPercentage
+      overallPercentage,
     }
   }, [activities, progress])
 
   return {
     ...stats,
-    getCompletionPercentage
+    getCompletionPercentage,
   }
 }

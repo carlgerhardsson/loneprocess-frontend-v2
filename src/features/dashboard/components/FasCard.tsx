@@ -37,42 +37,38 @@ export function FasCard({ activities, title, subtitle, colorScheme }: FasCardPro
     bg: colorScheme.bg,
     border: colorScheme.border,
     text: colorScheme.text,
-    accent: getFasAccentColor(colorScheme.border)
+    accent: getFasAccentColor(colorScheme.border),
   }
 
   return (
-    <div className={`${colorScheme.bg} ${colorScheme.border} border-2 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl`}>
+    <div
+      className={`${colorScheme.bg} ${colorScheme.border} border-2 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl`}
+    >
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h2 className={`text-2xl font-bold ${colorScheme.text} mb-1`}>
-              {title}
-            </h2>
-            <p className="text-gray-600 text-sm">
-              {subtitle}
-            </p>
+            <h2 className={`text-2xl font-bold ${colorScheme.text} mb-1`}>{title}</h2>
+            <p className="text-gray-600 text-sm">{subtitle}</p>
           </div>
-          <CircularProgress 
-            percentage={overallPercentage} 
+          <CircularProgress
+            percentage={overallPercentage}
             size={100}
             color={colorScheme.progressColor}
           />
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className={`text-lg font-semibold ${colorScheme.text}`}>
             {completedCount} av {totalCount} klara
           </div>
-          <div className="text-gray-500 text-sm">
-            ({activities.length} aktiviteter)
-          </div>
+          <div className="text-gray-500 text-sm">({activities.length} aktiviteter)</div>
         </div>
       </div>
 
       {/* Activity List - Now Expandable! */}
       <div className="p-4 space-y-3 max-h-[600px] overflow-y-auto">
-        {activities.map((activity) => (
+        {activities.map(activity => (
           <ActivityListItemExpanded
             key={activity.id}
             activity={activity}

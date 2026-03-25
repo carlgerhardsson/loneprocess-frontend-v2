@@ -16,7 +16,7 @@ export function CircularProgress({
   size = 120,
   strokeWidth = 8,
   color = '#3b82f6',
-  backgroundColor = '#e5e7eb'
+  backgroundColor = '#e5e7eb',
 }: CircularProgressProps) {
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI

@@ -15,8 +15,8 @@ const FAS_CONFIGS = [
       bg: 'bg-blue-50',
       border: 'border-blue-200',
       text: 'text-blue-700',
-      progressColor: '#2563eb'
-    }
+      progressColor: '#2563eb',
+    },
   },
   {
     fas: 'Kontroll' as const,
@@ -26,8 +26,8 @@ const FAS_CONFIGS = [
       bg: 'bg-orange-50',
       border: 'border-orange-200',
       text: 'text-orange-700',
-      progressColor: '#ea580c'
-    }
+      progressColor: '#ea580c',
+    },
   },
   {
     fas: 'Lön Klar' as const,
@@ -37,9 +37,9 @@ const FAS_CONFIGS = [
       bg: 'bg-green-50',
       border: 'border-green-200',
       text: 'text-green-700',
-      progressColor: '#16a34a'
-    }
-  }
+      progressColor: '#16a34a',
+    },
+  },
 ]
 
 export function DashboardOverview() {
@@ -48,11 +48,10 @@ export function DashboardOverview() {
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Löneprocess - Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Löneprocess - Dashboard</h1>
           <p className="text-gray-600 text-base">
-            Översikt över alla {ACTIVITY_STATS.total} aktiviteter fördelat på {ACTIVITY_STATS.fas1 + ACTIVITY_STATS.fas2 + ACTIVITY_STATS.fas3} faser
+            Översikt över alla {ACTIVITY_STATS.total} aktiviteter fördelat på{' '}
+            {ACTIVITY_STATS.fas1 + ACTIVITY_STATS.fas2 + ACTIVITY_STATS.fas3} faser
           </p>
         </div>
 
@@ -78,7 +77,7 @@ export function DashboardOverview() {
 
         {/* Phase Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {FAS_CONFIGS.map((config) => {
+          {FAS_CONFIGS.map(config => {
             const activities = getActivitiesByFas(config.fas)
             return (
               <FasCard

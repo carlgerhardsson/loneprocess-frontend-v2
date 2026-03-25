@@ -18,26 +18,26 @@ export const FAS2_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '2.1.1',
         text: 'Starta prövlönekörning i systemet',
-        required: true
+        required: true,
       },
       {
         id: '2.1.2',
         text: 'Vänta på att körningen slutförs',
-        required: true
+        required: true,
       },
       {
         id: '2.1.3',
         text: 'Granska körningsstatus från API',
-        required: true
+        required: true,
       },
       {
         id: '2.1.4',
         text: 'Kontrollera att inga kritiska fel uppstått',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
+    defaultAssignee: 'Hassan Sundberg',
   },
   {
     id: '2.2',
@@ -51,26 +51,26 @@ export const FAS2_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '2.2.1',
         text: 'Hämta fellista från API',
-        required: true
+        required: true,
       },
       {
         id: '2.2.2',
         text: 'Granska kritiska fel (severity: error)',
-        required: true
+        required: true,
       },
       {
         id: '2.2.3',
         text: 'Åtgärda fel i systemet',
-        required: true
+        required: true,
       },
       {
         id: '2.2.4',
         text: 'Verifiera att alla fel är lösta',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Tua Jonasson'
+    defaultAssignee: 'Tua Jonasson',
   },
   {
     id: '2.3',
@@ -83,26 +83,26 @@ export const FAS2_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '2.3.1',
         text: 'Kör rapport över lönesummor per kostnadsställe',
-        required: true
+        required: true,
       },
       {
         id: '2.3.2',
         text: 'Jämför med föregående period',
-        required: true
+        required: true,
       },
       {
         id: '2.3.3',
         text: 'Analysera avvikelser',
-        required: true
+        required: true,
       },
       {
         id: '2.3.4',
         text: 'Verifiera mot budget',
-        required: false
-      }
+        required: false,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
+    defaultAssignee: 'Hassan Sundberg',
   },
   {
     id: '2.4',
@@ -115,32 +115,32 @@ export const FAS2_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '2.4.1',
         text: 'Granska sjukfrånvaro-rapport',
-        required: true
+        required: true,
       },
       {
         id: '2.4.2',
         text: 'Kontrollera föräldrapenningunderlag',
-        required: true
+        required: true,
       },
       {
         id: '2.4.3',
         text: 'Verifiera karensavdrag',
-        required: true
+        required: true,
       },
       {
         id: '2.4.4',
         text: 'Bekräfta att alla underlag är kompletta',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [
       {
         title: 'Försäkringskassan: Regler',
         url: 'https://www.forsakringskassan.se/',
-        type: 'External'
-      }
+        type: 'External',
+      },
     ],
-    defaultAssignee: 'Tua Jonasson'
+    defaultAssignee: 'Tua Jonasson',
   },
   {
     id: '2.5',
@@ -153,30 +153,30 @@ export const FAS2_ACTIVITIES: ActivityDefinition[] = [
       {
         id: '2.5.1',
         text: 'Korrigera identifierade fel från fellistan',
-        required: true
+        required: true,
       },
       {
         id: '2.5.2',
         text: 'Gör manuella ombernäkningar vid behov',
-        required: true
+        required: true,
       },
       {
         id: '2.5.3',
         text: 'Dokumentera alla ändringar',
-        required: true
+        required: true,
       },
       {
         id: '2.5.4',
         text: 'Kör ny prövlönekörning',
-        required: true
+        required: true,
       },
       {
         id: '2.5.5',
         text: 'Verifiera att felen är åtgärdade',
-        required: true
-      }
+        required: true,
+      },
     ],
     references: [],
-    defaultAssignee: 'Hassan Sundberg'
-  }
+    defaultAssignee: 'Hassan Sundberg',
+  },
 ]

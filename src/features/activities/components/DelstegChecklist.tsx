@@ -17,7 +17,7 @@ interface DelstegChecklistProps {
 export function DelstegChecklist({ activityId, delsteg, colorScheme }: DelstegChecklistProps) {
   const { progress, toggleDelsteg } = useActivityProgress()
   const activityProgress = progress[activityId]
-  
+
   const handleToggle = (index: number) => {
     toggleDelsteg(activityId, index, delsteg.length)
   }
@@ -26,7 +26,7 @@ export function DelstegChecklist({ activityId, delsteg, colorScheme }: DelstegCh
     <div className="space-y-2">
       {delsteg.map((step, index) => {
         const isChecked = activityProgress?.delstegCompleted[index] || false
-        
+
         return (
           <div
             key={step.id}

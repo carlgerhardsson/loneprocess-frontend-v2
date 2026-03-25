@@ -1,6 +1,6 @@
 /**
  * Alla 20 Aktiviteter - Huvudindex
- * 
+ *
  * Import från:
  * import { ACTIVITIES } from '@/data/activities'
  */
@@ -14,7 +14,7 @@ import { FAS3_ACTIVITIES } from './fas3'
 export const ACTIVITIES: ActivityDefinition[] = [
   ...FAS1_ACTIVITIES,
   ...FAS2_ACTIVITIES,
-  ...FAS3_ACTIVITIES
+  ...FAS3_ACTIVITIES,
 ]
 
 // Helper: Hämta aktiviteter för specifik fas
@@ -47,5 +47,5 @@ export const ACTIVITY_STATS = {
   fas2: FAS2_ACTIVITIES.length, // 5
   fas3: FAS3_ACTIVITIES.length, // 7
   withApi: getApiActivities().length, // 7
-  manual: getManualActivities().length // 13
+  manual: getManualActivities().length, // 13
 }

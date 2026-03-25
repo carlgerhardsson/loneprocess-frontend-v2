@@ -34,25 +34,20 @@ export function ActivityComments({ activityId }: ActivityCommentsProps) {
 
   return (
     <div className="space-y-2">
-      <label
-        htmlFor={`comment-${activityId}`}
-        className="block text-sm font-medium text-gray-700"
-      >
+      <label htmlFor={`comment-${activityId}`} className="block text-sm font-medium text-gray-700">
         Kommentarer & Anteckningar
       </label>
       <textarea
         id={`comment-${activityId}`}
         value={localComment}
-        onChange={(e) => setLocalComment(e.target.value)}
+        onChange={e => setLocalComment(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder="Lägg till kommentarer, anteckningar eller observationer..."
         rows={3}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
       />
-      <p className="text-xs text-gray-500">
-        Tips: Tryck Cmd/Ctrl + Enter för att spara
-      </p>
+      <p className="text-xs text-gray-500">Tips: Tryck Cmd/Ctrl + Enter för att spara</p>
       {activityProgress?.lastUpdated && (
         <p className="text-xs text-gray-400">
           Senast uppdaterad: {new Date(activityProgress.lastUpdated).toLocaleString('sv-SE')}

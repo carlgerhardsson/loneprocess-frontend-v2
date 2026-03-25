@@ -55,14 +55,22 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
           {/* Checkbox Indicator */}
           <div
             className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center ${
-              isComplete
-                ? `${colorScheme.accent} border-transparent`
-                : 'border-gray-300'
+              isComplete ? `${colorScheme.accent} border-transparent` : 'border-gray-300'
             }`}
           >
             {isComplete && (
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             )}
           </div>
@@ -79,13 +87,9 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
                 </span>
               )}
             </div>
-            <h3 className="text-base font-semibold text-gray-900">
-              {activity.process}
-            </h3>
+            <h3 className="text-base font-semibold text-gray-900">{activity.process}</h3>
             {activity.defaultAssignee && (
-              <p className="text-sm text-gray-500 mt-1">
-                {activity.defaultAssignee}
-              </p>
+              <p className="text-sm text-gray-500 mt-1">{activity.defaultAssignee}</p>
             )}
           </div>
 

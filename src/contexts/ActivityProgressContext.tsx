@@ -30,10 +30,10 @@ function getStoredProgress(): LoneportalProgress {
   } catch (error) {
     console.error('Failed to parse localStorage progress:', error)
   }
-  
+
   return {
     currentPeriod: new Date().toISOString().slice(0, 7),
-    activities: {}
+    activities: {},
   }
 }
 
@@ -50,60 +50,63 @@ export function ActivityProgressProvider({ children }: { children: ReactNode }) 
     return getStoredProgress().activities
   })
 
-  const toggleDelsteg = useCallback((activityId: string, delstegIndex: number, totalDelsteg: number) => {
-    setProgress(prev => {
-      const activity = prev[activityId] || {
-        activityId,
-        delstegCompleted: Array(totalDelsteg).fill(false),
-        lastUpdated: new Date().toISOString()
-      }
-      
-      const updated = [...activity.delstegCompleted]
-      while (updated.length < totalDelsteg) {
-        updated.push(false)
-      }
-      updated[delstegIndex] = !updated[delstegIndex]
-      
-      const newProgress = {
-        ...prev,
-        [activityId]: {
-          ...activity,
-          delstegCompleted: updated,
-          lastUpdated: new Date().toISOString()
+  const toggleDelsteg = useCallback(
+    (activityId: string, delstegIndex: number, totalDelsteg: number) => {
+      setProgress(prev => {
+        const activity = prev[activityId] || {
+          activityId,
+          delstegCompleted: Array(totalDelsteg).fill(false),
+          lastUpdated: new Date().toISOString(),
         }
-      }
-      
-      saveProgress({
-        currentPeriod: new Date().toISOString().slice(0, 7),
-        activities: newProgress
+
+        const updated = [...activity.delstegCompleted]
+        while (updated.length < totalDelsteg) {
+          updated.push(false)
+        }
+        updated[delstegIndex] = !updated[delstegIndex]
+
+        const newProgress = {
+          ...prev,
+          [activityId]: {
+            ...activity,
+            delstegCompleted: updated,
+            lastUpdated: new Date().toISOString(),
+          },
+        }
+
+        saveProgress({
+          currentPeriod: new Date().toISOString().slice(0, 7),
+          activities: newProgress,
+        })
+
+        return newProgress
       })
-      
-      return newProgress
-    })
-  }, [])
+    },
+    []
+  )
 
   const updateComment = useCallback((activityId: string, comment: string) => {
     setProgress(prev => {
       const activity = prev[activityId] || {
         activityId,
         delstegCompleted: [],
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       }
-      
+
       const newProgress = {
         ...prev,
         [activityId]: {
           ...activity,
           comment,
-          lastUpdated: new Date().toISOString()
-        }
+          lastUpdated: new Date().toISOString(),
+        },
       }
-      
+
       saveProgress({
         currentPeriod: new Date().toISOString().slice(0, 7),
-        activities: newProgress
+        activities: newProgress,
       })
-      
+
       return newProgress
     })
   }, [])
@@ -113,48 +116,54 @@ export function ActivityProgressProvider({ children }: { children: ReactNode }) 
       const activity = prev[activityId] || {
         activityId,
         delstegCompleted: [],
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       }
-      
+
       const newProgress = {
         ...prev,
         [activityId]: {
           ...activity,
           assignedTo: assignee,
-          lastUpdated: new Date().toISOString()
-        }
+          lastUpdated: new Date().toISOString(),
+        },
       }
-      
+
       saveProgress({
         currentPeriod: new Date().toISOString().slice(0, 7),
-        activities: newProgress
+        activities: newProgress,
       })
-      
+
       return newProgress
     })
   }, [])
 
-  const getProgress = useCallback((activityId: string): ActivityProgress | undefined => {
-    return progress[activityId]
-  }, [progress])
+  const getProgress = useCallback(
+    (activityId: string): ActivityProgress | undefined => {
+      return progress[activityId]
+    },
+    [progress]
+  )
 
   const resetProgress = useCallback(() => {
     const emptyProgress: LoneportalProgress = {
       currentPeriod: new Date().toISOString().slice(0, 7),
-      activities: {}
+      activities: {},
     }
     saveProgress(emptyProgress)
     setProgress({})
   }, [])
 
-  const getCompletionPercentage = useCallback((activityId: string): number => {
-    const activity = progress[activityId]
-    if (!activity || activity.delstegCompleted.length === 0) {
-      return 0
-    }
-    const completed = activity.delstegCompleted.filter(Boolean).length
-    return Math.round((completed / activity.delstegCompleted.length) * 100)
-  }, [progress])
+  const getCompletionPercentage = useCallback(
+    (activityId: string): number => {
+      const activity = progress[activityId]
+      if (!activity || activity.delstegCompleted.length === 0) {
+        return 0
+      }
+      const completed = activity.delstegCompleted.filter(Boolean).length
+      return Math.round((completed / activity.delstegCompleted.length) * 100)
+    },
+    [progress]
+  )
 
   return (
     <ActivityProgressContext.Provider
@@ -165,7 +174,7 @@ export function ActivityProgressProvider({ children }: { children: ReactNode }) 
         updateAssignee,
         getProgress,
         resetProgress,
-        getCompletionPercentage
+        getCompletionPercentage,
       }}
     >
       {children}
