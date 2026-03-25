@@ -1,10 +1,15 @@
 /**
  * DashboardPage - Main entry point for dashboard
- * This page can be routed to from App.tsx
+ * Wrapped in ActivityProgressProvider to share state across all components
  */
 
 import { DashboardOverview } from '@/features/dashboard/components/DashboardOverview'
+import { ActivityProgressProvider } from '@/contexts/ActivityProgressContext'
 
 export default function DashboardPage() {
-  return <DashboardOverview />
+  return (
+    <ActivityProgressProvider>
+      <DashboardOverview />
+    </ActivityProgressProvider>
+  )
 }
