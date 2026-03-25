@@ -34,7 +34,7 @@ describe('Header', () => {
         <Header />
       </MemoryRouter>
     )
-    expect(screen.queryByText('Aktiviteter')).not.toBeInTheDocument()
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
     expect(screen.queryByText('Logga ut')).not.toBeInTheDocument()
   })
 
@@ -58,7 +58,7 @@ describe('Header', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Aktiviteter')).toBeInTheDocument()
+    expect(screen.getByText('Dashboard')).toBeInTheDocument()
     expect(screen.getByText('Test User')).toBeInTheDocument()
     expect(screen.getByText('Logga ut')).toBeInTheDocument()
   })

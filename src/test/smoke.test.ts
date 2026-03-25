@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 
 /**
  * Smoke Tests
- * 
+ *
  * Basic tests to ensure the test infrastructure is working.
  * These will be replaced with real unit tests as features are implemented.
  */

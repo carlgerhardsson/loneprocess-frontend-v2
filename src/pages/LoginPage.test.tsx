@@ -45,7 +45,7 @@ describe('LoginPage', () => {
     expect(screen.getByText(/Användarnamn och lösenord krävs/i)).toBeInTheDocument()
   })
 
-  it('logs in user and navigates to activities', async () => {
+  it('logs in user and navigates to dashboard', async () => {
     render(
       <MemoryRouter>
         <LoginPage />
@@ -68,7 +68,7 @@ describe('LoginPage', () => {
 
     const state = useAuthStore.getState()
     expect(state.user?.email).toBe('testuser')
-    expect(mockNavigate).toHaveBeenCalledWith('/activities')
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
   })
 
   it('shows demo instructions', () => {
