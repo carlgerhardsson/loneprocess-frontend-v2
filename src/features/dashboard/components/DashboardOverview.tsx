@@ -48,10 +48,10 @@ export function DashboardOverview() {
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Löneprocess - Dashboard
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-base">
             Översikt över alla {ACTIVITY_STATS.total} aktiviteter fördelat på {ACTIVITY_STATS.fas1 + ACTIVITY_STATS.fas2 + ACTIVITY_STATS.fas3} faser
           </p>
         </div>
