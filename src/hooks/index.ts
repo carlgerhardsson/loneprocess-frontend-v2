@@ -1,8 +1,12 @@
-/**
- * Hooks Index - READ-ONLY VERSION
- * Central export for all custom hooks
- */
+// Query hooks
+export { useActivities } from './queries/useActivities'
+export { usePeriods } from './queries/usePeriods'
 
-export * from './useAuth'
-export * from './queries'
-export * from './useToast'
+// Auth hook
+export { useAuth } from './useAuth'
+
+// Toast hook
+export { useToast } from './useToast'
+
+// Activity progress hook (localStorage)
+export { useActivityProgress } from './useActivityProgress'
