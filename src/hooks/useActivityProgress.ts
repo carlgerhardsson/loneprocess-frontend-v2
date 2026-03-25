@@ -1,7 +1,15 @@
 /**
  * useActivityProgress Hook
- * DEPRECATED: Use ActivityProgressContext instead
- * This file is kept for backward compatibility but now just re-exports from context
+ * Hook to access the ActivityProgress context
  */
 
-export { useActivityProgress } from '@/contexts/ActivityProgressContext'
+import { useContext } from 'react'
+import { ActivityProgressContext } from '@/contexts/ActivityProgressContext'
+
+export function useActivityProgress() {
+  const context = useContext(ActivityProgressContext)
+  if (!context) {
+    throw new Error('useActivityProgress must be used within ActivityProgressProvider')
+  }
+  return context
+}
