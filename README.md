@@ -3,16 +3,16 @@
 > Production-ready digital checklista för löneprocessen - Built with React + TypeScript
 
 [![CI](https://github.com/carlgerhardsson/loneprocess-frontend-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/carlgerhardsson/loneprocess-frontend-v2/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-285%20passing-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
+[![Tests](https://img.shields.io/badge/tests-297%20passing-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
 
 ## 📋 Project Status
 
-**Current Phase:** 🟢 Fas 1–3 COMPLETE | 🔵 Fas 4 IN PROGRESS (75%)  
+**Current Phase:** 🟢 Fas 1–4 COMPLETE | ⏳ Fas 5 PLANNED  
 **Version:** 2.0.0  
-**Test Suite:** ✅ 285 tests (283 unit + 2 E2E)  
+**Test Suite:** ✅ 297 tests (295 unit + 2 E2E)  
 **Components:** 35 production-ready  
-**Status:** Milestone 4.3 API Integration Complete
+**Status:** Fas 4 API Integration Complete 🎉
 
 📖 **[View Detailed Status →](./PROJECT_STATUS.md)**  
 🚀 **[Next Session Guide →](./NEXT_SESSION.md)**  
@@ -45,7 +45,7 @@
 - 🧪 **Vitest 1.6.1** - Unit & component tests
 - 🎭 **Playwright 1.49.1** - E2E testing
 - 📚 **Testing Library** - React component testing
-- ✅ **285 passing tests** (100% success rate)
+- ✅ **297 passing tests** (100% success rate)
 
 ---
 
@@ -86,31 +86,22 @@ npm run e2e
 
 ## 📊 Migration Progress
 
-### ✅ Fas 1–3: COMPLETE
-- ✅ Fas 1: Project Setup (Vite, TypeScript, ESLint, CI/CD)
-- ✅ Fas 2: Core Components (Layout, Loading, Errors, API Client, Stores)
-- ✅ Fas 3: Feature Components (ActivityList, Periods, Details, Comments, Search)
+### ✅ Fas 1–4: COMPLETE
+
+- ✅ **Fas 1:** Project Setup (Vite, TypeScript, ESLint, CI/CD)
+- ✅ **Fas 2:** Core Components (Layout, Loading, Errors, API Client, Stores)
+- ✅ **Fas 3:** Feature Components (ActivityList, Periods, Details, Comments, Search)
+- ✅ **Fas 4:** Integration & API
+  - 4.1 React Router Setup
+  - 4.2 Authentication Flow (API-nyckel, auto-login)
+  - 4.3 API Integration (query hooks + data-komponenter för 7 API-aktiviteter)
+  - 4.4 Production Error Handling (svenska felmeddelanden, global toast)
+  - 4.5 Data Persistence & Cache (optimerad cache-strategi per datatyp)
 
 ---
 
-### 🔵 Fas 4: Integration & API (IN PROGRESS - 75%)
+### ⏳ Fas 5: Advanced Features (NEXT)
 
-- ✅ **4.1** React Router Setup
-- ✅ **4.2** Authentication Flow (API-nyckel, auto-login)
-- ✅ **4.3** API Integration (query hooks + data-komponenter för 7 API-aktiviteter)
-- ⏳ **4.4** Production Error Handling (global errors, toasts)
-- ⏳ **4.5** Data Persistence & Cache
-
-**Vad som är klart i 4.3:**
-- ✅ Auto-login via `VITE_LONEPROCESS_API_KEY` — ingen input krävs
-- ✅ `useEmployees`, `useKorningsStatus`, `useFellistor` — React Query hooks
-- ✅ `EmployeeTable`, `StatusCard`, `ErrorList`, `ApiDataDisplay` — data-komponenter
-- ✅ Integrerat i `ActivityListItemExpanded` för de 7 API-aktiviteterna
-- ✅ Loading skeletons + error states med retry-knapp
-
----
-
-### ⏳ Fas 5: Advanced Features
 - Dashboard med framdriftsöversikt
 - Avancerad filtrering (datum, bemanningsområde)
 - Export-funktion (PDF/Excel)
@@ -118,6 +109,7 @@ npm run e2e
 ---
 
 ### ⏳ Fas 6: Production Ready
+
 - Performance-optimering
 - Tillgänglighetsaudit (WCAG 2.1 AA)
 - Felövervakning (Sentry)
@@ -150,30 +142,15 @@ Every commit must pass:
 
 ---
 
-## 📁 Project Structure
+## 🎊 Latest Achievements
 
-```
-src/
-├── components/          # Core reusable components
-│   ├── layout/         # Header, Footer, PageLayout
-│   ├── loading/        # Spinner, Skeleton, LoadingOverlay, ProgressBar
-│   ├── errors/         # ErrorBoundary, ErrorFallback
-│   └── auth/           # SessionManager
-├── features/
-│   └── activities/
-│       └── components/ # ActivityList, ApiDataDisplay, EmployeeTable,
-│                       # StatusCard, ErrorList, DelstegChecklist, m.fl.
-├── hooks/
-│   └── queries/        # useActivities, usePeriods, useEmployees,
-│                       # useKorningsStatus, useFellistor
-├── lib/
-│   ├── api/            # apiClient (Axios), la.ts, auth.ts, env.ts
-│   └── query/          # React Query config
-├── stores/             # authStore, activitiesStore, periodsStore
-├── types/              # activity.ts, auth.ts, la.ts, period.ts
-├── pages/              # LoginPage, ActivitiesPage, ActivityDetailPage
-└── router/             # React Router + ProtectedRoute
-```
+**Session: 2026-03-26**
+- ✅ Fas 4 komplett (5 milestones, 10 PRs mergade)
+- ✅ Auto-login via API-nyckel
+- ✅ 7 API-aktiviteter med live data
+- ✅ Global felhantering med svenska meddelanden
+- ✅ Optimerad cache-strategi per datatyp
+- ✅ 297 tester passerar (100%)
 
 ---
 
@@ -181,25 +158,12 @@ src/
 
 - **Live Demo:** [GitHub Pages](https://carlgerhardsson.github.io/loneprocess-frontend-v2/)
 - **API:** `https://loneprocess-api-922770673146.us-central1.run.app` (externt team)
-- **API Docs:** `https://loneprocess-api-922770673146.us-central1.run.app/docs`
 - **Project Status:** [PROJECT_STATUS.md](./PROJECT_STATUS.md)
 - **Next Session:** [NEXT_SESSION.md](./NEXT_SESSION.md)
 - **Architecture:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
 ---
 
-## 🎊 Latest Achievements
-
-**Session: 2026-03-26**
-- ✅ Milestone 4.3 komplett (3 steg, 5 PRs mergade)
-- ✅ Auto-login via API-nyckel implementerat
-- ✅ 3 React Query hooks för LA-endpoints
-- ✅ 4 data-komponenter för de 7 API-aktiviteterna
-- ✅ 285 tester passerar (100%)
-- ✅ Arkitekturdokumentation skapad
-
----
-
-**Built with ❤️ | Fas 1–3 Complete ✅ | Fas 4: 75% 🔵**
+**Built with ❤️ | Fas 1–4 Complete ✅ | Fas 5: Planerad ⏳**
 
 _Last updated: 2026-03-26_
