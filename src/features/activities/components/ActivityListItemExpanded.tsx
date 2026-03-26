@@ -23,7 +23,11 @@ interface ActivityListItemExpandedProps {
   loneperiodId?: number | null
 }
 
-export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }: ActivityListItemExpandedProps) {
+export function ActivityListItemExpanded({
+  activity,
+  colorScheme,
+  loneperiodId,
+}: ActivityListItemExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { progress, getCompletionPercentage } = useActivityProgress()
   const percentage = getCompletionPercentage(activity.id)
@@ -61,8 +65,18 @@ export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }
             }`}
           >
             {isComplete && (
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             )}
           </div>
@@ -70,7 +84,9 @@ export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }
           {/* Activity Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-sm font-bold text-gray-500">{activity.processNr}</span>
+              <span className="font-mono text-sm font-bold text-gray-500">
+                {activity.processNr}
+              </span>
               {activity.hasApiIntegration && (
                 <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
                   API
@@ -107,7 +123,6 @@ export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }
       {isExpanded && (
         <div className="border-t-2 border-gray-200 bg-gray-50">
           <div className="p-6 space-y-6">
-
             {/* Live Data från System — bara för API-aktiviteter */}
             {activity.hasApiIntegration && (
               <div>
@@ -115,10 +130,7 @@ export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }
                   <span className="w-2 h-2 rounded-full bg-green-500" />
                   Live Data från System
                 </h3>
-                <ApiDataDisplay
-                  activityId={activity.id}
-                  loneperiodId={loneperiodId}
-                />
+                <ApiDataDisplay activityId={activity.id} loneperiodId={loneperiodId} />
               </div>
             )}
 
@@ -143,7 +155,6 @@ export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }
             <div>
               <ActivityComments activityId={activity.id} />
             </div>
-
           </div>
         </div>
       )}

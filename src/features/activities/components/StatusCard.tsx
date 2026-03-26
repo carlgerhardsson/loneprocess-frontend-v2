@@ -24,14 +24,22 @@ const STATUS_LABELS: Record<KorningsStatusType, string> = {
 }
 
 const STATUS_COLORS: Record<KorningsStatusType, { bg: string; text: string; dot: string }> = {
-  for_registrering:    { bg: 'bg-blue-50',   text: 'text-blue-700',   dot: 'bg-blue-500' },
+  for_registrering: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
   last_for_registrering: { bg: 'bg-yellow-50', text: 'text-yellow-700', dot: 'bg-yellow-500' },
-  provlon_pagaar:      { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-500 animate-pulse' },
-  provlon_klar:        { bg: 'bg-green-50',  text: 'text-green-700',  dot: 'bg-green-500' },
-  definitiv_pagaar:    { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-500 animate-pulse' },
-  definitiv_klar:      { bg: 'bg-green-50',  text: 'text-green-700',  dot: 'bg-green-500' },
-  resultat_mottaget:   { bg: 'bg-green-50',  text: 'text-green-700',  dot: 'bg-green-500' },
-  fel:                 { bg: 'bg-red-50',    text: 'text-red-700',    dot: 'bg-red-500' },
+  provlon_pagaar: {
+    bg: 'bg-orange-50',
+    text: 'text-orange-700',
+    dot: 'bg-orange-500 animate-pulse',
+  },
+  provlon_klar: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
+  definitiv_pagaar: {
+    bg: 'bg-orange-50',
+    text: 'text-orange-700',
+    dot: 'bg-orange-500 animate-pulse',
+  },
+  definitiv_klar: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
+  resultat_mottaget: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
+  fel: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
 }
 
 function formatDateTime(dateStr: string | null): string {
@@ -58,36 +66,44 @@ export function StatusCard({ status }: StatusCardProps) {
       <div className="bg-white px-4 py-3 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
         <div>
           <dt className="text-gray-500 text-xs">Antal anställda</dt>
-          <dd className="font-medium text-gray-900 mt-0.5">
-            {status.antal_anstallda ?? '—'}
-          </dd>
+          <dd className="font-medium text-gray-900 mt-0.5">{status.antal_anstallda ?? '—'}</dd>
         </div>
         <div>
           <dt className="text-gray-500 text-xs">Antal fel</dt>
-          <dd className={`font-medium mt-0.5 ${
-            status.antal_fel && status.antal_fel > 0 ? 'text-red-600' : 'text-gray-900'
-          }`}>
+          <dd
+            className={`font-medium mt-0.5 ${
+              status.antal_fel && status.antal_fel > 0 ? 'text-red-600' : 'text-gray-900'
+            }`}
+          >
             {status.antal_fel ?? '—'}
           </dd>
         </div>
         <div>
           <dt className="text-gray-500 text-xs">Provlön startad</dt>
-          <dd className="font-medium text-gray-900 mt-0.5">{formatDateTime(status.provlon_startad)}</dd>
+          <dd className="font-medium text-gray-900 mt-0.5">
+            {formatDateTime(status.provlon_startad)}
+          </dd>
         </div>
         <div>
           <dt className="text-gray-500 text-xs">Provlön klar</dt>
-          <dd className="font-medium text-gray-900 mt-0.5">{formatDateTime(status.provlon_klar)}</dd>
+          <dd className="font-medium text-gray-900 mt-0.5">
+            {formatDateTime(status.provlon_klar)}
+          </dd>
         </div>
         {status.definitiv_startad && (
           <div>
             <dt className="text-gray-500 text-xs">Definitiv startad</dt>
-            <dd className="font-medium text-gray-900 mt-0.5">{formatDateTime(status.definitiv_startad)}</dd>
+            <dd className="font-medium text-gray-900 mt-0.5">
+              {formatDateTime(status.definitiv_startad)}
+            </dd>
           </div>
         )}
         {status.definitiv_klar && (
           <div>
             <dt className="text-gray-500 text-xs">Definitiv klar</dt>
-            <dd className="font-medium text-gray-900 mt-0.5">{formatDateTime(status.definitiv_klar)}</dd>
+            <dd className="font-medium text-gray-900 mt-0.5">
+              {formatDateTime(status.definitiv_klar)}
+            </dd>
           </div>
         )}
       </div>

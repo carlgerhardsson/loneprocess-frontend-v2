@@ -48,9 +48,13 @@ function createWrapper() {
 describe('ApiDataDisplay', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ data: [], isSuccess: true, status: 'success' }))
+    vi.mocked(useEmployees).mockReturnValue(
+      mockQuery<LAEmployee[]>({ data: [], isSuccess: true, status: 'success' })
+    )
     vi.mocked(useKorningsStatus).mockReturnValue(mockQuery<KorningsStatus>({ data: undefined }))
-    vi.mocked(useFellistor).mockReturnValue(mockQuery<LACalculationError[]>({ data: [], isSuccess: true, status: 'success' }))
+    vi.mocked(useFellistor).mockReturnValue(
+      mockQuery<LACalculationError[]>({ data: [], isSuccess: true, status: 'success' })
+    )
   })
 
   it('visar EmployeeTable för aktivitet 1.2', () => {
@@ -84,13 +88,17 @@ describe('ApiDataDisplay', () => {
   })
 
   it('visar loading skeleton', () => {
-    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ isLoading: true, isPending: true, status: 'pending' }))
+    vi.mocked(useEmployees).mockReturnValue(
+      mockQuery<LAEmployee[]>({ isLoading: true, isPending: true, status: 'pending' })
+    )
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
     expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument()
   })
 
   it('visar error state med retry-knapp', () => {
-    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ isError: true, status: 'error', error: new Error('API error') }))
+    vi.mocked(useEmployees).mockReturnValue(
+      mockQuery<LAEmployee[]>({ isError: true, status: 'error', error: new Error('API error') })
+    )
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Kunde inte hämta data/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Försök igen/i })).toBeInTheDocument()

@@ -11,16 +11,26 @@ interface ErrorListProps {
   errors: LACalculationError[]
 }
 
-const SEVERITY_CONFIG: Record<FelSeverity, { label: string; bg: string; text: string; border: string }> = {
-  error:   { label: 'Fel',      bg: 'bg-red-50',    text: 'text-red-700',    border: 'border-red-200' },
-  warning: { label: 'Varning',  bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
-  info:    { label: 'Info',     bg: 'bg-blue-50',   text: 'text-blue-700',   border: 'border-blue-200' },
+const SEVERITY_CONFIG: Record<
+  FelSeverity,
+  { label: string; bg: string; text: string; border: string }
+> = {
+  error: { label: 'Fel', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+  warning: {
+    label: 'Varning',
+    bg: 'bg-yellow-50',
+    text: 'text-yellow-700',
+    border: 'border-yellow-200',
+  },
+  info: { label: 'Info', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
 }
 
 function SeverityBadge({ severity }: { severity: FelSeverity }) {
   const config = SEVERITY_CONFIG[severity]
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${config.bg} ${config.text}`}>
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${config.bg} ${config.text}`}
+    >
       {config.label}
     </span>
   )
@@ -30,7 +40,12 @@ export function ErrorList({ errors }: ErrorListProps) {
   if (errors.length === 0) {
     return (
       <div className="flex items-center gap-2 p-4 bg-green-50 rounded-lg border border-green-200">
-        <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          className="w-5 h-5 text-green-600 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
         <span className="text-sm text-green-700 font-medium">Inga fel hittades</span>
@@ -40,7 +55,10 @@ export function ErrorList({ errors }: ErrorListProps) {
 
   // Gruppera på severity för summering
   const counts = errors.reduce(
-    (acc, e) => { acc[e.severity] = (acc[e.severity] ?? 0) + 1; return acc },
+    (acc, e) => {
+      acc[e.severity] = (acc[e.severity] ?? 0) + 1
+      return acc
+    },
     {} as Record<FelSeverity, number>
   )
 
@@ -48,15 +66,11 @@ export function ErrorList({ errors }: ErrorListProps) {
     <div className="space-y-3">
       {/* Summering */}
       <div className="flex gap-3 text-sm">
-        {counts.error > 0 && (
-          <span className="font-medium text-red-600">{counts.error} fel</span>
-        )}
+        {counts.error > 0 && <span className="font-medium text-red-600">{counts.error} fel</span>}
         {counts.warning > 0 && (
           <span className="font-medium text-yellow-600">{counts.warning} varningar</span>
         )}
-        {counts.info > 0 && (
-          <span className="font-medium text-blue-600">{counts.info} info</span>
-        )}
+        {counts.info > 0 && <span className="font-medium text-blue-600">{counts.info} info</span>}
       </div>
 
       {/* Fellista */}

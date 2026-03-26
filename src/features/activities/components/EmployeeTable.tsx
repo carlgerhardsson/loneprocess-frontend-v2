@@ -23,16 +23,16 @@ function formatDate(dateStr: string | null): string {
 
 function formatSalary(amount: number | null): string {
   if (amount === null) return '—'
-  return new Intl.NumberFormat('sv-SE', { style: 'currency', currency: 'SEK', maximumFractionDigits: 0 }).format(amount)
+  return new Intl.NumberFormat('sv-SE', {
+    style: 'currency',
+    currency: 'SEK',
+    maximumFractionDigits: 0,
+  }).format(amount)
 }
 
 export function EmployeeTable({ employees, variant }: EmployeeTableProps) {
   if (employees.length === 0) {
-    return (
-      <div className="text-center py-6 text-gray-500 text-sm">
-        Inga poster hittades.
-      </div>
-    )
+    return <div className="text-center py-6 text-gray-500 text-sm">Inga poster hittades.</div>
   }
 
   return (
