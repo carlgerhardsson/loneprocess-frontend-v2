@@ -57,3 +57,46 @@
     outline-offset: 2px;
   }
 }
+
+/* =====================================================
+   PRINT STYLES
+   Hanterar PDF-export via window.print()
+   ===================================================== */
+@media print {
+  /* Sidstorlek och marginaler */
+  @page {
+    size: A4;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+
+  /* Nollställ bakgrunder för print */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  /* Dölj app-header (Header.tsx) */
+  header {
+    display: none !important;
+  }
+
+  /* Sidbrytningar */
+  h2 {
+    break-after: avoid;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  .break-inside-avoid-page {
+    break-inside: avoid-page;
+  }
+}
