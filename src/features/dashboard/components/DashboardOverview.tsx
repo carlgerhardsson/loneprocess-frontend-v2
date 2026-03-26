@@ -55,12 +55,10 @@ export function DashboardOverview() {
   const [bemanningsomrade, setBemanningsomrade] = useState('Hela installationen')
   const { getCompletionPercentage } = useActivityProgress()
 
-  // Auto-välj aktiv period vid mount
+  // Auto-välj aktiv period vid mount — 'active' är den enda status som passar
   useEffect(() => {
     if (periods.length > 0 && selectedPeriodId === null) {
-      const active = periods.find(
-        p => p.status === 'active' || p.status === 'for_registrering'
-      )
+      const active = periods.find(p => p.status === 'active')
       const fallback = periods[periods.length - 1]
       const target = active ?? fallback
       if (target) setSelectedPeriodId(Number(target.id))
