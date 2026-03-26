@@ -48,7 +48,7 @@ function groupByYear(periods: Period[]): Record<string, Period[]> {
 }
 
 export function LoneperioderTab() {
-  const { data: periods = [], isLoading, isError, error } = usePeriods()
+  const { data: periods = [], isLoading, isError } = usePeriods()
 
   if (isLoading) {
     return (
@@ -74,11 +74,9 @@ export function LoneperioderTab() {
   }
 
   if (isError) {
-    const errMsg = error instanceof Error ? error.message : String(error)
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg space-y-2">
-        <p className="text-red-700 text-sm font-medium">Kunde inte hämta löneperioder.</p>
-        <p className="text-red-600 text-xs font-mono break-all">{errMsg}</p>
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-700 text-sm">Kunde inte hämta löneperioder.</p>
       </div>
     )
   }
