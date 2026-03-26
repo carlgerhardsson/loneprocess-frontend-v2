@@ -68,8 +68,7 @@ export function DashboardOverview() {
   }, [periods, selectedPeriodId])
 
   // Omvandla bemanningsområde → org_kod (null = alla)
-  const orgKod =
-    bemanningsomrade !== HELA_INSTALLATIONEN ? bemanningsomrade : null
+  const orgKod = bemanningsomrade !== HELA_INSTALLATIONEN ? bemanningsomrade : null
 
   // Total framdrift över alla aktiviteter
   const allActivities = [
@@ -85,8 +84,7 @@ export function DashboardOverview() {
     const pct = getCompletionPercentage(a.id)
     return sum + Math.round((pct / 100) * a.delsteg.length)
   }, 0)
-  const totalPercent =
-    totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
+  const totalPercent = totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
 
   const selectedPeriod = periods.find(p => Number(p.id) === selectedPeriodId)
   const periodDisplayName = selectedPeriod?.name ?? ''
@@ -106,9 +104,7 @@ export function DashboardOverview() {
                 className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none"
                 aria-label="Välj period"
               >
-                {periods.length === 0 && (
-                  <option value="">Laddar perioder...</option>
-                )}
+                {periods.length === 0 && <option value="">Laddar perioder...</option>}
                 {periods.map(p => (
                   <option key={p.id} value={Number(p.id)}>
                     {p.name}
@@ -135,9 +131,7 @@ export function DashboardOverview() {
 
           {/* Bemanningsområde */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Bemanningsområde
-            </label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Bemanningsområde</label>
             <div className="relative">
               <select
                 value={bemanningsomrade}
@@ -186,8 +180,8 @@ export function DashboardOverview() {
           />
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda ·{' '}
-          {completedDelsteg} av {totalDelsteg} delsteg klara
+          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda · {completedDelsteg}{' '}
+          av {totalDelsteg} delsteg klara
         </p>
       </div>
 

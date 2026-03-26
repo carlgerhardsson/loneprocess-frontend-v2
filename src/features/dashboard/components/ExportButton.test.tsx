@@ -6,7 +6,9 @@ import { ExportButton } from './ExportButton'
 describe('ExportButton', () => {
   it('renderas med standard-label', () => {
     render(<ExportButton />)
-    expect(screen.getByRole('button', { name: /Exportera checklista som PDF/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Exportera checklista som PDF/i })
+    ).toBeInTheDocument()
     expect(screen.getByText('Exportera checklista')).toBeInTheDocument()
   })
 

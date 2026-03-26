@@ -49,7 +49,9 @@ function PrintActivity({
           }`}
         />
         <span className="font-mono text-xs text-gray-500">{activity.processNr}</span>
-        <span className={`text-sm font-semibold ${isDone ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+        <span
+          className={`text-sm font-semibold ${isDone ? 'line-through text-gray-400' : 'text-gray-900'}`}
+        >
           {activity.process}
         </span>
         <span className="text-xs text-gray-400 ml-auto">
@@ -103,9 +105,7 @@ export function PrintView() {
             <p className="text-sm text-gray-600 mt-1">POL LA 2025.2</p>
           </div>
           <div className="text-right text-sm text-gray-600">
-            {periodName && (
-              <p className="font-semibold text-gray-900">Period: {periodName}</p>
-            )}
+            {periodName && <p className="font-semibold text-gray-900">Period: {periodName}</p>}
             <p>{printDate}</p>
           </div>
         </div>
@@ -141,7 +141,9 @@ export function PrintView() {
 
       {/* Footer */}
       <div className="mt-8 pt-3 border-t border-gray-300 text-xs text-gray-400 flex justify-between">
-        <span>Löneportal v2.0 — Exporterad {printDate} kl {printTime}</span>
+        <span>
+          Löneportal v2.0 — Exporterad {printDate} kl {printTime}
+        </span>
         <span>CGI Inc.</span>
       </div>
     </div>

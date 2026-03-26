@@ -49,9 +49,7 @@ export default function DashboardPage() {
                 ))}
               </nav>
               {/* Exportknapp — bara synlig på Överblick */}
-              {activeTab === 'overblick' && (
-                <ExportButton />
-              )}
+              {activeTab === 'overblick' && <ExportButton />}
             </div>
           </div>
         </div>

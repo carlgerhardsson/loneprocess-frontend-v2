@@ -48,9 +48,7 @@ describe('ApiDataDisplay', () => {
     vi.mocked(useEmployees).mockReturnValue(
       mockQuery<LAEmployee[]>({ data: [], isSuccess: true, status: 'success' })
     )
-    vi.mocked(useKorningsStatus).mockReturnValue(
-      mockQuery<KorningsStatus>({ data: undefined })
-    )
+    vi.mocked(useKorningsStatus).mockReturnValue(mockQuery<KorningsStatus>({ data: undefined }))
     vi.mocked(useFellistor).mockReturnValue(
       mockQuery<LACalculationError[]>({ data: [], isSuccess: true, status: 'success' })
     )
@@ -58,9 +56,7 @@ describe('ApiDataDisplay', () => {
 
   it('visar EmployeeTable för aktivitet 1.2', () => {
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
-    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'new' })
-    )
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(expect.objectContaining({ status: 'new' }))
   })
 
   it('visar EmployeeTable för aktivitet 1.3', () => {
@@ -76,20 +72,14 @@ describe('ApiDataDisplay', () => {
   })
 
   it('skickar org_kod när bemanningsområde är satt för 1.2', () => {
-    render(
-      <ApiDataDisplay activityId="1.2" orgKod="ORG1" />,
-      { wrapper: createWrapper() }
-    )
+    render(<ApiDataDisplay activityId="1.2" orgKod="ORG1" />, { wrapper: createWrapper() })
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'new', org_kod: 'ORG1' })
     )
   })
 
   it('skickar org_kod när bemanningsområde är satt för 1.5', () => {
-    render(
-      <ApiDataDisplay activityId="1.5" orgKod="ORG2" />,
-      { wrapper: createWrapper() }
-    )
+    render(<ApiDataDisplay activityId="1.5" orgKod="ORG2" />, { wrapper: createWrapper() })
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
       expect.objectContaining({ org_kod: 'ORG2' })
     )
