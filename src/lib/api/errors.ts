@@ -97,9 +97,7 @@ export function handleAPIError(error: unknown): APIError {
     }
   }
 
-  return new APIError(
-    error instanceof Error ? error.message : 'Ett oväntat fel uppstod.'
-  )
+  return new APIError(error instanceof Error ? error.message : 'Ett oväntat fel uppstod.')
 }
 
 /**

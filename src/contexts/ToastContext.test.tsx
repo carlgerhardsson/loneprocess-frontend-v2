@@ -17,9 +17,7 @@ function TestComponent() {
 }
 
 function renderWithProvider() {
-  return render(
-    createElement(ToastProvider, null, createElement(TestComponent))
-  )
+  return render(createElement(ToastProvider, null, createElement(TestComponent)))
 }
 
 describe('ToastContext', () => {
@@ -43,9 +41,7 @@ describe('ToastContext', () => {
 
   it('kastar fel om useToastContext används utanför provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() =>
-      render(createElement(TestComponent))
-    ).toThrow()
+    expect(() => render(createElement(TestComponent))).toThrow()
     spy.mockRestore()
   })
 })

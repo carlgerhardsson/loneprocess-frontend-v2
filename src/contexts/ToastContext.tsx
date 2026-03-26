@@ -39,18 +39,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  const showError = useCallback(
-    (message: string) => showToast(message, 'error'),
-    [showToast]
-  )
-  const showSuccess = useCallback(
-    (message: string) => showToast(message, 'success'),
-    [showToast]
-  )
-  const showInfo = useCallback(
-    (message: string) => showToast(message, 'info'),
-    [showToast]
-  )
+  const showError = useCallback((message: string) => showToast(message, 'error'), [showToast])
+  const showSuccess = useCallback((message: string) => showToast(message, 'success'), [showToast])
+  const showInfo = useCallback((message: string) => showToast(message, 'info'), [showToast])
 
   return (
     <ToastContext.Provider value={{ showToast, showError, showSuccess, showInfo }}>
