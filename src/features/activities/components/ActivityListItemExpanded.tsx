@@ -1,6 +1,6 @@
 /**
- * ActivityListItemExpanded - Expandable Activity Row
- * Click to expand and show delsteg, comments, references
+ * ActivityListItemExpanded - Expanderbar aktivitetsrad
+ * Klicka för att expandera och visa delsteg, kommentarer, referenser och live API-data.
  */
 
 import { useState } from 'react'
@@ -9,6 +9,7 @@ import { useActivityProgress } from '@/hooks/useActivityProgress'
 import { DelstegChecklist } from './DelstegChecklist'
 import { ActivityComments } from './ActivityComments'
 import { ActivityReferences } from './ActivityReferences'
+import { ApiDataDisplay } from './ApiDataDisplay'
 
 interface ActivityListItemExpandedProps {
   activity: ActivityDefinition
@@ -18,15 +19,20 @@ interface ActivityListItemExpandedProps {
     text: string
     accent: string
   }
+  /** Aktiv löneperiod-ID för API-aktiviteter som behöver period-kontext */
+  loneperiodId?: number | null
 }
 
-export function ActivityListItemExpanded({ activity, colorScheme }: ActivityListItemExpandedProps) {
+export function ActivityListItemExpanded({
+  activity,
+  colorScheme,
+  loneperiodId,
+}: ActivityListItemExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { progress, getCompletionPercentage } = useActivityProgress()
   const percentage = getCompletionPercentage(activity.id)
   const isComplete = percentage === 100
 
-  // Calculate completed delsteg count
   const activityProgress = progress[activity.id]
   const completedDelsteg = activityProgress
     ? activityProgress.delstegCompleted.filter(Boolean).length
@@ -117,6 +123,17 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
       {isExpanded && (
         <div className="border-t-2 border-gray-200 bg-gray-50">
           <div className="p-6 space-y-6">
+            {/* Live Data från System — bara för API-aktiviteter */}
+            {activity.hasApiIntegration && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  Live Data från System
+                </h3>
+                <ApiDataDisplay activityId={activity.id} loneperiodId={loneperiodId} />
+              </div>
+            )}
+
             {/* Delsteg Checklist */}
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3">Delsteg</h3>
