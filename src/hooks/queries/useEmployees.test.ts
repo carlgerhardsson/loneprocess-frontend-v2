@@ -75,10 +75,9 @@ describe('useEmployees', () => {
   it('använder rätt query key för filtrering', async () => {
     vi.mocked(fetchEmployees).mockResolvedValue([])
 
-    const { result } = renderHook(
-      () => useEmployees({ status: 'terminated' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useEmployees({ status: 'terminated' }), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(vi.mocked(fetchEmployees)).toHaveBeenCalledWith({ status: 'terminated' })

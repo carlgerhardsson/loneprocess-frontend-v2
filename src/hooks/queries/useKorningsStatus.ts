@@ -28,9 +28,9 @@ export function useKorningsStatus(loneperiodId: number | null) {
     queryKey: korningsStatusKeys.detail(loneperiodId!),
     queryFn: () => fetchKorningsStatus(loneperiodId!),
     enabled: loneperiodId !== null,
-    staleTime: 15 * 1000,         // Färsk i 15 sek
-    gcTime: 5 * 60 * 1000,        // Cache i 5 min
-    refetchInterval: 30 * 1000,   // Polla var 30:e sekund
+    staleTime: 15 * 1000, // Färsk i 15 sek
+    gcTime: 5 * 60 * 1000, // Cache i 5 min
+    refetchInterval: 30 * 1000, // Polla var 30:e sekund
     refetchOnWindowFocus: true,
     // retry styrs av QueryClient-konfigurationen (retry: false i tester)
   })

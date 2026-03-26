@@ -15,8 +15,7 @@ export const fellistorKeys = {
   all: ['la-fellistor'] as const,
   list: (loneperiodId: number, filters?: FellistorFilters) =>
     [...fellistorKeys.all, loneperiodId, filters ?? {}] as const,
-  summary: (loneperiodId: number) =>
-    [...fellistorKeys.all, loneperiodId, 'summary'] as const,
+  summary: (loneperiodId: number) => [...fellistorKeys.all, loneperiodId, 'summary'] as const,
 }
 
 /**

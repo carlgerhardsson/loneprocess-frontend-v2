@@ -74,10 +74,9 @@ describe('useFellistor', () => {
   it('filtrerar på severity korrekt', async () => {
     vi.mocked(fetchFellistor).mockResolvedValue(mockFel)
 
-    const { result } = renderHook(
-      () => useFellistor(42, { severity: 'error' }),
-      { wrapper: createWrapper() }
-    )
+    const { result } = renderHook(() => useFellistor(42, { severity: 'error' }), {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(vi.mocked(fetchFellistor)).toHaveBeenCalledWith(42, { severity: 'error' })

@@ -35,9 +35,7 @@ export async function fetchEmployees(filters?: EmployeeFilters): Promise<LAEmplo
  * Används av aktivitet 2.1 och 3.1
  */
 export async function fetchKorningsStatus(loneperiodId: number): Promise<KorningsStatus> {
-  const response = await apiClient.get<KorningsStatus>(
-    `/la/periods/${loneperiodId}/korningsstatus`
-  )
+  const response = await apiClient.get<KorningsStatus>(`/la/periods/${loneperiodId}/korningsstatus`)
   return response.data
 }
 
@@ -49,17 +47,14 @@ export async function fetchFellistor(
   loneperiodId: number,
   filters?: FellistorFilters
 ): Promise<LACalculationError[]> {
-  const response = await apiClient.get<LACalculationError[]>(
-    `/la/fellistor/${loneperiodId}`,
-    {
-      params: {
-        ...(filters?.severity && { severity: filters.severity }),
-        ...(filters?.visa_endast_obehandlade && {
-          visa_endast_obehandlade: filters.visa_endast_obehandlade,
-        }),
-      },
-    }
-  )
+  const response = await apiClient.get<LACalculationError[]>(`/la/fellistor/${loneperiodId}`, {
+    params: {
+      ...(filters?.severity && { severity: filters.severity }),
+      ...(filters?.visa_endast_obehandlade && {
+        visa_endast_obehandlade: filters.visa_endast_obehandlade,
+      }),
+    },
+  })
   return response.data
 }
 
@@ -67,8 +62,6 @@ export async function fetchFellistor(
  * Hämtar sammanfattning av fellista för en löneperiod
  */
 export async function fetchFellistaSummary(loneperiodId: number): Promise<FellistaSummary> {
-  const response = await apiClient.get<FellistaSummary>(
-    `/la/fellistor/${loneperiodId}/summary`
-  )
+  const response = await apiClient.get<FellistaSummary>(`/la/fellistor/${loneperiodId}/summary`)
   return response.data
 }
