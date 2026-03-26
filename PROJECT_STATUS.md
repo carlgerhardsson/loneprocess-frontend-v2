@@ -2,10 +2,21 @@
 
 > Complete overview of migration progress
 
-**Last Updated:** 2026-03-23  
+**Last Updated:** 2026-03-26  
 **Version:** 2.0.0  
 **Status:** Fas 4 In Progress (33%)  
 **Tests:** 265 passing (263 unit + 2 E2E)
+
+---
+
+## ⚠️ VIKTIGA ARKITEKTURPRINCIPER
+
+> Dessa regler gäller alltid och ska aldrig frångås.
+
+1. **API ägs av externt team** — Frontend-teamet kan inte påverka API:et. Inga krav ställs på API-teamet.
+2. **Read-Only** — Applikationen hämtar bara data. Inga create/update/delete-operationer.
+3. **Autentisering = API-nyckel** — `VITE_LONEPROCESS_API_KEY` i env. Auto-login, inget lösenordsfält.
+4. **7 utvalda endpoints** — Se NEXT_SESSION.md för komplett endpoint-mappning per aktivitet.
 
 ---
 
@@ -24,280 +35,115 @@ Overall: ██████░░░░░░░░░░░░░ 55%
 
 ---
 
-## ✅ Fas 1: Project Setup (COMPLETE)
+## ✅ Fas 1–3: COMPLETE
 
-**Status:** 100% Complete  
-**Duration:** 2 hours  
-**Milestones:** 7/7 ✅
+Alla faser 1–3 är klara. Se tidigare versioner för detaljer.
 
-### Completed
-- ✅ 1.1: Repository & Vite Setup
-- ✅ 1.2: TypeScript Configuration
-- ✅ 1.3: ESLint & Prettier Setup
-- ✅ 1.4: Tailwind CSS Integration
-- ✅ 1.5: Vitest Configuration
-- ✅ 1.6: Playwright E2E Setup
-- ✅ 1.7: CI/CD Pipeline (GitHub Actions)
-
-### Deliverables
-- Modern build setup with Vite
-- Type-safe TypeScript config
-- Code quality enforcement
-- Utility-first CSS framework
-- Complete test infrastructure
-- Automated CI/CD pipeline
-
----
-
-## ✅ Fas 2: Core Components (COMPLETE)
-
-**Status:** 100% Complete  
-**Duration:** 4 hours  
-**Milestones:** 7/7 ✅  
-**Tests:** 75  
-**Components:** 9
-
-### Completed Milestones
-
-#### 2.1: Layout Components ✅
-- Header, Footer, PageLayout
-- 12 tests
-
-#### 2.2: Loading States ✅
-- Spinner, Skeleton, ProgressBar, LoadingOverlay
-- 27 tests
-
-#### 2.3: Error Handling ✅
-- ErrorBoundary, ErrorFallback
-- 9 tests
-
-#### 2.4: API Client ✅
-- Axios-based HTTP client with auth interceptors
-- 3 tests
-
-#### 2.5: React Query Setup ✅
-- QueryClient configuration
-- 3 tests
-
-#### 2.6: Custom Hooks ✅
-- useActivities, usePeriods
-- 2 tests
-
-#### 2.7: Zustand Stores ✅
-- activitiesStore, periodsStore, authStore
-- 19 tests
-
----
-
-## ✅ Fas 3: Feature Components (COMPLETE)
-
-**Status:** 100% Complete  
-**Duration:** 6 hours  
-**Milestones:** 6/6 ✅  
-**Tests:** 150  
-**Components:** 18
-
-### Completed Milestones
-
-#### 3.1: Activities List UI ✅
-**Components:** ActivityList, ActivityListItem, StatusBadge, EmptyState, PriorityIndicator  
-**Tests:** 29  
-**Features:**
-- Sortable activity list
-- Status badges with color coding
-- Empty states with CTAs
-- Priority indicators
-
-#### 3.2: Period Selector ✅
-**Components:** PeriodSelector, PeriodDisplay  
-**Tests:** 18  
-**Features:**
-- Period selection UI
-- Period information display
-- Responsive design
-
-#### 3.3: Activity Details View ✅
-**Components:** ActivityDetails, ChecklistDisplay  
-**Tests:** 18  
-**Features:**
-- Detailed activity view
-- Checklist with progress
-- Expandable sections
-
-#### 3.4: Comments System ✅
-**Components:** CommentsList, CommentItem, CommentForm  
-**Tests:** 25  
-**Features:**
-- Comment thread display
-- Add/edit comments
-- Swedish timestamps
-- Character limit (500)
-
-#### 3.5: Search & Filters ✅
-**Components:** SearchBar, FilterPanel, ActiveFilters  
-**Tests:** 29  
-**Features:**
-- Debounced search (300ms)
-- Multi-criteria filtering
-- Active filter chips
-- Clear all filters
-
-#### 3.6: Forms & Validation ✅
-**Components:** ActivityForm, FormField, validation schemas  
-**Tests:** 31  
-**Features:**
-- Zod schema validation
-- React Hook Form integration
-- Error messages in Swedish
-- Create/Edit modes
+- ✅ Fas 1: Project Setup (Vite, TypeScript, ESLint, CI/CD)
+- ✅ Fas 2: Core Components (Layout, Loading, Errors, API Client, Stores)
+- ✅ Fas 3: Feature Components (ActivityList, Periods, Details, Comments, Search, Forms)
 
 ---
 
 ## 🔵 Fas 4: Integration & API (IN PROGRESS - 33%)
 
-**Status:** 2/6 Milestones Complete  
-**Estimated Duration:** 8-12 hours  
-**Tests Added:** 17  
-**Components Added:** 7
+**Status:** 2/5 Milestones Complete  
 
-### ✅ Completed Milestones
+### ✅ Completed
 
 #### 4.1: React Router Setup ✅
-**PR:** #29  
-**Tests:** 14  
-**Components:** ProtectedRoute, LoginPage, ActivitiesPage, ActivityDetailPage, NotFoundPage, HomePage  
-**Features:**
-- React Router v6 integration
-- Protected routes with auth guards
-- Login page
-- 404 page
-- GitHub Pages SPA routing fix
-- Conditional basename (dev vs production)
+- Protected routes, Login/Dashboard/Detail/404 pages
+- GitHub Pages SPA routing
 
 #### 4.2: Authentication Flow ✅
-**PR:** #30  
-**Tests:** 17  
-**Components:** useAuth hook, SessionManager, API interceptor  
-**Features:**
-- Token management (JWT-ready)
-- Auto-logout on token expiry
-- Auto-refresh tokens (55min intervals)
-- Session monitoring (5min checks)
-- API interceptor for 401 handling
-- useAuth hook for easy access
-- Mock authentication (ready for backend)
+- authStore med Zustand + persist
+- API-nyckel-baserad autentisering (X-API-Key header)
+- Auto-login via env-variabel VITE_LONEPROCESS_API_KEY
+- API interceptor för 401-hantering
+- useAuth hook
 
-### ⏳ Remaining Milestones
+### ⏳ Remaining
 
-#### 4.3: API Integration (NEXT)
-**Estimated:** 2-3 hours  
-**Tasks:**
-- Connect to backend API
-- Environment variable configuration
-- Replace mock auth with real endpoints
-- Error handling for network failures
+#### 4.3: API Integration (NEXT) 🎯
+**Estimat:** 3–4 timmar  
+**Vad som ska byggas:**
+- Auto-login (anropa `/health` för att verifiera API-nyckel)
+- LoginPage utan input-fält — bara auto-redirect
+- Query hooks: `useEmployees`, `useKorningsStatus`, `useFellistor`
+- Komponenter: `ApiDataDisplay`, `EmployeeTable`, `StatusCard`, `ErrorList`
+- Integrering i `ActivityListItemExpanded` för de 7 API-aktiviteterna
+- Loading + error states
+- Uppdaterade tester med MSW
 
-#### 4.4: CRUD Operations
-**Estimated:** 3-4 hours  
-**Tasks:**
-- Implement create activity
-- Implement edit activity
-- Implement delete activity
-- Optimistic UI updates
+**De 7 API-aktiviteterna:**
+| ID | Aktivitet | Endpoint |
+|---|---|---|
+| 1.2 | Hantera nyanställningar | `GET /api/v1/la/employees?status=new` |
+| 1.3 | Registrera slutlöner | `GET /api/v1/la/employees?status=terminated` |
+| 1.5 | Uppdatera tillägg/avdrag | `GET /api/v1/la/employees` |
+| 1.6 | Rapportera lönehändelser | `GET /api/v1/la/employees` |
+| 2.1 | Starta provlönekörning | `GET /api/v1/la/periods/{id}/korningsstatus` |
+| 2.2 | Granska felsignaler AGI | `GET /api/v1/la/fellistor/{id}` |
+| 3.1 | Definitiv lönekörning | `GET /api/v1/la/periods/{id}/korningsstatus` |
 
-#### 4.5: Data Persistence
-**Estimated:** 2 hours  
-**Tasks:**
-- React Query cache configuration
-- Optimistic updates
-- Background refetching
-- Stale-while-revalidate strategy
-
-#### 4.6: Production Error Handling
-**Estimated:** 1-2 hours  
+#### 4.4: Production Error Handling
+**Estimat:** 1–2 timmar  
 **Tasks:**
 - Global error boundary
 - Toast notifications
-- API error mapping
-- User-friendly error messages
+- API error mapping med svenska felmeddelanden
+
+#### 4.5: Data Persistence & Cache
+**Estimat:** 1–2 timmar  
+**Tasks:**
+- React Query cache-konfiguration
+- Background refetching
+- Stale-while-revalidate
+
+> ⛔ **OBS: Fas 4.4 CRUD Operations är borttagen** — applikationen är read-only.
 
 ---
 
 ## ⏳ Fas 5: Advanced Features (PLANNED)
 
-**Status:** Not Started  
-**Estimated Duration:** 10-15 hours
-
-### Planned Features
-- Dashboard with analytics
-- Advanced filtering (date ranges, custom queries)
-- Batch operations (bulk edit, delete)
-- File uploads for attachments
-- Real-time notifications
-- Export to Excel/PDF
+- Dashboard med framdriftsöversikt
+- Avancerad filtrering (datum, bemanningsområde)
+- Export-funktion (PDF/Excel) av checklista
+- ~~Batch-operationer~~ ← EJ AKTUELLT (read-only)
+- ~~Filuppladdning~~ ← EJ AKTUELLT
 
 ---
 
 ## ⏳ Fas 6: Production Ready (PLANNED)
 
-**Status:** Not Started  
-**Estimated Duration:** 8-12 hours
-
-### Planned Tasks
-- Performance optimization (code splitting, lazy loading)
-- Accessibility audit (WCAG 2.1 AA compliance)
-- Error monitoring setup (Sentry)
-- Analytics integration
-- User documentation
-- Production deployment
-- Load testing
+- Performance-optimering (code splitting, lazy loading)
+- Tillgänglighetsaudit (WCAG 2.1 AA)
+- Felövervakning (Sentry)
+- Produktionsdeploy
+- Användardokumentation
 
 ---
 
 ## 📊 Key Metrics
 
-### Test Coverage
-- **Total Tests:** 265 ✅
-- **Unit Tests:** 263
-- **E2E Tests:** 2
-- **Success Rate:** 100%
-
-### Components
-- **Total Components:** 31
-- **Layout:** 3
-- **Loading States:** 4
-- **Error Handling:** 2
-- **Features:** 18
-- **Pages:** 4
-
-### Code Quality
-- **TypeScript:** 100% coverage
-- **ESLint:** 0 errors, 0 warnings
-- **Prettier:** Enforced
-- **CI/CD:** All checks passing
+| Metric | Value |
+|---|---|
+| Total tester | 265 ✅ |
+| Unit tester | 263 |
+| E2E tester | 2 |
+| Komponenter | 31 |
+| TypeScript coverage | 100% |
+| ESLint errors | 0 |
 
 ---
 
-## 🎯 Current Sprint
+## 🔗 Länkar
 
-**Focus:** Milestone 4.3 - API Integration  
-**Goal:** Connect frontend to backend API  
-**Estimated Time:** 2-3 hours
-
-### Tasks
-1. Set up environment variables
-2. Configure API base URL
-3. Implement real login endpoint
-4. Update auth store to use real API
-5. Add error handling for network failures
-6. Test with backend
+- **Live:** [GitHub Pages](https://carlgerhardsson.github.io/loneprocess-frontend-v2/)
+- **API:** `https://loneprocess-api-922770673146.us-central1.run.app` (externt team)
+- **API Docs:** `https://loneprocess-api-922770673146.us-central1.run.app/docs`
+- **Next Session:** [NEXT_SESSION.md](./NEXT_SESSION.md)
 
 ---
 
-## 🚀 Next Session
-
-See [NEXT_SESSION.md](./NEXT_SESSION.md) for detailed instructions on how to continue.
-
----
-
-**Last Updated:** 2026-03-23 | **Status:** Ready for API Integration 🚀
+**Last Updated:** 2026-03-26 | **Status:** Redo för API Integration 🚀

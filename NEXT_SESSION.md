@@ -1,10 +1,23 @@
 # 🚀 Next Session Guide - Fas 4.3: API Integration
 
-> Ready to connect to the backend!
+> Koppla frontend mot live data från backend-API:et
 
-**Last Updated:** 2026-03-23  
+**Last Updated:** 2026-03-26  
 **Current Status:** Milestone 4.2 Complete  
 **Next Up:** Milestone 4.3 - API Integration
+
+---
+
+## ⚠️ VIKTIGA ARKITEKTURREGLER — LÄS DETTA FÖRST
+
+### 1. API:et ägs av ett externt team
+Frontend-teamet **kan inte påverka API:et**. API:et utvecklas och underhålls av ett separat team. Inga krav eller ändringar kan ställas på API:et från detta projekt.
+
+### 2. Detta team är READ-ONLY
+Frontend-applikationen **hämtar bara data** — inga create, update eller delete-operationer ska implementeras. Alla CRUD-planer från tidigare dokumentation är **ej aktuella**.
+
+### 3. Autentisering via API-nyckel
+API:et använder `X-API-Key` header — **inte** JWT/lösenord. API-nyckeln sätts som en env-variabel (`VITE_LONEPROCESS_API_KEY`) och inloggning sker **automatiskt** utan att användaren skriver in något.
 
 ---
 
@@ -23,136 +36,167 @@
 
 ## 🎯 Next Milestone: 4.3 - API Integration
 
-**Estimated Time:** 2-3 hours  
-**Prerequisites:** Backend API running  
-**Goal:** Replace mock auth with real backend connection
+**Estimated Time:** 3-4 timmar  
+**Mål:** Visa live data från backend för de 7 API-aktiviteterna
 
-### What We'll Build
+---
 
-1. **Environment Configuration**
-   - Set up `.env` files
-   - Configure API base URL
-   - Add environment type checking
+## 🔌 DE 7 API-AKTIVITETERNA OCH DERAS ENDPOINTS
 
-2. **Real Authentication**
-   - Replace mock login with real API endpoint
-   - Handle real JWT tokens
-   - Store refresh tokens securely
+Detta är de enda endpoints detta team använder. Alla är GET-anrop (read-only).
 
-3. **Error Handling**
-   - Network error handling
-   - API error mapping
-   - User-friendly error messages
+### FAS 1: Före Löneberäkning 🔵
 
-4. **Testing**
-   - Update tests for real API
-   - Mock API responses
-   - Test error scenarios
+| Aktivitet | Endpoint | Visar |
+|---|---|---|
+| **1.2** Hantera nyanställningar | `GET /api/v1/la/employees?status=new` | Lista nyanställda: namn, personnummer, anst.datum |
+| **1.3** Registrera slutlöner | `GET /api/v1/la/employees?status=terminated` | Lista avslutade: namn, personnummer, sista arbetsdag |
+| **1.5** Uppdatera tillägg/avdrag | `GET /api/v1/la/employees` (filtrerat) | Ändringar: namn, typ av ändring, belopp |
+| **1.6** Rapportera lönehändelser | `GET /api/v1/la/employees` (filtrerat) | Frånvaro/övertid: namn, händelsetyp, datum, belopp |
+
+### FAS 2: Kontrollperiod 🟠
+
+| Aktivitet | Endpoint | Visar |
+|---|---|---|
+| **2.1** Starta provlönekörning | `GET /api/v1/la/periods/{id}/korningsstatus` | Status-badge + progress bar |
+| **2.2** Granska felsignaler AGI | `GET /api/v1/la/fellistor/{id}` | Fellista: feltyp, beskrivning, antal |
+
+### FAS 3: Efter Löneberäkning 🟢
+
+| Aktivitet | Endpoint | Visar |
+|---|---|---|
+| **3.1** Definitiv lönekörning | `GET /api/v1/la/periods/{id}/korningsstatus` | Status-badge + sammanfattning |
+
+---
+
+## 🏗️ IMPLEMENTATIONSPLAN
+
+### Steg 1: Auto-login via API-nyckel
+
+**Filer:**
+```
+.env.example                      # Uppdatera mall
+src/stores/authStore.ts           # Byt mock mot API-nyckel-validering
+src/pages/LoginPage.tsx           # Ta bort input-fält, auto-login
+```
+
+- Ta bort användarnamn/lösenord-fält från `LoginPage.tsx`
+- `authStore.ts`: anropa `GET /health` med `X-API-Key` för att verifiera nyckeln
+- Om 200 → sätt `isAuthenticated: true` automatiskt
+- API-nyckeln läses från `VITE_LONEPROCESS_API_KEY` i env
+
+### Steg 2: Query Hooks (READ-ONLY)
+
+**Nya filer:**
+```
+src/hooks/queries/useEmployees.ts       # För 1.2, 1.3, 1.5, 1.6
+src/hooks/queries/useKorningsStatus.ts  # För 2.1, 3.1
+src/hooks/queries/useFellistor.ts       # För 2.2
+```
+
+```typescript
+// Exempel
+export function useEmployees(status?: 'new' | 'terminated') {
+  return useQuery({
+    queryKey: ['employees', status],
+    queryFn: () => fetchEmployees(status),
+    staleTime: 5 * 60 * 1000, // 5 min
+  })
+}
+```
+
+### Steg 3: Data-komponenter
+
+**Nya filer:**
+```
+src/features/activities/components/ApiDataDisplay.tsx   # Huvud-wrapper
+src/features/activities/components/EmployeeTable.tsx    # För 1.2, 1.3, 1.5, 1.6
+src/features/activities/components/StatusCard.tsx       # För 2.1, 3.1
+src/features/activities/components/ErrorList.tsx        # För 2.2
+```
+
+**ApiDataDisplay** — väljer rätt komponent baserat på `activityId`:
+```typescript
+interface ApiDataDisplayProps {
+  activityId: string   // '1.2', '1.3', '2.1' etc.
+  periodId?: number    // Krävs för 2.1, 2.2, 3.1
+}
+```
+
+### Steg 4: Integrera i ActivityListItemExpanded
+
+```tsx
+{activity.hasApiIntegration && isExpanded && (
+  <div>
+    <h3 className="text-sm font-semibold text-gray-700 mb-3">
+      Live Data från System
+    </h3>
+    <ApiDataDisplay
+      activityId={activity.id}
+      periodId={currentPeriodId}
+    />
+  </div>
+)}
+```
+
+### Steg 5: Loading & Error states
+
+- Loading skeletons för varje data-typ (tabell, status-card, fellista)
+- Error state med "Försök igen"-knapp
+- Toast-notifikationer vid fel
+
+---
+
+## 📊 UX-EXEMPEL: Aktivitet 1.2 Expanderad
+
+```
+┌─────────────────────────────────────────────────────┐
+│ 1.2 Hantera nyanställningar                   [API]│
+│ ━━━━━━━━━━━━━━━━━━━━━ 0%                           │
+└─────────────────────────────────────────────────────┘
+  ▼ Expanderad
+
+  📋 Delsteg
+  ☐ Kontrollera anställningsavtal
+  ☐ Registrera i lönesystem
+  ☐ Skapa personalkort
+
+  📊 Live Data från System
+  ┌──────────────┬───────────────┬──────────────┐
+  │ Personnummer │ Namn          │ Anst.datum   │
+  ├──────────────┼───────────────┼──────────────┤
+  │ 8901011234   │ Anna Svensson │ 2025-04-01   │
+  │ 9102022345   │ Erik Nilsson  │ 2025-04-01   │
+  └──────────────┴───────────────┴──────────────┘
+```
 
 ---
 
 ## 🏁 Quick Start
 
-### 1. Standard Workflow Check
-
 ```bash
-# Navigate to project
 cd loneprocess-frontend-v2
-
-# Ensure you're on main branch
 git checkout main
 git pull origin main
-
-# Verify everything works
 npm install
-npm run type-check  # Should pass ✅
-npm run lint        # Should pass ✅
-npm test            # 265 tests passing ✅
+npm run type-check  # Ska passa ✅
+npm run lint        # Ska passa ✅
+npm test            # Ska passa ✅
 ```
 
-### 2. Start New Milestone
-
-**Tell Claude:**
+**Starta milestone:**
 ```
 "Kör Fas 4, Milestone 4.3: API Integration"
-```
-
-Claude will:
-1. Create feature branch `feat/milestone-4.3-api-integration`
-2. Set up environment configuration
-3. Implement real authentication
-4. Add error handling
-5. Update tests
-6. Create PR when done
-
----
-
-## 📁 Files to Modify
-
-### New Files
-```
-.env.example           # Environment template
-.env.development       # Local dev config
-.env.production        # Production config
-src/lib/env.ts         # Environment validation
-```
-
-### Updated Files
-```
-src/stores/authStore.ts           # Real API calls
-src/lib/api/client.ts             # API configuration
-src/pages/LoginPage.tsx           # Real login flow
-src/stores/authStore.test.ts      # Updated tests
 ```
 
 ---
 
 ## 🧪 Testing Strategy
 
-### Before Starting
-```bash
-npm test                    # 265 tests passing ✅
-npm run e2e                 # 2 E2E tests passing ✅
-```
-
-### After Milestone
-```bash
-npm test                    # Should maintain 100% ✅
-npm run e2e                 # Should pass with real API ✅
-```
-
----
-
-## 🔗 Backend Requirements
-
-### API Endpoints Needed
-
-```
-POST /api/auth/login
-  Body: { email: string, password: string }
-  Response: { token: string, refreshToken: string, user: User }
-
-POST /api/auth/refresh
-  Body: { refreshToken: string }
-  Response: { token: string, expiresAt: string }
-
-POST /api/auth/logout
-  Headers: { Authorization: Bearer <token> }
-  Response: { success: boolean }
-```
-
-### Backend Status
-
-Check backend API status:
-```bash
-# If backend is running locally
-curl http://localhost:3000/api/health
-
-# Or check backend repo
-cd ../loneprocess-api
-git pull
-npm start
-```
+- Använd MSW (Mock Service Worker) för att mocka API-svar i tester
+- Testa loading state, success state och error state för varje komponent
+- Uppdatera authStore-tester för API-nyckel-flow istf mock-login
+- Behåll 100% test-pass rate
 
 ---
 
@@ -160,114 +204,39 @@ npm start
 
 ### Branch Naming
 ```
-feat/milestone-X.Y-description
-fix/issue-description
-chore/task-description
+feat/milestone-4.3-api-integration
 ```
 
 ### Commit Pattern
 ```
-feat: add environment configuration
-fix: handle network errors in login
-test: add API error handling tests
-chore: update dependencies
+feat: add auto-login via API key
+feat: add useEmployees query hook
+feat: add ApiDataDisplay component
+test: add MSW mocks for API endpoints
 ```
 
 ### PR Requirements
 - ✅ All CI checks green
-- ✅ Tests passing (maintain 100%)
+- ✅ Tests passing (100%)
 - ✅ Type-check passing
 - ✅ Lint passing
-- ✅ E2E tests passing
-- ✅ No merge conflicts
-
----
-
-## 🐛 Common Issues & Solutions
-
-### Issue: Backend Not Running
-**Solution:** Start backend first
-```bash
-cd loneprocess-api
-npm start
-```
-
-### Issue: CORS Errors
-**Solution:** Configure backend CORS to allow frontend origin
-```javascript
-// backend: app.js
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}))
-```
-
-### Issue: Environment Variables Not Loading
-**Solution:** Restart dev server after changing `.env`
-```bash
-# Stop server (Ctrl+C)
-npm run dev  # Restart
-```
-
----
-
-## 📚 Documentation to Update
-
-After completing Milestone 4.3:
-
-1. **README.md**
-   - Update progress (50% Fas 4)
-   - Update test count
-   - Add backend setup instructions
-
-2. **PROJECT_STATUS.md**
-   - Mark 4.3 as complete
-   - Update metrics
-
-3. **NEXT_SESSION.md**
-   - Update to Milestone 4.4
-   - Add new instructions
 
 ---
 
 ## 🎯 Success Criteria
 
-Milestone 4.3 is complete when:
+Milestone 4.3 är klar när:
 
-- ✅ Environment variables configured
-- ✅ Real login endpoint working
-- ✅ JWT tokens stored and refreshed
-- ✅ Error handling implemented
-- ✅ All tests passing (100%)
-- ✅ E2E tests updated and passing
-- ✅ Documentation updated
-- ✅ PR merged to main
-
----
-
-## 💡 Tips
-
-1. **Start Small:** Get basic login working first, then add complexity
-2. **Test Early:** Test with backend as soon as possible
-3. **Mock Smart:** Use MSW for API mocking in tests
-4. **Error First:** Implement error handling before success paths
-5. **Iterate Fast:** Small commits, frequent testing
-
----
-
-## 🚀 Ready to Start?
-
-**Command:**
-```
-"Kör Fas 4, Milestone 4.3: API Integration"
-```
-
-Claude will handle:
-- ✅ Branch creation
-- ✅ File scaffolding
-- ✅ Implementation
-- ✅ Testing
-- ✅ PR creation
+- ✅ Auto-login via API-nyckel fungerar
+- ✅ LoginPage visar ingen input — laddar direkt
+- ✅ Query hooks skapade för alla 3 data-typer
+- ✅ ApiDataDisplay visar rätt komponent per aktivitet
+- ✅ EmployeeTable, StatusCard och ErrorList implementerade
+- ✅ Loading + error states fungerar
+- ✅ Integrerat i ActivityListItemExpanded
+- ✅ Alla tester passerar (100%)
+- ✅ Dokumentation uppdaterad
+- ✅ PR mergad till main
 
 ---
 
