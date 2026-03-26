@@ -1,10 +1,12 @@
 /**
  * ToastContext — Global toast-provider
  *
- * Exporterar bara ToastProvider (komponent) från denna fil.
+ * Exporterar ToastProvider (komponent) och ToastContext (context-objekt).
+ * Context-objekt och komponenter i samma fil är ett känt React-mönster.
  * Se useToastContext.ts för hooken.
  */
 
+// eslint-disable-next-line react-refresh/only-export-components -- context + provider i samma fil är standard React-mönster
 import { createContext, useState, useCallback, type ReactNode } from 'react'
 import { Toast, type ToastType } from '@/components/ui/Toast'
 
