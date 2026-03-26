@@ -1,6 +1,6 @@
 /**
  * ActivityListItemExpanded - Expandable Activity Row
- * Click to expand and show delsteg, comments, references
+ * Click to expand and show delsteg, comments, references, and API data
  */
 
 import { useState } from 'react'
@@ -9,6 +9,7 @@ import { useActivityProgress } from '@/hooks/useActivityProgress'
 import { DelstegChecklist } from './DelstegChecklist'
 import { ActivityComments } from './ActivityComments'
 import { ActivityReferences } from './ActivityReferences'
+import { ApiDataDisplay } from './ApiDataDisplay'
 
 interface ActivityListItemExpandedProps {
   activity: ActivityDefinition
@@ -126,6 +127,13 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
                 colorScheme={{ accent: colorScheme.accent }}
               />
             </div>
+
+            {/* API Data Section - Only show if activity has API integration */}
+            {activity.hasApiIntegration && (
+              <div>
+                <ApiDataDisplay activityId={activity.id} />
+              </div>
+            )}
 
             {/* References */}
             {activity.references.length > 0 && (
