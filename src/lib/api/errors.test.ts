@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { AxiosError } from 'axios'
+import type { InternalAxiosRequestConfig } from 'axios'
 import {
   handleAPIError,
   getErrorMessage,
@@ -18,7 +19,7 @@ function makeAxiosError(status?: number): AxiosError {
       status,
       data: {},
       headers: {},
-      config: err.config ?? ({} as AxiosError['config']),
+      config: {} as InternalAxiosRequestConfig,
       statusText: String(status),
     }
   }

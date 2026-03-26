@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { createElement } from 'react'
 import { ToastProvider } from '@/contexts/ToastContext'
@@ -24,7 +24,6 @@ describe('useApiError', () => {
 
   it('handleError anropar showError utan att krascha', () => {
     const { result } = renderHook(() => useApiError(), { wrapper })
-    // Ska inte kasta
     act(() => {
       result.current.handleError(new Error('Test error'))
     })

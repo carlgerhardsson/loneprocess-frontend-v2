@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ToastProvider, useToastContext } from './ToastContext'
 import { createElement } from 'react'
 
-// Testkomponent som använder context
 function TestComponent() {
   const { showToast, showError, showSuccess } = useToastContext()
   return (
@@ -42,7 +41,6 @@ describe('ToastContext', () => {
   })
 
   it('kastar fel om useToastContext används utanför provider', () => {
-    // Tysta console.error för detta test
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() =>
       render(createElement(TestComponent))
