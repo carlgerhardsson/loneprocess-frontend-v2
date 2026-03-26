@@ -1,15 +1,20 @@
 /**
  * Authentication Store
- * Manages user authentication state with persistence and token management
+ * Hanterar autentisering via API-nyckel (X-API-Key header)
+ *
+ * OBS: API:et ägs av externt team och kan inte påverkas.
+ * Autentisering sker automatiskt via env-variabeln VITE_LONEPROCESS_API_KEY.
+ * Användaren behöver inte skriva in något lösenord.
  */
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User, AuthSession, LoginCredentials, AuthState, Permission } from '../types'
+import type { User, AuthSession, AuthState, Permission } from '../types'
+import { validateEnv } from '../lib/env'
+import { verifyApiKey } from '../lib/api/auth'
 
 interface AuthActions {
-  login: (user: User) => void
-  loginWithCredentials: (credentials: LoginCredentials) => Promise<void>
+  loginWithApiKey: () => Promise<void>
   logout: () => void
   setUser: (user: User | null) => void
   setSession: (session: AuthSession | null) => void
@@ -17,14 +22,10 @@ interface AuthActions {
   checkPermission: (permission: string) => boolean
   hasRole: (role: string) => boolean
   checkSession: () => boolean
-  refreshToken: () => Promise<boolean>
 }
 
 type AuthStore = AuthState & AuthActions
 
-/**
- * Check if a session is expired
- */
 function isSessionExpired(session: AuthSession | null): boolean {
   if (!session) return true
   return new Date(session.expiresAt) <= new Date()
@@ -40,57 +41,62 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
       error: null,
 
-      // Actions
-      login: (user: User) => {
-        // Direct login with user object (for mock/demo)
-        const mockSession: AuthSession = {
-          token: 'mock-token-' + Date.now(),
-          expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
-          refreshToken: 'mock-refresh-token-' + Date.now(),
+      /**
+       * Loggar in automatiskt via API-nyckel från VITE_LONEPROCESS_API_KEY.
+       * Verifierar nyckeln mot backend innan inloggning sätts.
+       */
+      loginWithApiKey: async () => {
+        // Om redan inloggad, gör ingenting
+        if (get().isAuthenticated) return
+
+        set({ isLoading: true, error: null })
+
+        // Kontrollera att env-variabeln finns
+        const { valid, missing } = validateEnv()
+        if (!valid) {
+          set({
+            isLoading: false,
+            error: `Konfigurationsfel: Miljövariabel saknas (${missing.join(', ')}). Kontakta administratören.`,
+          })
+          return
         }
 
-        set({
-          user,
-          session: mockSession,
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-        })
-      },
+        const apiKey = import.meta.env.VITE_LONEPROCESS_API_KEY as string
 
-      loginWithCredentials: async (credentials: LoginCredentials) => {
-        set({ isLoading: true, error: null })
         try {
-          // TODO: Replace with real API call in Milestone 4.3
-          // Simulated login for now
-          await new Promise(resolve => setTimeout(resolve, 500))
+          // Verifiera att API-nyckeln är giltig
+          await verifyApiKey(apiKey)
 
-          const mockUser: User = {
-            id: '1',
-            email: credentials.email,
-            name: 'Demo User',
-            role: 'user',
-            permissions: ['activities:read', 'activities:write', 'periods:read'],
+          // API-nyckel verifierad — sätt inloggad
+          const systemUser: User = {
+            id: 'api-key-user',
+            email: 'system@loneportalen.se',
+            name: 'Löneportalen',
+            role: 'viewer',
+            permissions: ['activities:read', 'periods:read'],
             createdAt: new Date().toISOString(),
             lastLogin: new Date().toISOString(),
           }
 
-          const mockSession: AuthSession = {
-            token: 'mock-token-' + Date.now(),
-            expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
-            refreshToken: 'mock-refresh-token-' + Date.now(),
+          // API-nycklar har ingen expiry — sätt långt framtida datum
+          const session: AuthSession = {
+            token: apiKey,
+            expiresAt: new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString(),
+            refreshToken: '',
           }
 
           set({
-            user: mockUser,
-            session: mockSession,
+            user: systemUser,
+            session,
             isAuthenticated: true,
             isLoading: false,
+            error: null,
           })
         } catch {
           set({
-            error: 'Login failed',
             isLoading: false,
+            error:
+              'Kunde inte ansluta till API:et. Kontrollera din nätverksanslutning eller kontakta administratören.',
           })
         }
       },
@@ -127,8 +133,8 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       /**
-       * Check if current session is valid
-       * Returns false if session is expired
+       * Kontrollerar om sessionen är giltig.
+       * API-nycklar löper inte ut men vi behåller metoden för kompatibilitet.
        */
       checkSession: () => {
         const { session, logout } = get()
@@ -139,35 +145,6 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         return true
-      },
-
-      /**
-       * Refresh the authentication token
-       * Returns true if successful
-       */
-      refreshToken: async () => {
-        const { session, logout } = get()
-
-        if (!session) {
-          return false
-        }
-
-        try {
-          // TODO: Replace with real API call in Milestone 4.3
-          await new Promise(resolve => setTimeout(resolve, 300))
-
-          const newSession: AuthSession = {
-            token: 'mock-token-refreshed-' + Date.now(),
-            expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour
-            refreshToken: session.refreshToken,
-          }
-
-          set({ session: newSession })
-          return true
-        } catch {
-          logout()
-          return false
-        }
       },
     }),
     {
