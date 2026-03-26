@@ -3,19 +3,28 @@
 > Production-ready digital checklista för löneprocessen - Built with React + TypeScript
 
 [![CI](https://github.com/carlgerhardsson/loneprocess-frontend-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/carlgerhardsson/loneprocess-frontend-v2/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-265%20passing-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
+[![Tests](https://img.shields.io/badge/tests-285%20passing-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-success)](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
 
 ## 📋 Project Status
 
-**Current Phase:** 🟢 Fas 2 & 3 COMPLETE | 🔵 Fas 4 IN PROGRESS (33%)  
+**Current Phase:** 🟢 Fas 1–3 COMPLETE | 🔵 Fas 4 IN PROGRESS (75%)  
 **Version:** 2.0.0  
-**Test Suite:** ✅ 265 tests (263 unit + 2 E2E)  
-**Components:** 31 production-ready  
-**Status:** Authentication Flow Complete
+**Test Suite:** ✅ 285 tests (283 unit + 2 E2E)  
+**Components:** 35 production-ready  
+**Status:** Milestone 4.3 API Integration Complete
 
 📖 **[View Detailed Status →](./PROJECT_STATUS.md)**  
-🚀 **[Next Session Guide →](./NEXT_SESSION.md)**
+🚀 **[Next Session Guide →](./NEXT_SESSION.md)**  
+🏛️ **[Architecture →](./docs/ARCHITECTURE.md)**
+
+---
+
+## ⚠️ Viktiga arkitekturprinciper
+
+1. **API ägs av externt team** — inga krav kan ställas på API-sidan
+2. **Read-only** — applikationen hämtar bara data, inga POST/PUT/DELETE
+3. **Autentisering = API-nyckel** — `VITE_LONEPROCESS_API_KEY` i env, auto-login
 
 ---
 
@@ -23,21 +32,20 @@
 
 ### Core
 - ⚛️ **React 18.3.1** + **TypeScript 5.9.3**
-- ⚡ **Vite 6.0.11** - Lightning fast build tool  
+- ⚡ **Vite 6.0.11** - Lightning fast build tool
 - 🎨 **Tailwind CSS 3.4.17** - Utility-first styling
 - 🧭 **React Router v6** - Client-side routing ✅
 
 ### State & Data
 - 🔄 **Zustand 5.0.2** - Lightweight state management
-- 📝 **React Hook Form 7.54.2** + **Zod 3.24.1** - Forms & validation
 - 🔌 **TanStack Query v5** - Server state management
-- 🔐 **Auth with JWT** - Token management & refresh ✅
+- 🔐 **Auth via API-nyckel** - X-API-Key header, auto-login ✅
 
 ### Quality & Testing
 - 🧪 **Vitest 1.6.1** - Unit & component tests
 - 🎭 **Playwright 1.49.1** - E2E testing
 - 📚 **Testing Library** - React component testing
-- ✅ **265 passing tests** (100% success rate)
+- ✅ **285 passing tests** (100% success rate)
 
 ---
 
@@ -51,122 +59,83 @@ cd loneprocess-frontend-v2
 # Install dependencies
 npm install
 
+# Sätt upp env-variabler
+cp .env.example .env.local
+# Fyll i VITE_LONEPROCESS_API_KEY i .env.local
+
 # Start dev server (Port 5173)
 npm run dev
 
 # Run tests
 npm test
 
-# Run tests in watch mode
-npm run test:watch
-
-# Run E2E tests
-npm run e2e
-
 # Type check
 npm run type-check
 
-# Lint
-npm run lint
-
-# Format code
-npm run format
+# Lint (med auto-fix)
+npm run lint -- --fix
 
 # Build for production
 npm run build
+
+# E2E tests
+npm run e2e
 ```
 
 ---
 
 ## 📊 Migration Progress
 
-### ✅ Fas 1: Project Setup (COMPLETE)
-- ✅ Repository & tooling setup
-- ✅ Vite + React + TypeScript configured
-- ✅ ESLint + Prettier configured
-- ✅ Tailwind CSS setup
-- ✅ Vitest configured with tests
-- ✅ Playwright E2E configured
-- ✅ GitHub Actions CI/CD pipelines
-- ✅ Documentation complete
+### ✅ Fas 1–3: COMPLETE
+- ✅ Fas 1: Project Setup (Vite, TypeScript, ESLint, CI/CD)
+- ✅ Fas 2: Core Components (Layout, Loading, Errors, API Client, Stores)
+- ✅ Fas 3: Feature Components (ActivityList, Periods, Details, Comments, Search)
 
 ---
 
-### ✅ Fas 2: Core Components (COMPLETE)
-**7 Milestones | 75 Tests | 9 Components**
+### 🔵 Fas 4: Integration & API (IN PROGRESS - 75%)
 
-- ✅ **2.1** Layout Components (Header, Footer, PageLayout)
-- ✅ **2.2** Loading States (Spinner, Skeleton, ProgressBar, LoadingOverlay)
-- ✅ **2.3** Error Handling (ErrorBoundary, ErrorFallback)
-- ✅ **2.4** API Client (Axios-based HTTP client)
-- ✅ **2.5** React Query Setup (QueryClient configuration)
-- ✅ **2.6** Custom Hooks (useActivities, usePeriods)
-- ✅ **2.7** Zustand Stores (activities, periods, auth)
+- ✅ **4.1** React Router Setup
+- ✅ **4.2** Authentication Flow (API-nyckel, auto-login)
+- ✅ **4.3** API Integration (query hooks + data-komponenter för 7 API-aktiviteter)
+- ⏳ **4.4** Production Error Handling (global errors, toasts)
+- ⏳ **4.5** Data Persistence & Cache
 
----
-
-### ✅ Fas 3: Feature Components (COMPLETE)
-**6 Milestones | 150 Tests | 18 Components**
-
-- ✅ **3.1** Activities List UI (5 components, 29 tests)
-- ✅ **3.2** Period Selector (2 components, 18 tests)
-- ✅ **3.3** Activity Details View (2 components, 18 tests)
-- ✅ **3.4** Comments System (3 components, 25 tests)
-- ✅ **3.5** Search & Filters (3 components, 29 tests)
-- ✅ **3.6** Forms & Validation (3 components, 31 tests)
-
-**Features Completed:**
-- Full CRUD UI components
-- Search with debouncing (300ms)
-- Multi-criteria filtering (status, type, priority, assignee)
-- Zod schema validation
-- React Hook Form integration
-- Swedish localization
-- Comprehensive test coverage
-
----
-
-### 🔵 Fas 4: Integration & API (IN PROGRESS - 33%)
-**6 Milestones | Estimated: 8-12 hours**
-
-- ✅ **4.1** React Router Setup (routing, navigation, guards) ✅
-- ✅ **4.2** Authentication Flow (login, token management, auto-refresh) ✅
-- ⏳ **4.3** API Integration (backend connection, env vars)
-- ⏳ **4.4** CRUD Operations (create, edit, delete with real API)
-- ⏳ **4.5** Data Persistence (optimistic updates, cache)
-- ⏳ **4.6** Production Error Handling (global errors, toasts)
-
-**Completed So Far:**
-- ✅ React Router v6 with protected routes
-- ✅ Login page with mock authentication
-- ✅ Token management (JWT-ready)
-- ✅ Auto-logout on token expiry
-- ✅ Auto-refresh tokens before expiry
-- ✅ API interceptor for 401 handling
-- ✅ Session monitoring component
-- ✅ useAuth hook for easy auth access
-- ✅ GitHub Pages deployment with SPA routing
-
-**Next Up:** Backend API integration (Milestone 4.3)
+**Vad som är klart i 4.3:**
+- ✅ Auto-login via `VITE_LONEPROCESS_API_KEY` — ingen input krävs
+- ✅ `useEmployees`, `useKorningsStatus`, `useFellistor` — React Query hooks
+- ✅ `EmployeeTable`, `StatusCard`, `ErrorList`, `ApiDataDisplay` — data-komponenter
+- ✅ Integrerat i `ActivityListItemExpanded` för de 7 API-aktiviteterna
+- ✅ Loading skeletons + error states med retry-knapp
 
 ---
 
 ### ⏳ Fas 5: Advanced Features
-- [ ] Dashboard & analytics
-- [ ] Advanced filtering
-- [ ] Batch operations
-- [ ] File uploads
-- [ ] Real-time notifications
+- Dashboard med framdriftsöversikt
+- Avancerad filtrering (datum, bemanningsområde)
+- Export-funktion (PDF/Excel)
 
 ---
 
 ### ⏳ Fas 6: Production Ready
-- [ ] Performance optimization
-- [ ] Accessibility audit (WCAG 2.1 AA)
-- [ ] Error monitoring (Sentry)
-- [ ] Analytics setup
-- [ ] User documentation
-- [ ] Production deployment
+- Performance-optimering
+- Tillgänglighetsaudit (WCAG 2.1 AA)
+- Felövervakning (Sentry)
+- Produktionsdeploy
+
+---
+
+## 🔌 De 7 API-aktiviteterna
+
+| Aktivitet | Hook | Endpoint |
+|---|---|---|
+| 1.2 Nyanställningar | `useEmployees({ status: 'new' })` | `GET /api/v1/la/employees?status=new` |
+| 1.3 Slutlöner | `useEmployees({ status: 'terminated' })` | `GET /api/v1/la/employees?status=terminated` |
+| 1.5 Tillägg/avdrag | `useEmployees()` | `GET /api/v1/la/employees` |
+| 1.6 Lönehändelser | `useEmployees()` | `GET /api/v1/la/employees` |
+| 2.1 Provlönekörning | `useKorningsStatus(id)` | `GET /api/v1/la/periods/{id}/korningsstatus` |
+| 2.2 Felsignaler AGI | `useFellistor(id)` | `GET /api/v1/la/fellistor/{id}` |
+| 3.1 Definitiv körning | `useKorningsStatus(id)` | `GET /api/v1/la/periods/{id}/korningsstatus` |
 
 ---
 
@@ -175,16 +144,9 @@ npm run build
 Every commit must pass:
 - ✅ TypeScript type check (`npm run type-check`)
 - ✅ ESLint with 0 errors (`npm run lint`)
-- ✅ Prettier format check (`npm run format:check`)
-- ✅ All 265 tests pass (`npm test`)
+- ✅ All tests pass (`npm test`)
 - ✅ Build succeeds (`npm run build`)
 - ✅ E2E tests pass (`npm run e2e`)
-
-**PR Requirements:**
-- ✅ All CI checks green
-- ✅ E2E tests pass
-- ✅ No merge conflicts
-- ✅ Code review approved
 
 ---
 
@@ -192,69 +154,25 @@ Every commit must pass:
 
 ```
 src/
-├── components/          # Fas 2: Core reusable components
+├── components/          # Core reusable components
 │   ├── layout/         # Header, Footer, PageLayout
 │   ├── loading/        # Spinner, Skeleton, LoadingOverlay, ProgressBar
 │   ├── errors/         # ErrorBoundary, ErrorFallback
-│   └── auth/           # SessionManager (Fas 4)
-├── features/           # Fas 3: Feature-specific components
-│   ├── activities/     # 15 components + schemas
-│   │   ├── components/ # ActivityList, Form, Details, Comments, etc.
-│   │   └── schemas/    # Zod validation schemas
-│   └── periods/        # 2 components
-│       └── components/ # PeriodSelector, PeriodDisplay
-├── hooks/              # Custom React hooks
-│   ├── queries/        # TanStack Query hooks
-│   └── useAuth.ts      # Auth hook (Fas 4)
-├── stores/             # Zustand state stores
-│   ├── activitiesStore.ts
-│   ├── periodsStore.ts
-│   └── authStore.ts    # With token management (Fas 4)
-├── lib/                # Utilities & configurations
-│   ├── api/           # HTTP client (Axios) with auth interceptors
-│   └── query/         # React Query config
-├── pages/             # Route pages (Fas 4)
-│   ├── LoginPage.tsx
-│   ├── ActivitiesPage.tsx
-│   ├── ActivityDetailPage.tsx
-│   └── NotFoundPage.tsx
-├── router/            # React Router config (Fas 4)
-│   ├── index.tsx
-│   └── ProtectedRoute.tsx
-├── types/             # TypeScript type definitions
-│   ├── activity.ts
-│   ├── period.ts
-│   ├── auth.ts        # Auth types (Fas 4)
-│   └── index.ts
-└── App.tsx            # Root with RouterProvider (Fas 4)
-```
-
----
-
-## 🧪 Testing
-
-### Test Suite Summary
-- **Total Tests:** 265 (100% passing)
-- **Unit Tests:** 263
-- **E2E Tests:** 2
-- **Coverage:** 100% of written components
-
-### Run Tests
-```bash
-# Run all tests
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-
-# E2E tests
-npm run e2e
-
-# E2E with UI
-npm run e2e:ui
+│   └── auth/           # SessionManager
+├── features/
+│   └── activities/
+│       └── components/ # ActivityList, ApiDataDisplay, EmployeeTable,
+│                       # StatusCard, ErrorList, DelstegChecklist, m.fl.
+├── hooks/
+│   └── queries/        # useActivities, usePeriods, useEmployees,
+│                       # useKorningsStatus, useFellistor
+├── lib/
+│   ├── api/            # apiClient (Axios), la.ts, auth.ts, env.ts
+│   └── query/          # React Query config
+├── stores/             # authStore, activitiesStore, periodsStore
+├── types/              # activity.ts, auth.ts, la.ts, period.ts
+├── pages/              # LoginPage, ActivitiesPage, ActivityDetailPage
+└── router/             # React Router + ProtectedRoute
 ```
 
 ---
@@ -262,65 +180,26 @@ npm run e2e:ui
 ## 🔗 Links
 
 - **Live Demo:** [GitHub Pages](https://carlgerhardsson.github.io/loneprocess-frontend-v2/)
-- **Repository:** [GitHub](https://github.com/carlgerhardsson/loneprocess-frontend-v2)
+- **API:** `https://loneprocess-api-922770673146.us-central1.run.app` (externt team)
+- **API Docs:** `https://loneprocess-api-922770673146.us-central1.run.app/docs`
 - **Project Status:** [PROJECT_STATUS.md](./PROJECT_STATUS.md)
 - **Next Session:** [NEXT_SESSION.md](./NEXT_SESSION.md)
-- **API Repository:** [loneprocess-api](https://github.com/carlgerhardsson/loneprocess-api)
-
----
-
-## 📝 Documentation
-
-- [Project Status](./PROJECT_STATUS.md) - Complete overview of all phases
-- [Next Session Guide](./NEXT_SESSION.md) - How to continue development
-- [Workflow Guide](./docs/WORKFLOW_GUIDE.md) - Git workflow & best practices
-
----
-
-## 🛡️ Quality Standards
-
-- **Type Safety:** 100% TypeScript, no `any` types allowed
-- **Code Quality:** ESLint strict mode, Prettier enforced
-- **Test Coverage:** All components tested, 100% CI pass rate
-- **Performance:** Fast builds with Vite, optimized bundles
-- **Accessibility:** Semantic HTML, keyboard navigation
-- **Localization:** Swedish language throughout
-- **Security:** Token-based auth, auto-refresh, secure storage
+- **Architecture:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
 ---
 
 ## 🎊 Latest Achievements
 
-**Session: 2026-03-25**
-- ✅ Completed Milestone 4.5: Read-Only Backend Integration
-- ✅ Schema migration to backend-specific types
-- ✅ All CRUD components removed (read-only mode)
-- ✅ Fixed 58 TypeScript errors
-- ✅ 188 passing tests (unit + E2E)
-- ✅ GitHub Pages deployment with environment variables
-- ✅ PR #34 merged to main
+**Session: 2026-03-26**
+- ✅ Milestone 4.3 komplett (3 steg, 5 PRs mergade)
+- ✅ Auto-login via API-nyckel implementerat
+- ✅ 3 React Query hooks för LA-endpoints
+- ✅ 4 data-komponenter för de 7 API-aktiviteterna
+- ✅ 285 tester passerar (100%)
+- ✅ Arkitekturdokumentation skapad
 
 ---
 
-## 🚀 Next Steps
+**Built with ❤️ | Fas 1–3 Complete ✅ | Fas 4: 75% 🔵**
 
-**To continue development:**
-
-1. Read [NEXT_SESSION.md](./NEXT_SESSION.md)
-2. Start with Fas 4, Milestone 4.3: API Integration
-3. Follow the standard workflow
-4. Run tests after each milestone
-
-**Command to start:**
-```bash
-# Tell Claude:
-"Kör Fas 4, Milestone 4.3: API Integration"
-```
-
----
-
-**Built with ❤️ | Fas 1, 2, 3 Complete ✅ | Fas 4: 33% 🔵 | Ready for Backend! 🚀**
-
----
-
-_Last deployment: 2026-03-25 07:14 UTC_
+_Last updated: 2026-03-26_
