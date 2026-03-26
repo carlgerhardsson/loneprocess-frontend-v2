@@ -15,7 +15,7 @@ describe('useApiError', () => {
     expect(typeof result.current.getErrorMsg).toBe('function')
   })
 
-  it('getErrorMsg returnerar svenskt felmeddelande för nätverksfel', () => {
+  it('getErrorMsg returnerar svenskt felmeddelande', () => {
     const { result } = renderHook(() => useApiError(), { wrapper })
     const msg = result.current.getErrorMsg(new Error('Network Error'))
     expect(msg).toBeTruthy()

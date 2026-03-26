@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ToastProvider, useToastContext } from './ToastContext'
+import { ToastProvider } from './ToastContext'
+import { useToastContext } from './useToastContext'
 import { createElement } from 'react'
 
 function TestComponent() {

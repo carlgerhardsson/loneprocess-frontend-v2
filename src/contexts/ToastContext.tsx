@@ -1,12 +1,11 @@
 /**
- * ToastContext — Global toast-notifikationer
+ * ToastContext — Global toast-provider
  *
- * Ger hela appen tillgång till toast-notifikationer via useToastContext().
- * Använd denna istället för den lokala useToast-hooken när du vill
- * visa toast från var som helst i appen (t.ex. från API-felhantering).
+ * Exporterar bara ToastProvider (komponent) från denna fil.
+ * Se useToastContext.ts för hooken.
  */
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useState, useCallback, type ReactNode } from 'react'
 import { Toast, type ToastType } from '@/components/ui/Toast'
 
 interface ToastState {
@@ -15,14 +14,14 @@ interface ToastState {
   type: ToastType
 }
 
-interface ToastContextValue {
+export interface ToastContextValue {
   showToast: (message: string, type?: ToastType) => void
   showError: (message: string) => void
   showSuccess: (message: string) => void
   showInfo: (message: string) => void
 }
 
-const ToastContext = createContext<ToastContextValue | null>(null)
+export const ToastContext = createContext<ToastContextValue | null>(null)
 
 let toastIdCounter = 0
 
@@ -54,7 +53,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast, showError, showSuccess, showInfo }}>
       {children}
-      {/* Render alla aktiva toasts */}
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         {toasts.map((toast, index) => (
           <div key={toast.id} style={{ bottom: `${index * 70}px` }}>
@@ -68,12 +66,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       </div>
     </ToastContext.Provider>
   )
-}
-
-export function useToastContext(): ToastContextValue {
-  const ctx = useContext(ToastContext)
-  if (!ctx) {
-    throw new Error('useToastContext måste användas inuti <ToastProvider>')
-  }
-  return ctx
 }
