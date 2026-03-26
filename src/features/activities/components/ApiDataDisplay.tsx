@@ -12,6 +12,8 @@
  *   2.1 → StatusCard
  *   2.2 → ErrorList
  *   3.1 → StatusCard
+ *
+ * Milestone 5.2: org_kod skickas till employee-endpoints för bemanningsområde-filtrering.
  */
 
 import { useEmployees } from '@/hooks/queries/useEmployees'
@@ -24,6 +26,8 @@ import { ErrorList } from './ErrorList'
 interface ApiDataDisplayProps {
   activityId: string
   loneperiodId?: number | null
+  /** Bemanningsområde — skickas som org_kod till employee-endpoints */
+  orgKod?: string | null
 }
 
 // Loading skeleton
@@ -67,24 +71,32 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
   )
 }
 
-// ─── Delkomponenter per aktivitetstyp ────────────────────────────────────────────
+// ─── Delkomponenter per aktivitetstyp ────────────────────────────────────────
 
-function NewEmployeesData() {
-  const { data, isLoading, isError, refetch } = useEmployees({ status: 'new' })
+function NewEmployeesData({ orgKod }: { orgKod?: string | null }) {
+  const { data, isLoading, isError, refetch } = useEmployees({
+    status: 'new',
+    ...(orgKod ? { org_kod: orgKod } : {}),
+  })
   if (isLoading) return <LoadingSkeleton />
   if (isError) return <ErrorState onRetry={() => void refetch()} />
   return <EmployeeTable employees={data ?? []} variant="new" />
 }
 
-function TerminatedEmployeesData() {
-  const { data, isLoading, isError, refetch } = useEmployees({ status: 'terminated' })
+function TerminatedEmployeesData({ orgKod }: { orgKod?: string | null }) {
+  const { data, isLoading, isError, refetch } = useEmployees({
+    status: 'terminated',
+    ...(orgKod ? { org_kod: orgKod } : {}),
+  })
   if (isLoading) return <LoadingSkeleton />
   if (isError) return <ErrorState onRetry={() => void refetch()} />
   return <EmployeeTable employees={data ?? []} variant="terminated" />
 }
 
-function AllEmployeesData() {
-  const { data, isLoading, isError, refetch } = useEmployees()
+function AllEmployeesData({ orgKod }: { orgKod?: string | null }) {
+  const { data, isLoading, isError, refetch } = useEmployees(
+    orgKod ? { org_kod: orgKod } : undefined
+  )
   if (isLoading) return <LoadingSkeleton />
   if (isError) return <ErrorState onRetry={() => void refetch()} />
   return <EmployeeTable employees={data ?? []} variant="default" />
@@ -115,15 +127,15 @@ function NoLoneperiodWarning() {
 
 // ─── Huvud-wrapper ──────────────────────────────────────────────────────────────
 
-export function ApiDataDisplay({ activityId, loneperiodId }: ApiDataDisplayProps) {
+export function ApiDataDisplay({ activityId, loneperiodId, orgKod }: ApiDataDisplayProps) {
   switch (activityId) {
     case '1.2':
-      return <NewEmployeesData />
+      return <NewEmployeesData orgKod={orgKod} />
     case '1.3':
-      return <TerminatedEmployeesData />
+      return <TerminatedEmployeesData orgKod={orgKod} />
     case '1.5':
     case '1.6':
-      return <AllEmployeesData />
+      return <AllEmployeesData orgKod={orgKod} />
     case '2.1':
     case '3.1':
       if (!loneperiodId) return <NoLoneperiodWarning />
