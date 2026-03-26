@@ -1,6 +1,6 @@
 # 🎯 Fas 5 — Teknisk Plan
 
-> Basärat på faktisk kodanalys av nuvarande implementation
+> Baserat på kodanalys + skärmbilder från tidigare version (v1.5.0)
 
 **Skapad:** 2026-03-26  
 **Status:** Planerad ⏳
@@ -15,6 +15,42 @@
 
 ---
 
+## 🎨 Referens: Tidigare version (v1.5.0)
+
+Skärmbilder från föregående version visar exakt målbilden:
+
+### Bild 1 — Överblick-fliken
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Överblick  |  Löneperioder  |  Verktygslåda                   │
+├─────────────────────────────────────────────────────────────────┤
+│  Period: [ March 2025  📅 ]    Bemanningsområde: [ Hela inst. ▼]│
+├─────────────────────────────────────────────────────────────────┤
+│  Total framdrift  Mars 2025                              0%     │
+│  ████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░         │
+│  0 av 20 aktiviteter slutförda · 0 av 71 delsteg klara          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Bild 2 — Löneperioder-fliken
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Överblick  |  Löneperioder  |  Verktygslåda                   │
+├─────────────────────────────────────────────────────────────────┤
+│  ⚠️ Kontakta lönechef för ändringar                             │
+│                                                                  │
+│  Löneperioder 2025                                              │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ 2025-01  Januari                          [Avslutad]    │   │
+│  │ 2025-02  Februari                         [Avslutad]    │   │
+│  │ 2025-03  Mars                  ← aktiv →  [Aktiv]       │   │  (blå highlight)
+│  │ 2025-04  April                            [Planerad]    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## 🔍 Nuvarande läge (efter Fas 4)
 
 ### Vad som fungerar
@@ -24,132 +60,130 @@
 - `ApiDataDisplay` väljer rätt komponent per `activityId`
 - `EmployeeTable`, `StatusCard`, `ErrorList` implementerade
 
-### Vad som saknas (grundproblem)
+### Vad som saknas
 
-**Problem 1: `loneperiodId` når aldrig `ApiDataDisplay`**
+**Problem 1: Tab-navigation saknas**
+Nuvarande app har bara "Dashboard" i headern. Den tidigare versionen
+hade tab-navigation (Överblick | Löneperioder | Verktygslåda)
+direkt i dashboard-vyn.
 
-Flödet ser ut så här:
+**Problem 2: `loneperiodId` når aldrig `ApiDataDisplay`**
 ```
 DashboardPage
-  └── DashboardOverview         ← ingen period hämtas här
+  └── DashboardOverview         ← ingen period hämtas
         └── FasCard              ← inget loneperiodId-prop
-              └── ActivityListItemExpanded  ← har loneperiodId-prop men får aldrig ett värde
-                    └── ApiDataDisplay     ← tar emot loneperiodId=undefined
-                          └── KorningsStatusData / FellistorData  ← visar "Ingen aktiv löneperiod"
+              └── ActivityListItemExpanded  ← har prop men får aldrig värde
+                    └── ApiDataDisplay     ← loneperiodId=undefined
+                          └── KorningsStatusData/FellistorData
+                                ← visar "Ingen aktiv löneperiod"
 ```
 
-Resultat: Aktiviteterna 2.1, 2.2 och 3.1 visar alltid varningen  
-"Ingen aktiv löneperiod vald" eftersom `loneperiodId` aldrig sätts.
+**Problem 3: Bemanningsområde-dropdown är dekorativ**
+Dropdown finns visuellt men är inte kopplad till state eller filtrering.
 
-**Problem 2: Bemanningsområde-dropdown är dekorativ**
-
-Dropdown-elementet i UI:et (se skärmbilden) är inte kopplat till  
-någon state eller filtrering. Väljer man ett bemanningsområde händer inget.
+**Problem 4: Ingen Löneperioder-sida**
+Sidan med periodlista (Avslutad/Aktiv/Planerad) existerar inte.
 
 ---
 
-## 📌 Fas 5 — 3 milestones
+## 📌 Fas 5 — 3 Milestones
 
 ---
 
-### Milestone 5.1 — Löneperiod-integration
+### Milestone 5.1 — Tab-navigation, Period-väljare & Löneperioder-sida
 
-**Estimat:** 2–3 timmar  
-**Mål:** Koppla vald löneperiod hela vägen ned till `ApiDataDisplay`
+**Estimat:** 3–4 timmar  
+**Mål:** Matcha v1.5.0-designen — tabs, period-väljare, löneperiod-lista, live-data end-to-end
 
-#### Vad som ska byggas
+#### Del A: Tab-navigation
 
-**1. Periodnummer-väljare i DashboardOverview**
-- Hämta löneperioder från API via `usePeriods()`
-- Visa en `<select>` med perioder (ex: "Mars 2025", "April 2025")
-- Sätt aktuell period automatiskt till den senaste med status `for_registrering`
-- Spara vald period i lokal state: `const [selectedPeriodId, setSelectedPeriodId] = useState<number|null>(null)`
-
-**2. Propagera `loneperiodId` nedåt**
-
-Prop-kedjan som måste uppdateras:
+Lägg till tabs i `DashboardPage`/`DashboardOverview`:
 ```
-DashboardOverview
-  selectedPeriodId: number | null              ← ny state
-    └── FasCard
-          loneperiodId: number | null          ← nytt prop
-            └── ActivityListItemExpanded
-                  loneperiodId: number | null  ← finns redan! (skickas bara inte)
-                    └── ApiDataDisplay
-                          loneperiodId         ← fungerar redan
+Överblick | Löneperioder | Verktygslåda
 ```
 
-**3. Filer att ändra**
+- **Överblick** = nuvarande dashboard (faskorten + aktivitetslistan)
+- **Löneperioder** = ny sida (se Del C)
+- **Verktygslåda** = placeholder (tomt för nu, visas i framtida fas)
+
+Implementeras som intern tab-state i `DashboardPage`, inte som separata routes,
+för att spara scrollposition och state.
+
+#### Del B: Period-väljare + Bemanningsområde i Överblick
+
+Exakt som skärmbild 1 — rad med två kontroller överst:
 ```
-src/features/dashboard/components/DashboardOverview.tsx  ← hämta perioder, period-väljare
-src/features/dashboard/components/FasCard.tsx            ← lägg till loneperiodId-prop
+Period: [ Mars 2025  📅 ]    Bemanningsområde: [ Hela installationen ▼ ]
 ```
 
-**4. Period-väljare UI**
-```tsx
-// I DashboardOverview.tsx
-const { data: periods = [] } = usePeriods()
-const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null)
+- Hämta löneperioder via `usePeriods()`
+- Auto-välj aktiv period (status = `for_registrering` eller `aktiv`)
+- Period-väljare: `<select>` med periodnamn (ex: "Mars 2025")
+- Propagera `selectedPeriodId` ned: `DashboardOverview → FasCard → ActivityListItemExpanded → ApiDataDisplay`
+- Bemanningsområde: koppla dropdown till state (se Milestone 5.2)
 
-// Auto-välj senaste period vid mount
-useEffect(() => {
-  const active = periods.find(p => p.status === 'for_registrering')
-  if (active) setSelectedPeriodId(active.id)
-}, [periods])
+**Prop-kedja att uppdatera:**
+```
+DashboardOverview (selectedPeriodId: number|null)
+  └── FasCard (+loneperiodId prop)
+        └── ActivityListItemExpanded (har redan prop — skickas bara inte)
+              └── ApiDataDisplay (fungerar redan)
+```
 
-// UI
-<select onChange={e => setSelectedPeriodId(Number(e.target.value))}>
-  {periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-</select>
+#### Del C: Löneperioder-sida
+
+Exakt som skärmbild 2:
+- Varningstext: "Kontakta lönechef för ändringar" (read-only, ingen redigering)
+- Rubrik: "Löneperioder [år]"
+- Lista med perioder och status-badges:
+  - `Avslutad` (grön badge)
+  - `Aktiv` (blå badge + highlight på raden)
+  - `Planerad` (grå badge)
+- Hämtar data via `usePeriods()` (redan implementerat)
+
+**Ny fil:**
+```
+src/features/dashboard/components/LoneperioderTab.tsx
+```
+
+#### Filer att skapa/ändra
+```
+src/pages/DashboardPage.tsx                              ← lägg till tab-state
+src/features/dashboard/components/DashboardOverview.tsx  ← period-väljare, bemanningsomr
+src/features/dashboard/components/FasCard.tsx            ← loneperiodId-prop
+src/features/dashboard/components/LoneperioderTab.tsx    ← ny fil
 ```
 
 #### Success criteria
-- Aktivitet 2.1 visar riktig `StatusCard` med körningsstatus
-- Aktivitet 2.2 visar riktig `ErrorList` med fellistor  
-- Aktivitet 3.1 visar riktig `StatusCard` med körningsstatus
-- Byts period i dropdown → ApiDataDisplay hämtar ny data
+- Tab-navigation synlig: Överblick | Löneperioder | Verktygslåda
+- Period-dropdown auto-väljer aktiv period
+- Byter period → ApiDataDisplay hämtar ny data
+- Aktivitet 2.1, 2.2, 3.1 visar live-data istf "Ingen aktiv löneperiod"
+- Löneperioder-fliken visar lista med Avslutad/Aktiv/Planerad
 
 ---
 
 ### Milestone 5.2 — Bemanningsområde-filtrering
 
 **Estimat:** 1–2 timmar  
-**Mål:** Koppla bemanningsområde-dropdown till faktisk filtrering
+**Mål:** Koppla bemanningsområde-dropdown till faktisk filtrering av anställda
 
 #### Bakgrund
 
 Från ursprungskraven:
-> *"Det styrs genom att ha olika bemanningsområden. Olika uppsättning av aktiviteter i löneperioden för olika verksamheter."*
-
-Dropdown:en är synlig i UI:et men är inte kopplad till något.
+> *"Det styrs genom att ha olika bemanningsområden. Olika uppsättning av
+> aktiviteter i löneperioden för olika verksamheter."*
 
 #### Vad som ska byggas
 
-**1. Bemanningsområde-state i DashboardOverview**
+State i `DashboardOverview`:
 ```tsx
 const [bemanningsomrade, setBemanningsomrade] = useState<string>('Hela installationen')
 ```
 
-**2. Filtrera aktiviteter per bemanningsområde**
-
-Aktiviteter i `src/data/activities.ts` behöver ett `bemanningsomrade`-fält,  
-eller filtrering kan ske via anropet till `useEmployees({ org_kod })` för  
-de aktiviteter som hämtar anställda.
-
-**3. Koppla dropdown till state**
+Skicka `bemanningsomrade` till `ApiDataDisplay` → `useEmployees({ org_kod })`:
 ```tsx
-<select
-  value={bemanningsomrade}
-  onChange={e => setBemanningsomrade(e.target.value)}
->
-  <option value="Hela installationen">Hela installationen</option>
-  {/* Dynamiska alternativ från API om tillgängligt */}
-</select>
-```
-
-**4. Skicka `orgKod` till `useEmployees`**
-```tsx
-useEmployees({ 
+useEmployees({
   status: 'new',
   org_kod: bemanningsomrade !== 'Hela installationen' ? bemanningsomrade : undefined
 })
@@ -159,13 +193,11 @@ useEmployees({
 ```
 src/features/dashboard/components/DashboardOverview.tsx
 src/features/activities/components/ApiDataDisplay.tsx
-src/hooks/queries/useEmployees.ts
 ```
 
 #### Success criteria
-- Väljer man ett bemanningsområde filtreras anställda i EmployeeTable
-- "Hela installationen" visar alla anställda
-- Dropdown och filtrering hänger ihop visuellt
+- Väljer man bemanningsområde filtreras anställda i EmployeeTable
+- "Hela installationen" visar alla
 
 ---
 
@@ -176,60 +208,30 @@ src/hooks/queries/useEmployees.ts
 
 #### Bakgrund
 
-Lönespecialisterna behöver kunna skriva ut/spara en PDF av checklistan  
-för dokumentation och arkivering. Detta är ett konkret affärsvärde.
+Lönespecialisterna behöver kunna spara/skriva ut checklistan
+för dokumentation och arkivering.
 
 #### Vad som ska byggas
 
-**1. ExportButton-komponent**
+**ExportButton-komponent** i dashboard-headern:
 ```tsx
-// src/features/dashboard/components/ExportButton.tsx
-export function ExportButton({ periodName }: { periodName: string }) {
-  const handleExport = () => {
-    window.print() // Enklaste möjliga implementation
-  }
-  return (
-    <button onClick={handleExport}>
-      Exportera checklista
-    </button>
-  )
-}
+src/features/dashboard/components/ExportButton.tsx
 ```
 
-**2. Print-optimerade CSS-klasser**
-
-Lägg till Tailwind print-klasser för att dölja irrelevanta UI-element  
-vid utskrift och visa checklistan på ett rent sätt:
-```css
-@media print {
-  /* Dölj navigation, knappar, filter */
-  /* Visa alla aktiviteter expanderade */
-  /* Snygg typografi */
-}
-```
-
-**3. Print-layout**
-- Header med periodnamn och datum
-- Alla tre faser med aktiviteter
+**Print-layout:**
+- Header med periodnamn + datum
+- Alla tre faser med aktiviteter och delsteg
 - Status (bockat/ej bockat) per delsteg
-- Footer med tidsstämpel
+- Dölj knappar, navigation, filter vid utskrift
 
-#### Alternativ implementation
-Om `window.print()` inte ger tillräcklig kontroll kan vi använda  
-biblioteket `html2canvas` + `jsPDF` för mer kontroll över PDF-utseendet.
-
-#### Filer att skapa/ändra
-```
-src/features/dashboard/components/ExportButton.tsx  ← ny komponent
-src/features/dashboard/components/DashboardOverview.tsx  ← lägg till knapp
-src/index.css (eller tailwind.config)  ← print-stilar
-```
+**Implementation:** `window.print()` med Tailwind `print:`-klasser.
+Alternativ om mer kontroll behövs: `html2canvas` + `jsPDF`.
 
 #### Success criteria
-- "Exportera"-knapp synlig i dashboard-headern
-- Klick öppnar print-dialog med snygg layout
-- Checklistans status (bockat/ej bockat) visas korrekt
-- Irrelevant UI (navigation, filter, knappar) döljs vid utskrift
+- "Exportera"-knapp i dashboard-headern
+- Print-dialog visar ren checklistevy
+- Status visas korrekt
+- Irrelevant UI döljs
 
 ---
 
@@ -237,9 +239,9 @@ src/index.css (eller tailwind.config)  ← print-stilar
 
 | Milestone | Estimat | Prioritet | Värde |
 |---|---|---|---|
-| 5.1 Löneperiod-integration | 2–3h | 🔴 Hög | Live-data fungerar end-to-end |
-| 5.2 Bemanningsområde-filtrering | 1–2h | 🟡 Medium | Krav från ursprungsspecen |
-| 5.3 Export av checklista | 2–3h | 🟡 Medium | Konkret affärsvärde |
+| 5.1 Tab-nav + Period + Löneperioder | 3–4h | 🔴 Hög | Matchar v1.5.0, live-data end-to-end |
+| 5.2 Bemanningsområde | 1–2h | 🟡 Medium | Ursprungskrav |
+| 5.3 Export | 2–3h | 🟡 Medium | Konkret affärsvärde |
 
 **Rekommenderad ordning:** 5.1 → 5.2 → 5.3
 
@@ -248,7 +250,6 @@ src/index.css (eller tailwind.config)  ← print-stilar
 ## 📝 Arbetsflöde
 
 ```bash
-# Efter varje git pull:
 npm test
 npm run type-check
 npm run lint -- --fix
@@ -258,11 +259,11 @@ npm run build
 
 ### Branch naming
 ```
-feat/milestone-5.1-period-integration
+feat/milestone-5.1-period-tabs
 feat/milestone-5.2-bemanningsomrade
 feat/milestone-5.3-export
 ```
 
 ---
 
-_Uppdaterad: 2026-03-26_
+_Uppdaterad: 2026-03-26 (med skärmbilder från v1.5.0)_
