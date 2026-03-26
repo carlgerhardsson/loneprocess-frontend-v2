@@ -31,10 +31,10 @@ export function useFellistor(loneperiodId: number | null, filters?: FellistorFil
     queryKey: fellistorKeys.list(loneperiodId!, filters),
     queryFn: () => fetchFellistor(loneperiodId!, filters),
     enabled: loneperiodId !== null,
-    staleTime: 2 * 60 * 1000,   // Färsk i 2 min
-    gcTime: 10 * 60 * 1000,     // Cache i 10 min
+    staleTime: 2 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
-    retry: 2,
+    // retry styrs av QueryClient-konfigurationen (retry: false i tester)
   })
 }
 
@@ -51,6 +51,6 @@ export function useFellistaSummary(loneperiodId: number | null) {
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
-    retry: 2,
+    // retry styrs av QueryClient-konfigurationen (retry: false i tester)
   })
 }

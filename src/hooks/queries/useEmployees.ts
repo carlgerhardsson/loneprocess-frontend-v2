@@ -33,6 +33,6 @@ export function useEmployees(filters?: EmployeeFilters) {
     staleTime: 5 * 60 * 1000,   // Färsk i 5 min
     gcTime: 10 * 60 * 1000,     // Cache i 10 min
     refetchOnWindowFocus: true,
-    retry: 2,
+    // retry styrs av QueryClient-konfigurationen (retry: false i tester)
   })
 }
