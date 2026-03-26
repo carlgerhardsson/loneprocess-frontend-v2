@@ -1,6 +1,6 @@
 /**
  * API Error Handling
- * Custom error classes and error handling utilities
+ * Felklasser med svenska meddelanden och mappning från HTTP-statuskoder
  */
 
 import { AxiosError } from 'axios'
@@ -17,49 +17,49 @@ export class APIError extends Error {
 }
 
 export class NetworkError extends APIError {
-  constructor(message = 'Network error - please check your connection') {
+  constructor(message = 'Kan inte ansluta till systemet. Kontrollera din nätverksanslutning.') {
     super(message)
     this.name = 'NetworkError'
   }
 }
 
 export class AuthenticationError extends APIError {
-  constructor(message = 'Authentication failed - please log in again') {
+  constructor(message = 'Din session har gått ut. Laddar om...') {
     super(message, 401)
     this.name = 'AuthenticationError'
   }
 }
 
 export class NotFoundError extends APIError {
-  constructor(message = 'Resource not found') {
+  constructor(message = 'Data hittades inte.') {
     super(message, 404)
     this.name = 'NotFoundError'
   }
 }
 
 export class ValidationError extends APIError {
-  constructor(message = 'Validation failed', data?: unknown) {
+  constructor(message = 'Ogiltiga uppgifter. Kontrollera dina inmatningar.', data?: unknown) {
     super(message, 422, data)
     this.name = 'ValidationError'
   }
 }
 
 export class RateLimitError extends APIError {
-  constructor(message = 'Too many requests - please wait and try again') {
+  constructor(message = 'För många förfrågningar. Vänta en stund och försök igen.') {
     super(message, 429)
     this.name = 'RateLimitError'
   }
 }
 
 export class ServerError extends APIError {
-  constructor(message = 'Server error - please try again later') {
+  constructor(message = 'Serverfel. Försök igen senare.') {
     super(message, 500)
     this.name = 'ServerError'
   }
 }
 
 /**
- * Convert Axios error to custom API error
+ * Omvandlar Axios-fel till anpassad APIError med svenska meddelanden.
  */
 export function handleAPIError(error: unknown): APIError {
   if (error instanceof APIError) {
@@ -68,34 +68,47 @@ export function handleAPIError(error: unknown): APIError {
 
   if (error instanceof AxiosError) {
     const status = error.response?.status
-    const message = error.response?.data?.message || error.message
 
-    // Network errors
     if (!error.response) {
       return new NetworkError()
     }
 
-    // HTTP status code errors
     switch (status) {
       case 401:
       case 403:
-        return new AuthenticationError(message)
+        return new AuthenticationError()
       case 404:
-        return new NotFoundError(message)
+        return new NotFoundError()
       case 422:
-        return new ValidationError(message, error.response?.data)
+        return new ValidationError(undefined, error.response?.data)
       case 429:
-        return new RateLimitError(message)
+        return new RateLimitError()
       case 500:
       case 502:
       case 503:
       case 504:
-        return new ServerError(message)
+        return new ServerError()
       default:
-        return new APIError(message, status, error.response?.data)
+        return new APIError(
+          `Ett fel uppstod (${status ?? 'okänd statuskod'}).`,
+          status,
+          error.response?.data
+        )
     }
   }
 
-  // Unknown error
-  return new APIError(error instanceof Error ? error.message : 'An unexpected error occurred')
+  return new APIError(error instanceof Error ? error.message : 'Ett oväntat fel uppstod.')
+}
+
+/**
+ * Returnerar ett användarvänligt svenskt felmeddelande för ett fel.
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof APIError) {
+    return error.message
+  }
+  if (error instanceof Error) {
+    return error.message
+  }
+  return 'Ett oväntat fel uppstod.'
 }
