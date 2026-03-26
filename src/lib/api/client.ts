@@ -1,41 +1,37 @@
 /**
  * API Client
- * Axios instance with authentication interceptors
+ * Axios instance med X-API-Key autentisering
+ *
+ * OBS: API:et ägs av externt team och kan inte påverkas.
+ * Autentisering sker via VITE_LONEPROCESS_API_KEY (API-nyckel).
  */
 
 import axios from 'axios'
-import { useAuthStore } from '@/stores/authStore'
+import { env } from '@/lib/env'
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://loneprocess-api-922770673146.us-central1.run.app/api/v1'
-const API_KEY = import.meta.env.VITE_LONEPROCESS_API_KEY
+const API_BASE_URL = env.apiUrl
 
 /**
- * Axios instance with interceptors for authentication
+ * Axios instance med API-nyckel i varje anrop
  */
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-    // Add API key if available
-    ...(API_KEY && { 'X-API-Key': API_KEY }),
   },
 })
 
 /**
  * Request interceptor
- * Adds authentication token to requests
+ * Lägger till X-API-Key header på alla anrop
  */
 apiClient.interceptors.request.use(
   config => {
-    const state = useAuthStore.getState()
-    const token = state.session?.token
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    const apiKey = env.apiKey
+    if (apiKey) {
+      config.headers['X-API-Key'] = apiKey
     }
-
     return config
   },
   error => Promise.reject(error)
@@ -43,34 +39,17 @@ apiClient.interceptors.request.use(
 
 /**
  * Response interceptor
- * Handles token expiry and refresh
+ * Hanterar 401 genom att logga ut användaren
  */
 apiClient.interceptors.response.use(
   response => response,
   async error => {
-    const originalRequest = error.config
-
-    // If 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-
-      try {
-        // Try to refresh the token
-        const success = await useAuthStore.getState().refreshToken()
-
-        if (success) {
-          // Retry the original request with new token
-          const token = useAuthStore.getState().session?.token
-          originalRequest.headers.Authorization = `Bearer ${token}`
-          return apiClient(originalRequest)
-        }
-      } catch (refreshError) {
-        // Refresh failed, logout
-        useAuthStore.getState().logout()
-        return Promise.reject(refreshError)
-      }
+    if (error.response?.status === 401) {
+      // API-nyckeln är ogiltig eller har återkallats
+      // Importera dynamiskt för att undvika cirkulera beroenden
+      const { useAuthStore } = await import('@/stores/authStore')
+      useAuthStore.getState().logout()
     }
-
     return Promise.reject(error)
   }
 )

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { useAuthStore } from './authStore'
+import type { Permission } from '../types'
 
 // Mocka auth API-modulen
 vi.mock('../lib/api/auth', () => ({
@@ -40,7 +41,7 @@ describe('authStore', () => {
       name: 'Test',
       email: 'test@test.com',
       role: 'user' as const,
-      permissions: [] as const,
+      permissions: [] as Permission[],
       createdAt: '2024-01-01',
       lastLogin: '2024-01-01',
     }
@@ -192,14 +193,12 @@ describe('authStore', () => {
 
     await useAuthStore.getState().loginWithApiKey()
 
-    // verifyApiKey ska inte ha anropats
     expect(vi.mocked(verifyApiKey)).not.toHaveBeenCalled()
   })
 
   it('sätter isLoading true under inloggning', async () => {
     vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-api-key-123')
 
-    // Håll verifyApiKey hängande för att fånga loading state
     let resolveVerify!: () => void
     vi.mocked(verifyApiKey).mockImplementation(
       () =>
