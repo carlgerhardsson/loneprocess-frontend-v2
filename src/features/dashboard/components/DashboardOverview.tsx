@@ -4,7 +4,7 @@
  * Visar period-väljare, bemanningsområde-dropdown,
  * total framdrift och de 3 faskorten.
  *
- * Baserat på v1.5.0-design.
+ * Milestone 5.2: bemanningsområde är nu kopplat till filtrering.
  */
 
 import { useState, useEffect } from 'react'
@@ -12,6 +12,8 @@ import { getActivitiesByFas, ACTIVITY_STATS } from '@/data/activities'
 import { FasCard } from './FasCard'
 import { usePeriods } from '@/hooks/queries'
 import { useActivityProgress } from '@/hooks/useActivityProgress'
+
+const HELA_INSTALLATIONEN = 'Hela installationen'
 
 const FAS_CONFIGS = [
   {
@@ -52,10 +54,10 @@ const FAS_CONFIGS = [
 export function DashboardOverview() {
   const { data: periods = [] } = usePeriods()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null)
-  const [bemanningsomrade, setBemanningsomrade] = useState('Hela installationen')
+  const [bemanningsomrade, setBemanningsomrade] = useState(HELA_INSTALLATIONEN)
   const { getCompletionPercentage } = useActivityProgress()
 
-  // Auto-välj aktiv period vid mount — 'active' är den enda status som passar
+  // Auto-välj aktiv period vid mount
   useEffect(() => {
     if (periods.length > 0 && selectedPeriodId === null) {
       const active = periods.find(p => p.status === 'active')
@@ -64,6 +66,10 @@ export function DashboardOverview() {
       if (target) setSelectedPeriodId(Number(target.id))
     }
   }, [periods, selectedPeriodId])
+
+  // Omvandla bemanningsområde → org_kod (null = alla)
+  const orgKod =
+    bemanningsomrade !== HELA_INSTALLATIONEN ? bemanningsomrade : null
 
   // Total framdrift över alla aktiviteter
   const allActivities = [
@@ -79,7 +85,8 @@ export function DashboardOverview() {
     const pct = getCompletionPercentage(a.id)
     return sum + Math.round((pct / 100) * a.delsteg.length)
   }, 0)
-  const totalPercent = totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
+  const totalPercent =
+    totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
 
   const selectedPeriod = periods.find(p => Number(p.id) === selectedPeriodId)
   const periodDisplayName = selectedPeriod?.name ?? ''
@@ -99,7 +106,9 @@ export function DashboardOverview() {
                 className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none"
                 aria-label="Välj period"
               >
-                {periods.length === 0 && <option value="">Laddar perioder...</option>}
+                {periods.length === 0 && (
+                  <option value="">Laddar perioder...</option>
+                )}
                 {periods.map(p => (
                   <option key={p.id} value={Number(p.id)}>
                     {p.name}
@@ -126,7 +135,9 @@ export function DashboardOverview() {
 
           {/* Bemanningsområde */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Bemanningsområde</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Bemanningsområde
+            </label>
             <div className="relative">
               <select
                 value={bemanningsomrade}
@@ -134,7 +145,8 @@ export function DashboardOverview() {
                 className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none"
                 aria-label="Välj bemanningsområde"
               >
-                <option value="Hela installationen">Hela installationen</option>
+                <option value={HELA_INSTALLATIONEN}>{HELA_INSTALLATIONEN}</option>
+                {/* Framtida: dynamiska områden från API */}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
                 <svg
@@ -174,8 +186,8 @@ export function DashboardOverview() {
           />
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda · {completedDelsteg}{' '}
-          av {totalDelsteg} delsteg klara
+          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda ·{' '}
+          {completedDelsteg} av {totalDelsteg} delsteg klara
         </p>
       </div>
 
@@ -195,6 +207,7 @@ export function DashboardOverview() {
                 subtitle={config.subtitle}
                 colorScheme={config.colorScheme}
                 loneperiodId={selectedPeriodId}
+                orgKod={orgKod}
               />
             )
           })}

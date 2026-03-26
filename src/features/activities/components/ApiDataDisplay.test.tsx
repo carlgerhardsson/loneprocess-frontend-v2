@@ -6,8 +6,6 @@ import { ApiDataDisplay } from './ApiDataDisplay'
 import type { UseQueryResult } from '@tanstack/react-query'
 import type { LAEmployee, KorningsStatus, LACalculationError } from '@/types/la'
 
-// Hjälpfunktion för att skapa mock query-resultat
-// Använder "as unknown as" för att kringgå TypeScript-krav på fullständigt UseQueryResult-objekt
 function mockQuery<T>(partial: Partial<UseQueryResult<T>>): UseQueryResult<T> {
   return {
     data: undefined,
@@ -24,7 +22,6 @@ function mockQuery<T>(partial: Partial<UseQueryResult<T>>): UseQueryResult<T> {
   } as unknown as UseQueryResult<T>
 }
 
-// Mocka alla hooks
 vi.mock('@/hooks/queries/useEmployees', () => ({
   useEmployees: vi.fn(),
 }))
@@ -51,7 +48,9 @@ describe('ApiDataDisplay', () => {
     vi.mocked(useEmployees).mockReturnValue(
       mockQuery<LAEmployee[]>({ data: [], isSuccess: true, status: 'success' })
     )
-    vi.mocked(useKorningsStatus).mockReturnValue(mockQuery<KorningsStatus>({ data: undefined }))
+    vi.mocked(useKorningsStatus).mockReturnValue(
+      mockQuery<KorningsStatus>({ data: undefined })
+    )
     vi.mocked(useFellistor).mockReturnValue(
       mockQuery<LACalculationError[]>({ data: [], isSuccess: true, status: 'success' })
     )
@@ -59,17 +58,41 @@ describe('ApiDataDisplay', () => {
 
   it('visar EmployeeTable för aktivitet 1.2', () => {
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
-    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith({ status: 'new' })
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'new' })
+    )
   })
 
   it('visar EmployeeTable för aktivitet 1.3', () => {
     render(<ApiDataDisplay activityId="1.3" />, { wrapper: createWrapper() })
-    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith({ status: 'terminated' })
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'terminated' })
+    )
   })
 
   it('visar EmployeeTable för aktivitet 1.5 (alla anställda)', () => {
     render(<ApiDataDisplay activityId="1.5" />, { wrapper: createWrapper() })
-    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith()
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(undefined)
+  })
+
+  it('skickar org_kod när bemanningsområde är satt för 1.2', () => {
+    render(
+      <ApiDataDisplay activityId="1.2" orgKod="ORG1" />,
+      { wrapper: createWrapper() }
+    )
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'new', org_kod: 'ORG1' })
+    )
+  })
+
+  it('skickar org_kod när bemanningsområde är satt för 1.5', () => {
+    render(
+      <ApiDataDisplay activityId="1.5" orgKod="ORG2" />,
+      { wrapper: createWrapper() }
+    )
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(
+      expect.objectContaining({ org_kod: 'ORG2' })
+    )
   })
 
   it('visar KorningsStatus för aktivitet 2.1', () => {

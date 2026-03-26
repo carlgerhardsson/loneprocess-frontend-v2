@@ -21,12 +21,15 @@ interface ActivityListItemExpandedProps {
   }
   /** Aktiv löneperiod-ID för API-aktiviteter som behöver period-kontext */
   loneperiodId?: number | null
+  /** Bemanningsområde — skickas till employee-endpoints för filtrering */
+  orgKod?: string | null
 }
 
 export function ActivityListItemExpanded({
   activity,
   colorScheme,
   loneperiodId,
+  orgKod,
 }: ActivityListItemExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { progress, getCompletionPercentage } = useActivityProgress()
@@ -130,7 +133,11 @@ export function ActivityListItemExpanded({
                   <span className="w-2 h-2 rounded-full bg-green-500" />
                   Live Data från System
                 </h3>
-                <ApiDataDisplay activityId={activity.id} loneperiodId={loneperiodId} />
+                <ApiDataDisplay
+                  activityId={activity.id}
+                  loneperiodId={loneperiodId}
+                  orgKod={orgKod}
+                />
               </div>
             )}
 

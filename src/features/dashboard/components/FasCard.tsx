@@ -1,7 +1,6 @@
 /**
  * FasCard — Phase Card Component
- * Displays a phase with its activities and progress
- * UPDATED: Propagerar loneperiodId till ActivityListItemExpanded
+ * Propagerar loneperiodId och orgKod till ActivityListItemExpanded
  */
 
 import type { ActivityDefinition } from '@/types/activityDef'
@@ -19,11 +18,19 @@ interface FasCardProps {
     text: string
     progressColor: string
   }
-  /** Löneperiod-ID från period-väljaren — krävs för API-aktiviteterna 2.1, 2.2, 3.1 */
   loneperiodId?: number | null
+  /** Bemanningsområde — skickas till employee-endpoints */
+  orgKod?: string | null
 }
 
-export function FasCard({ activities, title, subtitle, colorScheme, loneperiodId }: FasCardProps) {
+export function FasCard({
+  activities,
+  title,
+  subtitle,
+  colorScheme,
+  loneperiodId,
+  orgKod,
+}: FasCardProps) {
   const { completedCount, totalCount, overallPercentage } = useFasProgress(activities)
 
   const getFasAccentColor = (border: string) => {
@@ -74,6 +81,7 @@ export function FasCard({ activities, title, subtitle, colorScheme, loneperiodId
             activity={activity}
             colorScheme={expandedColorScheme}
             loneperiodId={loneperiodId}
+            orgKod={orgKod}
           />
         ))}
       </div>
