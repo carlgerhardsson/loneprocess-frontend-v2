@@ -5,12 +5,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import DashboardPage from './DashboardPage'
 
-// Mocka alla hooks och komponenter som gör API-anrop
+// Mocka komponenter som gör API-anrop eller kräver providers
 vi.mock('@/features/dashboard/components/DashboardOverview', () => ({
   DashboardOverview: () => <div data-testid="dashboard-overview">Oversikt</div>,
 }))
 vi.mock('@/features/dashboard/components/LoneperioderTab', () => ({
   LoneperioderTab: () => <div data-testid="loneperioder-tab">Löneperioder</div>,
+}))
+vi.mock('@/features/dashboard/components/PrintView', () => ({
+  PrintView: () => <div data-testid="print-view" />,
+}))
+vi.mock('@/features/dashboard/components/ExportButton', () => ({
+  ExportButton: () => <button>Exportera checklista</button>,
 }))
 vi.mock('@/contexts/ActivityProgressContext', () => ({
   ActivityProgressProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -56,5 +62,15 @@ describe('DashboardPage', () => {
     render(<DashboardPage />, { wrapper: createWrapper() })
     await userEvent.click(screen.getByRole('tab', { name: 'Löneperioder' }))
     expect(screen.queryByTestId('dashboard-overview')).not.toBeInTheDocument()
+  })
+
+  it('visar ExportButton på Överblick-fliken', () => {
+    render(<DashboardPage />, { wrapper: createWrapper() })
+    expect(screen.getByText('Exportera checklista')).toBeInTheDocument()
+  })
+
+  it('renderar PrintView', () => {
+    render(<DashboardPage />, { wrapper: createWrapper() })
+    expect(screen.getByTestId('print-view')).toBeInTheDocument()
   })
 })
