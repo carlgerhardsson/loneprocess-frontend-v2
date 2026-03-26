@@ -1,10 +1,8 @@
-# 🚀 Next Session Guide - Fas 5.1: Tab-navigation, Period-väljare & Löneperioder
-
-> Fas 4 klar — nu bygger vi om dashboard för att matcha v1.5.0-designen
+# 🚀 Next Session Guide - Fas 6: Production Ready
 
 **Last Updated:** 2026-03-26  
-**Current Status:** Fas 4 Complete ✅  
-**Next Up:** Fas 5.1 — Tab-navigation + Period-integration
+**Current Status:** Fas 5 Complete ✅  
+**Next Up:** Fas 6 — Production Ready
 
 ---
 
@@ -18,44 +16,44 @@
 
 ## 📊 Var vi är
 
-✅ **Klart — Fas 1–4 (100%)**
+✅ **Klart — Fas 1–5 (100%)**
 
-⏳ **Nästa:** Fas 5.1 — Tab-navigation, Period-väljare & Löneperioder-sida
+| Fas | Status |
+|---|---|
+| Fas 1: Project Setup | ✅ |
+| Fas 2: Core Components | ✅ |
+| Fas 3: Feature Components | ✅ |
+| Fas 4: API Integration | ✅ |
+| Fas 5.1: Tab-nav + Period + Löneperioder | ✅ PR #46 |
+| Fas 5.2: Bemanningsområde-filtrering | ✅ PR #47 |
+| Fas 5.3: Export av checklista (PDF) | ✅ PR #48 |
+
+**Live:** https://carlgerhardsson.github.io/loneprocess-frontend-v2/  
+**Tests:** ~330 passing
 
 ---
 
-## 🎯 Fas 5.1 — Vad som ska byggas
+## 🎯 Fas 6: Production Ready
 
-Baserat på skärmbilder från v1.5.0. Tre delar hänger ihop:
+### 6.1 Performance-optimering
+- Code splitting / lazy loading per tab
+- `React.lazy()` för `LoneperioderTab` och `DashboardOverview`
+- Bundle-analys med `vite-bundle-analyzer`
 
-### Del A — Tab-navigation
-```
-Löneportalen
-  ├── Överblick     ← nuvarande dashboard (faskort + aktiviteter)
-  ├── Löneperioder  ← ny sida (lista med perioder)
-  └── Verktygslåda  ← placeholder
-```
-Implementeras som intern tab-state i DashboardPage (inte separata routes).
+### 6.2 Tillgänglighetsaudit (WCAG 2.1 AA)
+- Kör `axe-core` eller `@axe-core/react` i dev
+- Kontrollera färgkontraster, focus-ordning, aria-labels
+- Keyboard-navigation i tab-komponenter och dropdowns
 
-### Del B — Period-väljare + Bemanningsområde i Överblick
-```
-Period: [ Mars 2025 📅 ]   Bemanningsområde: [ Hela installationen ▼ ]
-```
-- Hämta perioder via `usePeriods()`
-- Auto-välj aktiv period
-- Propagera `selectedPeriodId` → FasCard → ActivityListItemExpanded → ApiDataDisplay
-- Aktiviteterna 2.1, 2.2, 3.1 visar då live-data istället för varning
+### 6.3 Felövervakning (Sentry)
+- Installera `@sentry/react`
+- Konfiguration i `src/lib/monitoring.ts`
+- Error boundary kopplad till Sentry
 
-### Del C — Löneperioder-sida
-```
-⚠️ Kontakta lönechef för ändringar
-
-Löneperioder 2025
-  2025-01 Januari    [Avslutad]
-  2025-02 Februari   [Avslutad]
-  2025-03 Mars       [Aktiv]     ← highlightad rad
-  2025-04 April      [Planerad]
-```
+### 6.4 Produktionsdeploy
+- Verifiera GitHub Pages-deployment
+- Kontrollera att `VITE_LONEPROCESS_API_KEY` är satt i GitHub Secrets
+- E2E-test mot live-URL
 
 ---
 
@@ -65,18 +63,19 @@ Löneperioder 2025
 cd loneprocess-frontend-v2
 git checkout main && git pull origin main
 npm install
-npm test            # 297 tester ska passa ✅
+npm test            # ~330 tester ska passa ✅
 npm run type-check  # Ska passa ✅
+npm run dev         # Starta lokalt
 ```
 
-**Starta milestone:**
+**Starta Fas 6:**
 ```
-"Kör Fas 5, Milestone 5.1"
+"Kör Fas 6, Milestone 6.1: Performance-optimering"
 ```
 
 ---
 
-## 📝 Arbetsflöde
+## 📝 Arbetsflöde (alltid följ detta)
 
 ```bash
 npm test
@@ -88,11 +87,12 @@ npm run build
 
 ### Branch naming
 ```
-feat/milestone-5.1-period-tabs
+feat/milestone-6.1-performance
+feat/milestone-6.2-accessibility
+feat/milestone-6.3-sentry
+feat/milestone-6.4-deploy
 ```
 
 ---
-
-📚 **Detaljerad teknisk plan:** [docs/FAS5_PLAN.md](./docs/FAS5_PLAN.md)
 
 **Happy Coding! 🎉**
