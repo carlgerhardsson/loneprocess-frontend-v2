@@ -23,11 +23,11 @@ import { QueryClient } from '@tanstack/react-query'
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,   // 5 minuter (standard)
-      gcTime: 1000 * 60 * 15,     // 15 minuter i cache
+      staleTime: 1000 * 60 * 5, // 5 minuter (standard)
+      gcTime: 1000 * 60 * 15, // 15 minuter i cache
       retry: 1,
-      refetchOnWindowFocus: true,  // Uppdatera när användaren återkommer
-      refetchOnReconnect: true,    // Uppdatera vid nätverksåteruppkoppling
+      refetchOnWindowFocus: true, // Uppdatera när användaren återkommer
+      refetchOnReconnect: true, // Uppdatera vid nätverksåteruppkoppling
     },
     mutations: {
       retry: 0,
@@ -57,13 +57,13 @@ export const CACHE_CONFIG = {
   },
   /** Körningsstatus — förändras snabbt vid aktiv körning */
   korningsstatus: {
-    staleTime: 1000 * 15,          // 15 sekunder
+    staleTime: 1000 * 15, // 15 sekunder
     gcTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 30,    // Polla var 30 sekunder
+    refetchInterval: 1000 * 30, // Polla var 30 sekunder
   },
   /** Fellistor — uppdateras när fel behandlas */
   fellistor: {
-    staleTime: 1000 * 60 * 2,     // 2 minuter
+    staleTime: 1000 * 60 * 2, // 2 minuter
     gcTime: 1000 * 60 * 10,
   },
 } as const
