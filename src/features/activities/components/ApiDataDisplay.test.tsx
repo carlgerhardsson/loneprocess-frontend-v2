@@ -28,7 +28,6 @@ function createWrapper() {
 describe('ApiDataDisplay', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Återställ default return values efter clearAllMocks
     vi.mocked(useEmployees).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useEmployees>)
     vi.mocked(useKorningsStatus).mockReturnValue({ data: null, isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useKorningsStatus>)
     vi.mocked(useFellistor).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useFellistor>)
@@ -46,8 +45,8 @@ describe('ApiDataDisplay', () => {
 
   it('visar EmployeeTable för aktivitet 1.5 (alla anställda)', () => {
     render(<ApiDataDisplay activityId="1.5" />, { wrapper: createWrapper() })
-    // Aktivitet 1.5 anropar useEmployees utan filter
-    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(undefined)
+    // useEmployees() anropas utan argument — inte fn(undefined) utan fn()
+    expect(vi.mocked(useEmployees)).toHaveBeenCalledWith()
   })
 
   it('visar KorningsStatus för aktivitet 2.1', () => {
