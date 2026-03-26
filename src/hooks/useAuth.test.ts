@@ -61,7 +61,7 @@ describe('useAuth', () => {
   it('provides session management', () => {
     const { result } = renderHook(() => useAuth())
 
+    // API-nyckel-auth har ingen refreshToken - bara checkSession
     expect(typeof result.current.checkSession).toBe('function')
-    expect(typeof result.current.refreshToken).toBe('function')
   })
 })

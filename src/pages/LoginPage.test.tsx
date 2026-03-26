@@ -1,8 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { LoginPage } from './LoginPage'
 import { useAuthStore } from '@/stores/authStore'
+
+// Mocka auth API
+vi.mock('@/lib/api/auth', () => ({
+  verifyApiKey: vi.fn(),
+}))
+
+import { verifyApiKey } from '@/lib/api/auth'
 
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async () => {
@@ -13,73 +21,101 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
+function renderLoginPage() {
+  return render(
+    <MemoryRouter>
+      <LoginPage />
+    </MemoryRouter>
+  )
+}
+
 describe('LoginPage', () => {
   beforeEach(() => {
-    useAuthStore.setState({ user: null, isAuthenticated: false, isLoading: false })
-    mockNavigate.mockClear()
-  })
-
-  it('renders login form', () => {
-    render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>
-    )
-
-    expect(screen.getByRole('heading', { name: /Löneportalen/i })).toBeInTheDocument()
-    expect(screen.getByLabelText(/Användarnamn/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Lösenord/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Logga in/i })).toBeInTheDocument()
-  })
-
-  it('shows error when submitting empty form', () => {
-    render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>
-    )
-
-    const submitButton = screen.getByRole('button', { name: /Logga in/i })
-    fireEvent.click(submitButton)
-
-    expect(screen.getByText(/Användarnamn och lösenord krävs/i)).toBeInTheDocument()
-  })
-
-  it('logs in user and navigates to dashboard', async () => {
-    render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>
-    )
-
-    const usernameInput = screen.getByLabelText(/Användarnamn/i)
-    const passwordInput = screen.getByLabelText(/Lösenord/i)
-    const submitButton = screen.getByRole('button', { name: /Logga in/i })
-
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } })
-    fireEvent.change(passwordInput, { target: { value: 'password123' } })
-    fireEvent.click(submitButton)
-
-    // Wait for async login to complete
-    await waitFor(() => {
-      const state = useAuthStore.getState()
-      expect(state.isAuthenticated).toBe(true)
+    useAuthStore.setState({
+      user: null,
+      session: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
     })
-
-    const state = useAuthStore.getState()
-    expect(state.user?.email).toBe('testuser')
-    expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
+    mockNavigate.mockClear()
+    vi.clearAllMocks()
   })
 
-  it('shows demo instructions', () => {
-    render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>
-    )
+  it('visar spinner och anslutningstext vid uppstart', () => {
+    // Håll verifyApiKey hängande så vi ser loading state
+    vi.mocked(verifyApiKey).mockImplementation(() => new Promise(() => {}))
+    vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-key')
 
-    expect(
-      screen.getByText(/Demo: Ange vilket användarnamn och lösenord som helst/i)
-    ).toBeInTheDocument()
+    renderLoginPage()
+
+    expect(screen.getByText(/Löneportalen/i)).toBeInTheDocument()
+    expect(screen.getByText(/Ansluter till systemet/i)).toBeInTheDocument()
+    // Ingen login-knapp eller formulärfält
+    expect(screen.queryByRole('button', { name: /Logga in/i })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/Användarnamn/i)).not.toBeInTheDocument()
+  })
+
+  it('redirectar till /dashboard när inloggning lyckas', async () => {
+    vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-key')
+    vi.mocked(verifyApiKey).mockResolvedValue(undefined)
+
+    renderLoginPage()
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard', { replace: true })
+    })
+  })
+
+  it('visar felmeddelande om API är onåbart', async () => {
+    vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-key')
+    vi.mocked(verifyApiKey).mockRejectedValue(new Error('Network error'))
+
+    renderLoginPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/Anslutningsfel/i)).toBeInTheDocument()
+    })
+  })
+
+  it('visar Försök igen-knapp vid fel', async () => {
+    vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-key')
+    vi.mocked(verifyApiKey).mockRejectedValue(new Error('Network error'))
+
+    renderLoginPage()
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Försök igen/i })).toBeInTheDocument()
+    })
+  })
+
+  it('försöker igen när man klickar Försök igen', async () => {
+    vi.stubEnv('VITE_LONEPROCESS_API_KEY', 'test-key')
+    vi.mocked(verifyApiKey)
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockResolvedValueOnce(undefined)
+
+    renderLoginPage()
+
+    // Vänta på felmeddelande
+    const retryButton = await screen.findByRole('button', { name: /Försök igen/i })
+
+    // Klicka försök igen
+    await userEvent.click(retryButton)
+
+    // Ska ha anropat verifyApiKey två gånger
+    await waitFor(() => {
+      expect(vi.mocked(verifyApiKey)).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  it('redirectar direkt om redan inloggad', () => {
+    useAuthStore.setState({ isAuthenticated: true })
+
+    renderLoginPage()
+
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard', { replace: true })
+    // loginWithApiKey ska inte ha anropats
+    expect(vi.mocked(verifyApiKey)).not.toHaveBeenCalled()
   })
 })

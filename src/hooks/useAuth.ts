@@ -1,22 +1,18 @@
 import { useAuthStore } from '@/stores/authStore'
 import { useCallback } from 'react'
-import type { LoginCredentials } from '@/types'
 
 /**
  * useAuth Hook
  *
- * Centralized hook for authentication operations.
- * Provides easy access to auth state and actions.
+ * Centraliserad hook för autentiseringsoperationer.
+ * Autentisering sker via API-nyckel (loginWithApiKey).
  */
 export function useAuth() {
   const store = useAuthStore()
 
-  const login = useCallback(
-    async (credentials: LoginCredentials) => {
-      await store.loginWithCredentials(credentials)
-    },
-    [store]
-  )
+  const login = useCallback(async () => {
+    await store.loginWithApiKey()
+  }, [store])
 
   const logout = useCallback(() => {
     store.logout()
@@ -24,10 +20,6 @@ export function useAuth() {
 
   const checkSession = useCallback(() => {
     return store.checkSession()
-  }, [store])
-
-  const refreshToken = useCallback(async () => {
-    return await store.refreshToken()
   }, [store])
 
   return {
@@ -42,7 +34,6 @@ export function useAuth() {
     login,
     logout,
     checkSession,
-    refreshToken,
 
     // Permissions
     checkPermission: store.checkPermission,
