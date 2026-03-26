@@ -1,6 +1,6 @@
 /**
  * ActivityListItemExpanded - Expandable Activity Row
- * Click to expand and show delsteg, comments, references, and API data
+ * Click to expand and show delsteg, comments, references
  */
 
 import { useState } from 'react'
@@ -118,6 +118,13 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
       {isExpanded && (
         <div className="border-t-2 border-gray-200 bg-gray-50">
           <div className="p-6 space-y-6">
+            {/* API Data Section - Show FIRST if activity has API integration */}
+            {activity.hasApiIntegration && activity.apiEndpoint && (
+              <div>
+                <ApiDataDisplay activityId={activity.id} apiEndpoint={activity.apiEndpoint} />
+              </div>
+            )}
+
             {/* Delsteg Checklist */}
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3">Delsteg</h3>
@@ -127,13 +134,6 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
                 colorScheme={{ accent: colorScheme.accent }}
               />
             </div>
-
-            {/* API Data Section - Only show if activity has API integration */}
-            {activity.hasApiIntegration && (
-              <div>
-                <ApiDataDisplay activityId={activity.id} />
-              </div>
-            )}
 
             {/* References */}
             {activity.references.length > 0 && (
