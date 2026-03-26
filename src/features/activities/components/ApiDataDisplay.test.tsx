@@ -3,16 +3,36 @@ import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { ApiDataDisplay } from './ApiDataDisplay'
+import type { UseQueryResult } from '@tanstack/react-query'
+import type { LAEmployee, KorningsStatus, LACalculationError } from '@/types/la'
+
+// Hjälpfunktion för att skapa mock query-resultat
+// Använder "as unknown as" för att kringgå TypeScript-krav på fullständigt UseQueryResult-objekt
+function mockQuery<T>(partial: Partial<UseQueryResult<T>>): UseQueryResult<T> {
+  return {
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+    isPending: false,
+    isFetching: false,
+    refetch: vi.fn(),
+    error: null,
+    status: 'pending',
+    fetchStatus: 'idle',
+    ...partial,
+  } as unknown as UseQueryResult<T>
+}
 
 // Mocka alla hooks
 vi.mock('@/hooks/queries/useEmployees', () => ({
-  useEmployees: vi.fn().mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() }),
+  useEmployees: vi.fn(),
 }))
 vi.mock('@/hooks/queries/useKorningsStatus', () => ({
-  useKorningsStatus: vi.fn().mockReturnValue({ data: null, isLoading: false, isError: false, refetch: vi.fn() }),
+  useKorningsStatus: vi.fn(),
 }))
 vi.mock('@/hooks/queries/useFellistor', () => ({
-  useFellistor: vi.fn().mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() }),
+  useFellistor: vi.fn(),
 }))
 
 import { useEmployees } from '@/hooks/queries/useEmployees'
@@ -28,9 +48,9 @@ function createWrapper() {
 describe('ApiDataDisplay', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useEmployees).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useEmployees>)
-    vi.mocked(useKorningsStatus).mockReturnValue({ data: null, isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useKorningsStatus>)
-    vi.mocked(useFellistor).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useFellistor>)
+    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ data: [], isSuccess: true, status: 'success' }))
+    vi.mocked(useKorningsStatus).mockReturnValue(mockQuery<KorningsStatus>({ data: undefined }))
+    vi.mocked(useFellistor).mockReturnValue(mockQuery<LACalculationError[]>({ data: [], isSuccess: true, status: 'success' }))
   })
 
   it('visar EmployeeTable för aktivitet 1.2', () => {
@@ -45,7 +65,6 @@ describe('ApiDataDisplay', () => {
 
   it('visar EmployeeTable för aktivitet 1.5 (alla anställda)', () => {
     render(<ApiDataDisplay activityId="1.5" />, { wrapper: createWrapper() })
-    // useEmployees() anropas utan argument — inte fn(undefined) utan fn()
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith()
   })
 
@@ -65,23 +84,13 @@ describe('ApiDataDisplay', () => {
   })
 
   it('visar loading skeleton', () => {
-    vi.mocked(useEmployees).mockReturnValueOnce({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useEmployees>)
+    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ isLoading: true, isPending: true, status: 'pending' }))
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
     expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument()
   })
 
   it('visar error state med retry-knapp', () => {
-    vi.mocked(useEmployees).mockReturnValueOnce({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      refetch: vi.fn(),
-    } as ReturnType<typeof useEmployees>)
+    vi.mocked(useEmployees).mockReturnValue(mockQuery<LAEmployee[]>({ isError: true, status: 'error', error: new Error('API error') }))
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
     expect(screen.getByText(/Kunde inte hämta data/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Försök igen/i })).toBeInTheDocument()
