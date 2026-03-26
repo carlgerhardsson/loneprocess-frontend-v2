@@ -1,6 +1,6 @@
 /**
- * ActivityListItemExpanded - Expandable Activity Row
- * Click to expand and show delsteg, comments, references
+ * ActivityListItemExpanded - Expanderbar aktivitetsrad
+ * Klicka för att expandera och visa delsteg, kommentarer, referenser och live API-data.
  */
 
 import { useState } from 'react'
@@ -9,6 +9,7 @@ import { useActivityProgress } from '@/hooks/useActivityProgress'
 import { DelstegChecklist } from './DelstegChecklist'
 import { ActivityComments } from './ActivityComments'
 import { ActivityReferences } from './ActivityReferences'
+import { ApiDataDisplay } from './ApiDataDisplay'
 
 interface ActivityListItemExpandedProps {
   activity: ActivityDefinition
@@ -18,15 +19,16 @@ interface ActivityListItemExpandedProps {
     text: string
     accent: string
   }
+  /** Aktiv löneperiod-ID för API-aktiviteter som behöver period-kontext */
+  loneperiodId?: number | null
 }
 
-export function ActivityListItemExpanded({ activity, colorScheme }: ActivityListItemExpandedProps) {
+export function ActivityListItemExpanded({ activity, colorScheme, loneperiodId }: ActivityListItemExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { progress, getCompletionPercentage } = useActivityProgress()
   const percentage = getCompletionPercentage(activity.id)
   const isComplete = percentage === 100
 
-  // Calculate completed delsteg count
   const activityProgress = progress[activity.id]
   const completedDelsteg = activityProgress
     ? activityProgress.delstegCompleted.filter(Boolean).length
@@ -59,18 +61,8 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
             }`}
           >
             {isComplete && (
-              <svg
-                className="w-4 h-4 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             )}
           </div>
@@ -78,9 +70,7 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
           {/* Activity Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-sm font-bold text-gray-500">
-                {activity.processNr}
-              </span>
+              <span className="font-mono text-sm font-bold text-gray-500">{activity.processNr}</span>
               {activity.hasApiIntegration && (
                 <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
                   API
@@ -117,6 +107,21 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
       {isExpanded && (
         <div className="border-t-2 border-gray-200 bg-gray-50">
           <div className="p-6 space-y-6">
+
+            {/* Live Data från System — bara för API-aktiviteter */}
+            {activity.hasApiIntegration && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  Live Data från System
+                </h3>
+                <ApiDataDisplay
+                  activityId={activity.id}
+                  loneperiodId={loneperiodId}
+                />
+              </div>
+            )}
+
             {/* Delsteg Checklist */}
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3">Delsteg</h3>
@@ -138,6 +143,7 @@ export function ActivityListItemExpanded({ activity, colorScheme }: ActivityList
             <div>
               <ActivityComments activityId={activity.id} />
             </div>
+
           </div>
         </div>
       )}
