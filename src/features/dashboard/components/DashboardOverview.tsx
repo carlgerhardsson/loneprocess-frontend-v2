@@ -79,8 +79,7 @@ export function DashboardOverview() {
     const pct = getCompletionPercentage(a.id)
     return sum + Math.round((pct / 100) * a.delsteg.length)
   }, 0)
-  const totalPercent =
-    totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
+  const totalPercent = totalDelsteg > 0 ? Math.round((completedDelsteg / totalDelsteg) * 100) : 0
 
   const selectedPeriod = periods.find(p => Number(p.id) === selectedPeriodId)
   const periodDisplayName = selectedPeriod?.name ?? ''
@@ -100,9 +99,7 @@ export function DashboardOverview() {
                 className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none"
                 aria-label="Välj period"
               >
-                {periods.length === 0 && (
-                  <option value="">Laddar perioder...</option>
-                )}
+                {periods.length === 0 && <option value="">Laddar perioder...</option>}
                 {periods.map(p => (
                   <option key={p.id} value={Number(p.id)}>
                     {p.name}
@@ -110,8 +107,18 @@ export function DashboardOverview() {
                 ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
             </div>
@@ -130,8 +137,18 @@ export function DashboardOverview() {
                 <option value="Hela installationen">Hela installationen</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -157,8 +174,8 @@ export function DashboardOverview() {
           />
         </div>
         <p className="text-xs text-gray-500 mt-2">
-          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda ·{' '}
-          {completedDelsteg} av {totalDelsteg} delsteg klara
+          {completedActivities} av {ACTIVITY_STATS.total} aktiviteter slutförda · {completedDelsteg}{' '}
+          av {totalDelsteg} delsteg klara
         </p>
       </div>
 

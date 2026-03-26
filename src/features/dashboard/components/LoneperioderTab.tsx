@@ -88,7 +88,12 @@ export function LoneperioderTab() {
     <div className="space-y-6">
       {/* Varning: read-only */}
       <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          className="w-4 h-4 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -126,9 +131,9 @@ export function LoneperioderTab() {
                     <span className="text-gray-500 text-sm">{period.name}</span>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      getStatusStyle(period.status)
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                      period.status
+                    )}`}
                   >
                     {getStatusLabel(period.status)}
                   </span>
