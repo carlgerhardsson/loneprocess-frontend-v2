@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
@@ -26,6 +26,14 @@ function createWrapper() {
 }
 
 describe('ApiDataDisplay', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // Återställ default return values efter clearAllMocks
+    vi.mocked(useEmployees).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useEmployees>)
+    vi.mocked(useKorningsStatus).mockReturnValue({ data: null, isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useKorningsStatus>)
+    vi.mocked(useFellistor).mockReturnValue({ data: [], isLoading: false, isError: false, refetch: vi.fn() } as ReturnType<typeof useFellistor>)
+  })
+
   it('visar EmployeeTable för aktivitet 1.2', () => {
     render(<ApiDataDisplay activityId="1.2" />, { wrapper: createWrapper() })
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith({ status: 'new' })
@@ -36,8 +44,9 @@ describe('ApiDataDisplay', () => {
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith({ status: 'terminated' })
   })
 
-  it('visar EmployeeTable för aktivitet 1.5', () => {
+  it('visar EmployeeTable för aktivitet 1.5 (alla anställda)', () => {
     render(<ApiDataDisplay activityId="1.5" />, { wrapper: createWrapper() })
+    // Aktivitet 1.5 anropar useEmployees utan filter
     expect(vi.mocked(useEmployees)).toHaveBeenCalledWith(undefined)
   })
 

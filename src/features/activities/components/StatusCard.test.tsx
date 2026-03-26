@@ -18,9 +18,13 @@ const mockStatus: KorningsStatus = {
 }
 
 describe('StatusCard', () => {
-  it('visar statusetikett', () => {
+  it('visar statusetikett i header-badge', () => {
     render(<StatusCard status={mockStatus} />)
-    expect(screen.getByText('Provlön klar')).toBeInTheDocument()
+    // Status-texten finns på två ställen (badge + dt-etikett) — matcha badge-spann specifikt
+    const badges = screen.getAllByText('Provlön klar')
+    expect(badges.length).toBeGreaterThanOrEqual(1)
+    // Badge-spann är det första elementet med denna text
+    expect(badges[0]).toHaveClass('font-semibold')
   })
 
   it('visar antal anställda', () => {
@@ -46,6 +50,7 @@ describe('StatusCard', () => {
 
   it('visar fel-status korrekt', () => {
     render(<StatusCard status={{ ...mockStatus, status: 'fel' }} />)
-    expect(screen.getByText('Fel uppstod')).toBeInTheDocument()
+    const badges = screen.getAllByText('Fel uppstod')
+    expect(badges[0]).toHaveClass('font-semibold')
   })
 })
